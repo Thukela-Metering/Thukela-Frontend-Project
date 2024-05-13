@@ -75,6 +75,10 @@ import { AddedDialogComponent } from './invoice/add-invoice/added-dialog/added-d
 import { AppBlogsComponent } from './blogs/blogs.component';
 import { AppBlogDetailsComponent } from './blogs/details/details.component';
 import { TestLayoutComponent } from './test-layout/test-layout.component';
+import { AppBuildingComponent, AppBuildingDialogContentComponent } from './buildings/building.component';
+import { AppAddBuildingComponent } from './buildings/add/add.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeToBuilding/linkingPage';
 
 
 @NgModule({
@@ -97,6 +101,7 @@ import { TestLayoutComponent } from './test-layout/test-layout.component';
     }),
     MatNativeDateModule,
     NgScrollbarModule,
+    MatRadioModule,
   ],
   exports: [TablerIconsModule],
   declarations: [
@@ -125,6 +130,9 @@ import { TestLayoutComponent } from './test-layout/test-layout.component';
     AppEmployeeComponent,
     AppEmployeeDialogContentComponent,
     AppAddEmployeeComponent,
+    AppBuildingComponent,
+    AppBuildingDialogContentComponent,
+    AppAddBuildingComponent,
     AppInvoiceListComponent,
     AppInvoiceViewComponent,
     AppAddInvoiceComponent,
@@ -133,7 +141,8 @@ import { TestLayoutComponent } from './test-layout/test-layout.component';
     OkDialogComponent,
     AppBlogsComponent,
     AppBlogDetailsComponent,
+    AppBuildingRepresentativeLinkComponent,
   ],
   providers: [DatePipe],
 })
-export class AppsModule {}
+export class AppsModule { }

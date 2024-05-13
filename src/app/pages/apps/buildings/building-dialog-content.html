@@ -11,48 +11,72 @@
       </div>
       <div class="col-lg-6">
         <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="surname" name="surname" [(ngModel)]="local_data.surname"
-            placeholder="Surname" />
+          <input type="text" matInput required id="nSquareMetersame" name="nSquareMetersame" [(ngModel)]="local_data.nSquareMetersame"
+            placeholder="nSquareMetersame" />
         </mat-form-field>
       </div>   
       <div class="col-lg-6">
         <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="username" name="username" [(ngModel)]="local_data.username"
-            placeholder="username" />
+          <input type="text" matInput required id="buildingOwner" name="buildingOwner" [(ngModel)]="local_data.buildingOwner"
+            placeholder="buildingOwner" />
         </mat-form-field>
       </div>
       <div class="col-lg-6">
         <mat-form-field appearance="outline" class="w-100">
-          <mat-select [(value)]="local_data.userRole" placeholder="Selecet User Role">
-            <mat-option *ngFor="let role of DropDownValues" [value]="role.Id">{{ role.Name }}</mat-option>
-          </mat-select>
+          <input type="text" matInput required id="sdgMeterZone" name="sdgMeterZone" [(ngModel)]="local_data.sdgMeterZone"
+          placeholder="sdgMeterZone" />
+          <!-- <mat-select [(value)]="local_data.sdgMeterZone" placeholder="sdgMeterZone">
+            <mat-option *ngFor="let role of DropDownValues" [value]="role.Id">{{ local_data.sdgMeterZone }}</mat-option>
+          </mat-select> -->
         </mat-form-field>
       </div>
       <div class="col-lg-6">
         <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="password" name="password" [(ngModel)]="local_data.password"
-            placeholder="Password" />
+          <input type="text" matInput required id="address" name="address" [(ngModel)]="local_data.address"
+            placeholder="address" />
         </mat-form-field>
       </div>
       <div class="col-lg-6">
         <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="confirmPassword" name="confirmPassword" [(ngModel)]="local_data.confirmPassword"
-            placeholder="Confirm Password" />
+          <input type="text" matInput required id="notes" name="notes" [(ngModel)]="local_data.notes"
+            placeholder="notes" />
         </mat-form-field>
       </div>     
       <div class="col-lg-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="vatNo" name="vatNo" [(ngModel)]="local_data.vatNo"
-            placeholder="Id Number" />
-        </mat-form-field>
+        <!-- <mat-form-field appearance="outline" class="w-100"> -->
+          <mat-radio-group name="isActive" class="w-100" [(ngModel)]="local_data.isActive">
+            <mat-radio-button [value]="true">Active</mat-radio-button>
+            <mat-radio-button [value]="false">Inactive</mat-radio-button>
+          </mat-radio-group>
+          {{ local_data.isActive }} <!-- Debug output -->
+          <ng-container *ngIf="local_data.isActive === false">
+            <mat-form-field appearance="outline" class="w-100">
+              <input
+                matInput
+                [matDatepicker]="startDateDP"
+                placeholder="Inactive from"
+                name="dateDeleted"
+                [(ngModel)]="local_data.dateDeleted"
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="startDateDP"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #startDateDP></mat-datepicker>
+            </mat-form-field>
+          </ng-container>
+          
+          <!-- <input type="text" matInput required id="isActive" name="isActive" [(ngModel)]="local_data.isActive"
+            placeholder="isActive" /> -->
+        <!-- </mat-form-field> -->
       </div>
-      <div class="col-lg-6">
+      <!-- <div class="col-lg-6">
         <mat-form-field appearance="outline" class="w-100">
           <input type="text" matInput required id="email" name="email" [(ngModel)]="local_data.email"
             placeholder="Email" />
         </mat-form-field>
-      </div>
-      <div class="col-lg-6">
+      </div> -->
+      <!-- <div class="col-lg-6">
         <mat-form-field appearance="outline" class="w-100">
           <input type="text" matInput required id="mobile" name="mobile" [(ngModel)]="local_data.mobile"
             placeholder="Mobile" />
@@ -64,35 +88,7 @@
             placeholder="Address">
         </textarea>
         </mat-form-field>
-      </div>
-    </div>
-    <div class="col-lg-6">
-      <!-- <mat-form-field appearance="outline" class="w-100"> -->
-        <mat-radio-group name="isActive" class="w-100" [(ngModel)]="local_data.isActive">
-          <mat-radio-button [value]="true">Active</mat-radio-button>
-          <mat-radio-button [value]="false">Inactive</mat-radio-button>
-        </mat-radio-group>
-        {{ local_data.isActive }} <!-- Debug output -->
-        <ng-container *ngIf="local_data.isActive === false">
-          <mat-form-field appearance="outline" class="w-100">
-            <input
-              matInput
-              [matDatepicker]="startDateDP"
-              placeholder="Inactive from"
-              name="dateDeleted"
-              [(ngModel)]="local_data.dateDeleted"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="startDateDP"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #startDateDP></mat-datepicker>
-          </mat-form-field>
-        </ng-container>
-        
-        <!-- <input type="text" matInput required id="isActive" name="isActive" [(ngModel)]="local_data.isActive"
-          placeholder="isActive" /> -->
-      <!-- </mat-form-field> -->
+      </div> -->
     </div>
     <button mat-flat-button (click)="doAction()" mat-flat-button color="primary" [disabled]="!userForm.valid">
       {{action}}
