@@ -21,7 +21,7 @@ import { AppHorizontalSidebarComponent } from './horizontal/sidebar/sidebar.comp
 import { AppBreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
 import { CustomizerComponent } from './shared/customizer/customizer.component';
 import { UserService } from 'src/app/services/user.service';
-import { PersonDTO } from 'src/app/DTOs/userDto';
+import { PersonDTO } from 'src/app/DTOs/personDTO';
 import { RoleService } from 'src/app/services/role.service';
 import { OperationalResultDTO } from 'src/app/DTOs/backendResponseDTO';
 import { AuthService } from 'src/app/services/auth.service';
@@ -242,8 +242,8 @@ export class FullComponent implements OnInit {
     var getLoggedInUserId = localStorage.getItem('LoggedInUserId')!;
     if (Number(getLoggedInUserId) > -1) {
       this._userService.getUserById(getLoggedInUserId).subscribe((userDetail) => {
-        var result = userDetail as PersonDTO
-        this.LoggedInPersonName = result.name.concat(' ', result.surname);
+        var result = userDetail as OperationalResultDTO<PersonDTO>;
+        this.LoggedInPersonName = result.data!.name.concat(' ', result.data!.surname);
         console.log(userDetail);
       });
     }

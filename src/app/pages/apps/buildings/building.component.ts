@@ -3,7 +3,7 @@ import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
-import { AppAddEmployeeComponent } from './add/add.component';
+import { AppAddBuildingComponent } from './add/add.component';
 import { PersonDTO } from 'src/app/DTOs/personDTO';
 import { UserService as PersonService } from 'src/app/services/user.service';
 import { UserDataDTO, UserDataDTO as UserRegistrationDTO } from 'src/app/DTOs/userDataDTO';
@@ -11,33 +11,34 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LookupValueDTO } from 'src/app/DTOs/lookupValueDTO';
 import { OperationalResultDTO } from 'src/app/DTOs/backendResponseDTO';
 import { SystemUserDTO } from 'src/app/DTOs/systemUserDTO';
+import { BuildingService } from 'src/app/services/building.service';
+import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 
 @Component({
-  templateUrl: './employee.component.html',
-  selector: 'app-building-representative-link',
+  templateUrl: './building.component.html',
+  selector:"ng-component-building"
 })
-export class AppEmployeeComponent implements OnInit, AfterViewInit {
+export class AppBuildingComponent implements OnInit, AfterViewInit {
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   searchText: any;
-  persons: UserDataDTO[] = [];
-  manageActiveUsers:boolean = true;
+  manageActiveBuildings:boolean = true;
+  buildings: BuildingDTO[] = [];
   displayedColumns: string[] = [
     'id',
     'name',
-    'surname',
-    'email',
-    'mobile',
-    'username',
+    'nSquareMetersame',
+    'buildingOwner',
+    'sdgMeterZone',
     'address',
-    'vatNo',
+    'notes',   
     'action',
   ];
-  dataSource = new MatTableDataSource(this.persons);
+  dataSource = new MatTableDataSource(this.buildings);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
-  constructor(public dialog: MatDialog, public datePipe: DatePipe, private _personService: PersonService, private authService: AuthService) { }
+  constructor(public dialog: MatDialog, public datePipe: DatePipe, private _buildingService: BuildingService, private authService: AuthService) { }
   ngOnInit(): void {
-    this.loadUserListData();
+    this.loadBuildingListData();
   }
 
   ngAfterViewInit(): void {
@@ -48,13 +49,13 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  loadUserListData(): void {
-    this._personService.getUserDataList(this.manageActiveUsers).subscribe({
-      next: (response: OperationalResultDTO<UserDataDTO[]>) => {
+  loadBuildingListData(): void {
+    this._buildingService.getAllBuildings(this.manageActiveBuildings).subscribe({
+      next: (response: OperationalResultDTO<BuildingDTO[]>) => {
         if (response) {
           this.dataSource.data = response.data ?? [];
-          this.persons = [];
-          this.persons = response.data ?? [];
+          this.buildings = [];
+          this.buildings = response.data ?? [];
           this.table.renderRows();
         }
       },
@@ -66,13 +67,14 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
 
   openDialog(action: string, obj: any): void {
     obj.action = action;
-    const dialogRef = this.dialog.open(AppEmployeeDialogContentComponent, {
+    const dialogRef = this.dialog.open(AppBuildingDialogContentComponent, {
       data: obj,
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result.event === 'Add') {
         this.addRowData(result.data);
       } else if (result.event === 'Update') {
+
         this.updateRowData(result.data);
       } else if (result.event === 'Delete') {
         this.deleteRowData(result.data);
@@ -81,103 +83,82 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
   }
 
   // tslint:disable-next-line - Disables all
-  addRowData(row_obj: UserDataDTO): void {
+  addRowData(row_obj: BuildingDTO): void {
 
-    this.authService.register(row_obj).subscribe(
+    this._buildingService.addNewBuilding(row_obj).subscribe(
       response => {
         // Handle successful registration
         console.log(response);
         //////////////////////////////////////////////////////
-        var userDataDTO = new UserDataDTO();
+        var userDataDTO = new BuildingDTO();
         userDataDTO.id = row_obj.id,
           userDataDTO.name = row_obj.name,
-          userDataDTO.surname = row_obj.surname,
-          userDataDTO.vatNo = row_obj.vatNo,
-          userDataDTO.email = row_obj.email,
-          userDataDTO.mobile = row_obj.mobile,
-          userDataDTO.username = row_obj.username,
-          userDataDTO.userRole = row_obj.userRole,
-          userDataDTO.password = row_obj.password,
-          userDataDTO.confirmPassword = row_obj.confirmPassword
+          userDataDTO.nSquareMetersame = row_obj.nSquareMetersame,
+          userDataDTO.buildingOwner = row_obj.buildingOwner,
+          userDataDTO.sdgMeterZone = row_obj.sdgMeterZone,
           userDataDTO.address = row_obj.address,
-          userDataDTO.password = row_obj.password,
-          userDataDTO.username = row_obj.username          
-        this.persons.push(userDataDTO);
-        ////////////////////////////////////////////////////
-        // this.dataSource.data.push(personDTO);
-        // this.dataSource.data.unshift({
-        //   id: row_obj.id,
-        //   name: row_obj.name,
-        //   surname: row_obj.surname,
-        //   idNumber: row_obj.idNumber,
-        //   email: row_obj.email,
-        //   mobile: row_obj.mobile,
-        //   address: row_obj.address
-        // });
+          userDataDTO.notes = row_obj.notes,              
+        this.buildings.push(userDataDTO);
+        ////////////////////////////////////////////////////        
         console.log(row_obj);
-        this.loadUserListData();
+        this.loadBuildingListData();
       },
       error => {
         // Handle error
         console.error(error);
       }
     );
-    this.dialog.open(AppAddEmployeeComponent);
+    this.dialog.open(AppAddBuildingComponent);
   }
 
   // tslint:disable-next-line - Disables all
-  updateRowData(row_obj: UserDataDTO): boolean | any {
-    this.dataSource.data = this.dataSource.data.filter((value: UserDataDTO) => {
+  updateRowData(row_obj: BuildingDTO): boolean | any {
+    this.dataSource.data = this.dataSource.data.filter((value: BuildingDTO) => {
       if (value.id === row_obj.id) {
         value.name = row_obj.name;
         value.id = row_obj.id;
-        value.isActive = row_obj.isActive;
-        value.dateDeleted = row_obj.dateDeleted;
-        value.surname = row_obj.surname;
-        value.vatNo = row_obj.vatNo;
-        value.email = row_obj.email;
-        value.mobile = row_obj.mobile;
+        value.nSquareMetersame = row_obj.nSquareMetersame;
+        value.buildingOwner = row_obj.buildingOwner;
+        value.sdgMeterZone = row_obj.sdgMeterZone;
         value.address = row_obj.address;
-        value.username = row_obj.username;
-        value.password = row_obj.password;
-        value.confirmPassword = row_obj.confirmPassword;
-        value.userRole = row_obj.userRole;        
+        value.notes = row_obj.notes;
+        value.isActive = row_obj.isActive;
+        value.dateCreated = row_obj.dateCreated;
+        value.dateLastUpdated = row_obj.dateLastUpdated;
+        value.dateDeleted = row_obj.dateDeleted;        
       }
-      this._personService.updateUserData(row_obj).subscribe({
+      this._buildingService.updateBuildingData(row_obj).subscribe({
         next: (response) => {
           if (response) {
-            this.loadUserListData();
             console.log(response);
+            this.loadBuildingListData();
           }
         },
         error: (error) => {
           console.error('There was an error!', error);
         }
       });
-     
       return true;
     });
   }
 
   // tslint:disable-next-line - Disables all
-  deleteRowData(row_obj: UserDataDTO): boolean | any {
+  deleteRowData(row_obj: BuildingDTO): boolean | any {
     // this.dataSource.data = this.dataSource.data.filter((value: any) => {
     //   return value.id !== row_obj.id;
     // });
-    if(row_obj.confirmPassword == "" || row_obj.confirmPassword == null)
-      {
-        row_obj.confirmPassword="some";
-      }
-    this._personService.deleteUserData(row_obj).subscribe({
+    row_obj.isActive = false;
+    row_obj.dateDeleted = new Date();
+    this._buildingService.deleteBuilding(row_obj).subscribe({
       next: (response) => {
         if (response) {
           console.log(response);
-          this.loadUserListData();
+          this.loadBuildingListData();
         }
       },
       error: (error) => {
         console.error('There was an error!', error);
-        this.loadUserListData();
+        this.loadBuildingListData();
       }
     });
 
@@ -187,30 +168,23 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
 
 @Component({
   // tslint:disable-next-line: component-selector
-  selector: 'app-dialog-content',
-  templateUrl: 'employee-dialog-content.html',
+  selector: 'app-building-dialog-content',
+  templateUrl: 'building-dialog-content.html',
 })
 // tslint:disable-next-line: component-class-suffix
-export class AppEmployeeDialogContentComponent implements OnInit {
+export class AppBuildingDialogContentComponent implements OnInit {
   action: string;
-  userRegistrationDTO: UserDataDTO = new UserDataDTO();
+  buildingDTO: BuildingDTO = new BuildingDTO();
   // tslint:disable-next-line - Disables all
-  local_data: UserDataDTO;
-  local_data_systemUser:SystemUserDTO;
-  username: string;
-  password: string;
-  confirmPassword: string;
-  userRoleId: number;
-  selectedImage: any = '';
-  joiningDate: any = '';
+  local_data: BuildingDTO;
   DropDownValues: LookupValueDTO[] = [];
   constructor(
     public datePipe: DatePipe,
-    public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
+    public dialogRef: MatDialogRef<AppBuildingDialogContentComponent>,
     private authService: AuthService,
     private personService: PersonService,
     // @Optional() is used to prevent error if no data is passed
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: UserDataDTO,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingDTO,
   ) {
     this.local_data = { ...data };
     this.action = this.local_data.action ? this.local_data.action : "Update";
@@ -251,23 +225,17 @@ export class AppEmployeeDialogContentComponent implements OnInit {
   }
   doAction(): void {
     if (this.action == "Add") {
-      this.userRegistrationDTO.confirmPassword = this.confirmPassword;
-      this.userRegistrationDTO.password = this.password;
-      this.userRegistrationDTO.username = this.username;
-      this.userRegistrationDTO.userRole = this.userRoleId;
-      this.userRegistrationDTO.name = this.local_data.name;
-      this.userRegistrationDTO.username = this.local_data.username;
-      this.userRegistrationDTO.password = this.local_data.password;
-      this.userRegistrationDTO.confirmPassword = this.local_data.confirmPassword;
-      this.userRegistrationDTO.surname = this.local_data.surname;
-      this.userRegistrationDTO.vatNo = this.local_data.vatNo;
-      this.userRegistrationDTO.userRole = this.local_data.userRole;
-      this.userRegistrationDTO.email = this.local_data.email;
-      this.userRegistrationDTO.mobile = this.local_data.mobile;
-      this.userRegistrationDTO.address = this.local_data.address;
-      this.userRegistrationDTO.isActive = this.local_data.isActive;
-this.userRegistrationDTO.dateDeleted = this.local_data.dateDeleted;
-      this.dialogRef.close({ event: this.action, data: this.userRegistrationDTO });
+      this.buildingDTO.name = this.local_data.name;
+      this.buildingDTO.nSquareMetersame = this.local_data.nSquareMetersame;
+      this.buildingDTO.buildingOwner = this.local_data.buildingOwner;
+      this.buildingDTO.sdgMeterZone = this.local_data.sdgMeterZone;
+      this.buildingDTO.name = this.local_data.name;
+      this.buildingDTO.address = this.local_data.address;
+      this.buildingDTO.notes = this.local_data.notes;
+      this.buildingDTO.isActive = this.local_data.isActive;
+      // this.buildingDTO.dateCreated = this.local_data.dateLastUpdated;
+      // this.buildingDTO.dateDeleted = this.local_data.dateDeleted;    
+      this.dialogRef.close({ event: this.action, data: this.buildingDTO });
     } else {
       this.dialogRef.close({ event: this.action, data: this.local_data });
     }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { userRegistrationDTO } from '../DTOs/userRegistrationDTO';
+import { UserDataDTO } from '../DTOs/userDataDTO';
 import { LookupGroupDTO } from '../DTOs/lookupGroupDTO';
 import { LookupListDTO } from '../DTOs/lookupListDTO';
 import { LookupValueDTO } from '../DTOs/lookupValueDTO';
@@ -37,7 +37,7 @@ export class AuthService {
     return this.isauthenticated;
   }
 
-  register(userData: userRegistrationDTO): Observable<any> {
+  register(userData: UserDataDTO): Observable<any> {
     var postResponse =  this.http.post(`${this.apiUrl}/Auth/register`, userData);
     return postResponse;
   }

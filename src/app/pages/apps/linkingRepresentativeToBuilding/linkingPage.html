@@ -1,0 +1,39 @@
+<form #linkForm="ngForm">
+    <!-- Select Representative Dropdown -->
+    <div class="row">
+      <div class="col-sm-4 d-flex align-items-center">
+        <mat-label class="mat-subtitle-2 f-w-600 d-block m-b-16">Select Representative</mat-label>
+      </div>
+      <div class="col-sm-8">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-select required id="representative" name="representative"  placeholder="Select a representative" [(value)]="selectedRepresentative">
+            <mat-option *ngFor="let user of users" [value]="user.id">
+              {{ user.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  
+    <!-- Select Building Dropdown -->
+    <div class="row">
+      <div class="col-sm-4 d-flex align-items-center">
+        <mat-label class="mat-subtitle-2 f-w-600 d-block m-b-16">Select Building</mat-label>
+      </div>
+      <div class="col-sm-8">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-select id="building" name="building"  required placeholder="Select a building" [(value)]="selectedBuilding">
+            <mat-option *ngFor="let building of buildings" [value]="building.id">
+              {{ building.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>  
+    <div class="row justify-content-end">
+      <div class="col-sm-8">
+        <button mat-flat-button (click)="saveBuildingRepLink()" color="primary" [disabled]="selectedBuilding <1 || selectedRepresentative <1">Send</button>
+      </div>
+    </div>
+  </form>
+  

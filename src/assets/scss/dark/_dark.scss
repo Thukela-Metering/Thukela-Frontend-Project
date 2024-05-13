@@ -1,5 +1,14 @@
 @use "sass:meta";
+.radio-group-label-container {
+  display: flex;
+  flex-direction: column;
+  align-items: start; /* Aligns the content to the left */
+}
 
+.radio-group-label {
+  margin-bottom: 8px; /* Space between label and radio buttons */
+  font-weight: bold; /* Optional: makes the label bold */
+}
 .dark-theme {
   $textPrimary: #eaeff4;
   $textSecondary: #7c8fac;
