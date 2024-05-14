@@ -11,6 +11,8 @@ import { BuildingService } from 'src/app/services/building.service';
 import { BuildingRepresentativeLinkDTO } from 'src/app/DTOs/buildingRepLinkDTO';
 import { BuildingLinkingService } from 'src/app/services/linking.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-buildingRepresentativeLink',
@@ -18,22 +20,41 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 })
 export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterViewInit {
   constructor(public dialog: MatDialog, private _personService: PersonService, private snackbarService: SnackbarService, public datePipe: DatePipe, private linkingService: BuildingLinkingService, private authService: AuthService, private _buildingService: BuildingService,) { }// private _personService: PersonService,
+  representativeFilterCtrl: FormControl = new FormControl();
+  buildingFilterCtrl: FormControl = new FormControl();
   ngAfterViewInit(): void {
     //   throw new Error('Method not implemented.');
   }
   ngOnInit(): void {
+    this.representativeFilterCtrl.valueChanges.pipe(
+     debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(value => {
+      this.filterRepresentatives(value || ''); // Use an empty string if value is falsy
+    });
+  
+    this.buildingFilterCtrl.valueChanges.pipe(
+    //  debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(value => {
+      this.filterBuildings(value || ''); // Use an empty string if value is falsy
+    });
+  
     this.loadUserListData();
 
-    this.loadBuildingListData();
+    this.loadBuildingListData();   
   }
   hide = true;
   hide2 = true;
   conhide = true;
   alignhide = true;
-  users: UserDataDTO[];
+  users: UserDataDTO[] = [];
   buildings: BuildingDTO[] = [];
   selectedRepresentative: number = 0;
   selectedBuilding: number = 0;
+ 
+  filteredBuildings: BuildingDTO[] = [...this.buildings];
+  filteredRepresentatives: UserDataDTO[] = [...this.users];
   // 3 accordian
   step = 0;
 
@@ -47,9 +68,8 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
   loadUserListData(): void {
     this._personService.getUserDataList(true).subscribe({
       next: (response: OperationalResultDTO<UserDataDTO[]>) => {
-        if (response) {
-          this.users = response.data ?? [];
-        }
+        this.users = response.data ?? [];
+        this.filterRepresentatives(this.representativeFilterCtrl.value); // Apply initial filter
       },
       error: (error) => {
         console.error('There was an error!', error);
@@ -60,7 +80,7 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
     this._buildingService.getAllBuildings(true).subscribe({
       next: (response: OperationalResultDTO<BuildingDTO[]>) => {
         if (response) {
-          this.buildings = response.data ?? [];
+        this.buildings = response.data ?? [];
         }
       },
       error: (error) => {
@@ -91,6 +111,15 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
         console.error('There was an error!', error);
       }
     });
+  }
+  filterRepresentatives(filter: string): void {
+    const filterValue = filter ? filter.toLowerCase() : '';
+    this.filteredRepresentatives = this.users.filter(option => option.name.toLowerCase().includes(filterValue));
+  }
+  
+  filterBuildings(filter: string): void {
+    const filterValue = filter ? filter.toLowerCase() : '';
+    this.filteredBuildings = this.buildings.filter(option => option.name!.toLowerCase().includes(filterValue));
   }
   panelOpenState = false;
 }
