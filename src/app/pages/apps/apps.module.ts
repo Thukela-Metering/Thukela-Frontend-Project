@@ -79,6 +79,7 @@ import { AppBuildingComponent, AppBuildingDialogContentComponent } from './build
 import { AppAddBuildingComponent } from './buildings/add/add.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeToBuilding/linkingPage';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 
 @NgModule({
@@ -102,6 +103,7 @@ import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeT
     MatNativeDateModule,
     NgScrollbarModule,
     MatRadioModule,
+    NgxMatSelectSearchModule,
   ],
   exports: [TablerIconsModule],
   declarations: [

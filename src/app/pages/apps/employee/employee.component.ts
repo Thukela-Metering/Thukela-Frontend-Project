@@ -11,6 +11,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { LookupValueDTO } from 'src/app/DTOs/lookupValueDTO';
 import { OperationalResultDTO } from 'src/app/DTOs/backendResponseDTO';
 import { SystemUserDTO } from 'src/app/DTOs/systemUserDTO';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   templateUrl: './employee.component.html',
@@ -204,6 +206,8 @@ export class AppEmployeeDialogContentComponent implements OnInit {
   selectedImage: any = '';
   joiningDate: any = '';
   DropDownValues: LookupValueDTO[] = [];
+  filteredRoles: LookupValueDTO[] = [...this.DropDownValues];
+  roleFilterCtrl: FormControl = new FormControl();
   constructor(
     public datePipe: DatePipe,
     public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
@@ -216,9 +220,22 @@ export class AppEmployeeDialogContentComponent implements OnInit {
     this.action = this.local_data.action ? this.local_data.action : "Update";
   }
   ngOnInit(): void {
+    this.roleFilterCtrl.valueChanges.pipe(
+    //  debounceTime(300),
+       distinctUntilChanged()
+     ).subscribe(value => {
+       this.filterRoles(value || ''); // Use an empty string if value is falsy
+     });
+   
+    this.filteredRoles = [...this.DropDownValues];
     this.getDropdownValues();
-  }
 
+  }
+  filterRole(filter: string): void {
+    const filterValue = filter ? filter.toLowerCase() : '';
+    this.filteredRoles = this.DropDownValues.filter(option => option.Name.toLowerCase().includes(filterValue));
+  }
+  
   getDropdownValues() {
     var userRoleResponse = this.authService.getLookupValues().subscribe(
       (response: OperationalResultDTO<LookupValueDTO[]>) => {
@@ -227,6 +244,18 @@ export class AppEmployeeDialogContentComponent implements OnInit {
 
 
             this.DropDownValues = response.data.map((item: any) => {
+              const lookupValue: LookupValueDTO = new LookupValueDTO();
+              lookupValue.Id = item.id;
+              lookupValue.Name = item.name;
+              lookupValue.Description = item.description;
+              lookupValue.LookupGroupValueId = item.lookupGroupValueId;
+              lookupValue.LookupGroupValueValue = item.lookupGroupValueValue;
+              lookupValue.LookupListValueId = item.lookupListValueId;
+              lookupValue.LookupListValueValue = item.lookupListValueValue;
+              lookupValue.DateCreated = item.dateCreated;
+              return lookupValue;
+            });
+            this.filteredRoles = response.data.map((item: any) => {
               const lookupValue: LookupValueDTO = new LookupValueDTO();
               lookupValue.Id = item.id;
               lookupValue.Name = item.name;
@@ -275,5 +304,10 @@ this.userRegistrationDTO.dateDeleted = this.local_data.dateDeleted;
   }
   closeDialog(): void {
     this.dialogRef.close({ event: 'Cancel' });
+  }
+
+  filterRoles(filter: string): void {
+    const filterValue = filter ? filter.toLowerCase() : '';
+    this.filteredRoles = this.DropDownValues.filter(option => option.Name.toLowerCase().includes(filterValue));
   }
 }
