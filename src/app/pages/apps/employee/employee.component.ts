@@ -22,7 +22,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   searchText: any;
   persons: UserDataDTO[] = [];
-  manageActiveUsers:boolean = true;
+  manageActiveUsers: boolean = true;
   displayedColumns: string[] = [
     'id',
     'name',
@@ -102,8 +102,8 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
           userDataDTO.confirmPassword = row_obj.confirmPassword,
           userDataDTO.address = row_obj.address,
           userDataDTO.password = row_obj.password,
-          userDataDTO.username = row_obj.username,         
-        this.persons.push(userDataDTO);
+          userDataDTO.username = row_obj.username,
+          this.persons.push(userDataDTO);
         ////////////////////////////////////////////////////
         console.log(row_obj);
         this.loadUserListData();
@@ -131,12 +131,12 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
         value.address = row_obj.address;
         value.username = row_obj.username;
         value.password = row_obj.password;
+        value.guid = row_obj.guid;
         value.confirmPassword = row_obj.confirmPassword;
-        value.userRole = row_obj.userRole;        
+        value.userRole = row_obj.userRole;
       }
-      if(row_obj.isActive)
-        {
-          row_obj.dateDeleted  =undefined;
+      if (row_obj.isActive) {
+        row_obj.dateDeleted = undefined;
       }
       this._personService.updateUserData(row_obj).subscribe({
         next: (response) => {
@@ -149,7 +149,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
           console.error('There was an error!', error);
         }
       });
-     
+
       return true;
     });
   }
@@ -159,11 +159,12 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
     // this.dataSource.data = this.dataSource.data.filter((value: any) => {
     //   return value.id !== row_obj.id;
     // });
-    if(row_obj.confirmPassword == "" || row_obj.confirmPassword == null)
-      {
-        row_obj.confirmPassword="some";
-      }
-      row_obj.isActive = false;
+    if (row_obj.confirmPassword == "" || row_obj.confirmPassword == null) {
+      row_obj.confirmPassword = "some";
+    }
+    row_obj.isActive = false;
+    row_obj.dateDeleted = new Date();
+    row_obj.dateDeleted.setHours(0, 0, 0, 0);
     this._personService.deleteUserData(row_obj).subscribe({
       next: (response) => {
         if (response) {
@@ -192,7 +193,7 @@ export class AppEmployeeDialogContentComponent implements OnInit {
   userRegistrationDTO: UserDataDTO = new UserDataDTO();
   // tslint:disable-next-line - Disables all
   local_data: UserDataDTO;
-  local_data_systemUser:SystemUserDTO;
+  local_data_systemUser: SystemUserDTO;
   username: string;
   password: string;
   confirmPassword: string;
@@ -215,12 +216,12 @@ export class AppEmployeeDialogContentComponent implements OnInit {
   }
   ngOnInit(): void {
     this.roleFilterCtrl.valueChanges.pipe(
-    //  debounceTime(300),
-       distinctUntilChanged()
-     ).subscribe(value => {
-       this.filterRoles(value || ''); // Use an empty string if value is falsy
-     });
-   
+      //  debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(value => {
+      this.filterRoles(value || ''); // Use an empty string if value is falsy
+    });
+
     this.filteredRoles = [...this.DropDownValues];
     this.getDropdownValues();
 
@@ -229,7 +230,7 @@ export class AppEmployeeDialogContentComponent implements OnInit {
     const filterValue = filter ? filter.toLowerCase() : '';
     this.filteredRoles = this.DropDownValues.filter(option => option.name.toLowerCase().includes(filterValue));
   }
-  
+
   getDropdownValues() {
     var userRoleResponse = this.authService.getLookupValues().subscribe(
       (response: OperationalResultDTO<TransactionDTO>) => {
@@ -289,7 +290,7 @@ export class AppEmployeeDialogContentComponent implements OnInit {
       this.userRegistrationDTO.mobile = this.local_data.mobile;
       this.userRegistrationDTO.address = this.local_data.address;
       this.userRegistrationDTO.isActive = this.local_data.isActive;
-this.userRegistrationDTO.dateDeleted = this.local_data.dateDeleted;
+      this.userRegistrationDTO.dateDeleted = this.local_data.dateDeleted;
       this.dialogRef.close({ event: this.action, data: this.userRegistrationDTO });
     } else {
       this.dialogRef.close({ event: this.action, data: this.local_data });

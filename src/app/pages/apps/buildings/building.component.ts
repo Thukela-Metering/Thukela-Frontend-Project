@@ -149,6 +149,7 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
     // });
     row_obj.isActive = false;
     row_obj.dateDeleted = new Date();
+    row_obj.dateDeleted.setHours(0, 0, 0, 0);
     this._buildingService.deleteBuilding(row_obj).subscribe({
       next: (response) => {
         if (response) {

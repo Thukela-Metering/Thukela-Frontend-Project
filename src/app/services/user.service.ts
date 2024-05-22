@@ -30,7 +30,7 @@ export class UserService {
     return response;
   }
   updateUserData(personData:UserDataDTO): Observable<OperationalResultDTO<TransactionDTO>>{
-    var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Person/updateUserData/${personData.id}`,personData)
+    var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Person/updateUserData/${personData.guid}`,personData)
     return response;
   }
   getUserById(userId:string){

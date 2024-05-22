@@ -239,8 +239,8 @@ export class FullComponent implements OnInit {
     this.layoutChangesSubscription.unsubscribe();
   }
   getLoggedInPersonData() {
-    var getLoggedInUserId = localStorage.getItem('LoggedInUserId')!;
-    if (Number(getLoggedInUserId) > -1) {
+    var getLoggedInUserId = localStorage.getItem('LoggedInUserGuid')!;
+    if (getLoggedInUserId != "") {
       this._userService.getUserById(getLoggedInUserId).subscribe((userDetail) => {
         var result = userDetail as OperationalResultDTO<TransactionDTO>;
         this.LoggedInPersonName = result.data!.personDTOs![0].name.concat(' ', result.data!.personDTOs![0].surname);
@@ -249,8 +249,8 @@ export class FullComponent implements OnInit {
     }
   }
   getLoggedInUserRole() {
-    var getLoggedInUserId = localStorage.getItem('LoggedInUserId')!;
-    if (Number(getLoggedInUserId) > -1) {
+    var getLoggedInUserId = localStorage.getItem('LoggedInUserGuid')!;
+    if (getLoggedInUserId!="") {
       this._roleService.getUserRoleByUserId(getLoggedInUserId).subscribe(ax => {
         var result = ax as OperationalResultDTO<TransactionDTO>;
         this.LoggedInPersonRole = result.data!.stringResponseProperty!;

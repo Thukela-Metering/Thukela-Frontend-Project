@@ -29,7 +29,7 @@ export class AppBoxedLoginComponent {
   get f() {
     return this.form.controls;
   }
-//
+  //
   submit() {
     var loginData = new userLoginDTO();
     loginData.Password = this.form.value.password!.toString();
@@ -37,15 +37,16 @@ export class AppBoxedLoginComponent {
 
     this.authService.login(loginData).subscribe(
       (response) => {
-      
-        const token = response.data?.accessToken
-     //   const token = response['accessToken'];
+
+        const token = response.data?.authenticationResponseDTOs[0].accessToken
+        //   const token = response['accessToken'];
         console.log('This is the token:');
         console.log(token)
         if (token != "credentials not found!" && token != "Invalid Password" && token != null) {
           localStorage.setItem('token', token ?? "No Token Found!");
           localStorage.setItem('LoggedInUserId', response.data?.userId ?? "-1");
-        localStorage.setItem("LoggedInUserRefreshToken",response['refreshToken'])
+          localStorage.setItem("LoggedInUserRefreshToken", response['refreshToken'])
+          localStorage.setItem("LoggedInUserGuid", response.data?.authenticationResponseDTOs[0].guid)
           this.authService.isauthenticated = true;
           this.router.navigate(['/dashboards/dashboard1']);
         } else {
