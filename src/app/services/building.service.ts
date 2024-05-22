@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { BuildingDTO } from "../DTOs/buildingDTO";
+import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
 
 @Injectable({
     providedIn: 'root'
@@ -11,30 +12,30 @@ import { BuildingDTO } from "../DTOs/buildingDTO";
 
     private apiUrl = 'http://localhost:80/api';
   
-    getAllBuildings(active:boolean): Observable<any> {
+    getAllBuildings(active:boolean):Observable<OperationalResultDTO<TransactionDTO>> {
       {
         const params = new HttpParams().set('isactive', active.toString());
-        var getResponse = this.http.get(`${this.apiUrl}/Building`, { params });      
+        var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building`, { params });      
         return getResponse;
       }
     }
-    addNewBuilding(buildingToSave:BuildingDTO):Observable<any>{{
-        var getResponse = this.http.post(`${this.apiUrl}/Building`,buildingToSave);      
+    addNewBuilding(buildingToSave:BuildingDTO):Observable<OperationalResultDTO<TransactionDTO>>{{
+        var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building`,buildingToSave);      
         return getResponse;
     }
 }
-    updateBuildingData(buildingData:BuildingDTO): Observable<any>{
-      var response = this.http.put(`${this.apiUrl}/Building/${buildingData.id}`,buildingData)
+    updateBuildingData(buildingData:BuildingDTO):Observable<OperationalResultDTO<TransactionDTO>>{
+      var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building/${buildingData.id}`,buildingData)
       return response;
     }
     
-    getBuildingById(buildingId:string){
-      var getResponse = this.http.get(`${this.apiUrl}/Building/${buildingId}`);      
+    getBuildingById(buildingId:string):Observable<OperationalResultDTO<TransactionDTO>>{
+      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building/${buildingId}`);      
       return getResponse;
     }
    
-    deleteBuilding(BuildingData:BuildingDTO): Observable<any>{
-      var response = this.http.put(`${this.apiUrl}/Building/delete/${BuildingData.id}`,BuildingData)
+    deleteBuilding(BuildingData:BuildingDTO): Observable<OperationalResultDTO<TransactionDTO>>{
+      var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building/delete/${BuildingData.id}`,BuildingData)
       return response;
     }
     

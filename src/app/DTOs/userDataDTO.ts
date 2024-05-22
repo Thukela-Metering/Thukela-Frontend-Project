@@ -1,5 +1,7 @@
-export class UserDataDTO {
-    id: number;
+import { BaseDTO } from "./baseDTO";
+
+export class UserDataDTO  extends BaseDTO{
+ 
     name: string;
     surname: string;
     vatNo?: string;
@@ -12,5 +14,4 @@ export class UserDataDTO {
     userRole!:number;
     action?:string;
     isActive:boolean;
-    dateDeleted?:Date;
 }

@@ -1,8 +1,10 @@
-export class LookupListDTO {
-    Id!: number;
-    Name!: string;
-    Description!: string;
-    LookupGroupValueId!: number;
-    LookupGroupValueValue!: string;
-    DateCreated!: Date; // or Date
+import { BaseDTO } from "./baseDTO";
+
+export class LookupListDTO  extends BaseDTO{
+
+    name!: string;
+    description!: string;
+    lookupGroupValueId!: number;
+    lookupGroupValueValue!: string;
+
   }

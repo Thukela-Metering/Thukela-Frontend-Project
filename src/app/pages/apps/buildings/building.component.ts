@@ -9,10 +9,10 @@ import { UserService as PersonService } from 'src/app/services/user.service';
 import { UserDataDTO, UserDataDTO as UserRegistrationDTO } from 'src/app/DTOs/userDataDTO';
 import { AuthService } from 'src/app/services/auth.service';
 import { LookupValueDTO } from 'src/app/DTOs/lookupValueDTO';
-import { OperationalResultDTO } from 'src/app/DTOs/backendResponseDTO';
 import { SystemUserDTO } from 'src/app/DTOs/systemUserDTO';
 import { BuildingService } from 'src/app/services/building.service';
 import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
+import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 
 @Component({
   templateUrl: './building.component.html',
@@ -51,11 +51,11 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
 
   loadBuildingListData(): void {
     this._buildingService.getAllBuildings(this.manageActiveBuildings).subscribe({
-      next: (response: OperationalResultDTO<BuildingDTO[]>) => {
+      next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response) {
-          this.dataSource.data = response.data ?? [];
+          this.dataSource.data = response.data?.buildingDTOs ?? [];
           this.buildings = [];
-          this.buildings = response.data ?? [];
+          this.buildings = response.data?.buildingDTOs ?? [];
           this.table.renderRows();
         }
       },
@@ -195,21 +195,21 @@ export class AppBuildingDialogContentComponent implements OnInit {
 
   getDropdownValues() {
     var userRoleResponse = this.authService.getLookupValues().subscribe(
-      (response: OperationalResultDTO<LookupValueDTO[]>) => {
+      (response: OperationalResultDTO<TransactionDTO>) => {
         if (response.success) {
           if (response.data != null) {
 
 
-            this.DropDownValues = response.data.map((item: any) => {
+            this.DropDownValues = response.data.lookupValueDTOs!.map((item: any) => {
               const lookupValue: LookupValueDTO = new LookupValueDTO();
-              lookupValue.Id = item.id;
-              lookupValue.Name = item.name;
-              lookupValue.Description = item.description;
-              lookupValue.LookupGroupValueId = item.lookupGroupValueId;
-              lookupValue.LookupGroupValueValue = item.lookupGroupValueValue;
-              lookupValue.LookupListValueId = item.lookupListValueId;
-              lookupValue.LookupListValueValue = item.lookupListValueValue;
-              lookupValue.DateCreated = item.dateCreated;
+              lookupValue.id = item.id;
+              lookupValue.name = item.name;
+              lookupValue.description = item.description;
+              lookupValue.lookupGroupValueId = item.lookupGroupValueId;
+              lookupValue.lookupGroupValueValue = item.lookupGroupValueValue;
+              lookupValue.lookupListValueId = item.lookupListValueId;
+              lookupValue.lookupListValueValue = item.lookupListValueValue;
+              lookupValue.dateCreated = item.dateCreated;
               return lookupValue;
             });
             console.log(this.DropDownValues);

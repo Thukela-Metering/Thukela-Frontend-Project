@@ -23,8 +23,8 @@ import { CustomizerComponent } from './shared/customizer/customizer.component';
 import { UserService } from 'src/app/services/user.service';
 import { PersonDTO } from 'src/app/DTOs/personDTO';
 import { RoleService } from 'src/app/services/role.service';
-import { OperationalResultDTO } from 'src/app/DTOs/backendResponseDTO';
 import { AuthService } from 'src/app/services/auth.service';
+import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -242,8 +242,8 @@ export class FullComponent implements OnInit {
     var getLoggedInUserId = localStorage.getItem('LoggedInUserId')!;
     if (Number(getLoggedInUserId) > -1) {
       this._userService.getUserById(getLoggedInUserId).subscribe((userDetail) => {
-        var result = userDetail as OperationalResultDTO<PersonDTO>;
-        this.LoggedInPersonName = result.data!.name.concat(' ', result.data!.surname);
+        var result = userDetail as OperationalResultDTO<TransactionDTO>;
+        this.LoggedInPersonName = result.data!.personDTOs![0].name.concat(' ', result.data!.personDTOs![0].surname);
         console.log(userDetail);
       });
     }
@@ -252,8 +252,8 @@ export class FullComponent implements OnInit {
     var getLoggedInUserId = localStorage.getItem('LoggedInUserId')!;
     if (Number(getLoggedInUserId) > -1) {
       this._roleService.getUserRoleByUserId(getLoggedInUserId).subscribe(ax => {
-        var result = ax as OperationalResultDTO<string>;
-        this.LoggedInPersonRole = result.data!.toString();
+        var result = ax as OperationalResultDTO<TransactionDTO>;
+        this.LoggedInPersonRole = result.data!.stringResponseProperty!;
       });
     }
   }

@@ -9,10 +9,10 @@ import { UserService as PersonService } from 'src/app/services/user.service';
 import { UserDataDTO, UserDataDTO as UserRegistrationDTO } from 'src/app/DTOs/userDataDTO';
 import { AuthService } from 'src/app/services/auth.service';
 import { LookupValueDTO } from 'src/app/DTOs/lookupValueDTO';
-import { OperationalResultDTO } from 'src/app/DTOs/backendResponseDTO';
 import { SystemUserDTO } from 'src/app/DTOs/systemUserDTO';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 
 @Component({
   templateUrl: './employee.component.html',
@@ -52,11 +52,11 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
 
   loadUserListData(): void {
     this._personService.getUserDataList(this.manageActiveUsers).subscribe({
-      next: (response: OperationalResultDTO<UserDataDTO[]>) => {
+      next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response) {
-          this.dataSource.data = response.data ?? [];
+          this.dataSource.data = response.data?.userDataDTOs ?? [];
           this.persons = [];
-          this.persons = response.data ?? [];
+          this.persons = response.data?.userDataDTOs ?? [];
           this.table.renderRows();
         }
       },
@@ -84,7 +84,6 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
 
   // tslint:disable-next-line - Disables all
   addRowData(row_obj: UserDataDTO): void {
-
     this.authService.register(row_obj).subscribe(
       response => {
         // Handle successful registration
@@ -100,22 +99,12 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
           userDataDTO.username = row_obj.username,
           userDataDTO.userRole = row_obj.userRole,
           userDataDTO.password = row_obj.password,
-          userDataDTO.confirmPassword = row_obj.confirmPassword
+          userDataDTO.confirmPassword = row_obj.confirmPassword,
           userDataDTO.address = row_obj.address,
           userDataDTO.password = row_obj.password,
-          userDataDTO.username = row_obj.username          
+          userDataDTO.username = row_obj.username,         
         this.persons.push(userDataDTO);
         ////////////////////////////////////////////////////
-        // this.dataSource.data.push(personDTO);
-        // this.dataSource.data.unshift({
-        //   id: row_obj.id,
-        //   name: row_obj.name,
-        //   surname: row_obj.surname,
-        //   idNumber: row_obj.idNumber,
-        //   email: row_obj.email,
-        //   mobile: row_obj.mobile,
-        //   address: row_obj.address
-        // });
         console.log(row_obj);
         this.loadUserListData();
       },
@@ -145,6 +134,10 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
         value.confirmPassword = row_obj.confirmPassword;
         value.userRole = row_obj.userRole;        
       }
+      if(row_obj.isActive)
+        {
+          row_obj.dateDeleted  =undefined;
+      }
       this._personService.updateUserData(row_obj).subscribe({
         next: (response) => {
           if (response) {
@@ -170,6 +163,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
       {
         row_obj.confirmPassword="some";
       }
+      row_obj.isActive = false;
     this._personService.deleteUserData(row_obj).subscribe({
       next: (response) => {
         if (response) {
@@ -233,38 +227,38 @@ export class AppEmployeeDialogContentComponent implements OnInit {
   }
   filterRole(filter: string): void {
     const filterValue = filter ? filter.toLowerCase() : '';
-    this.filteredRoles = this.DropDownValues.filter(option => option.Name.toLowerCase().includes(filterValue));
+    this.filteredRoles = this.DropDownValues.filter(option => option.name.toLowerCase().includes(filterValue));
   }
   
   getDropdownValues() {
     var userRoleResponse = this.authService.getLookupValues().subscribe(
-      (response: OperationalResultDTO<LookupValueDTO[]>) => {
+      (response: OperationalResultDTO<TransactionDTO>) => {
         if (response.success) {
           if (response.data != null) {
 
 
-            this.DropDownValues = response.data.map((item: any) => {
+            this.DropDownValues = response.data.lookupValueDTOs!.map((item: any) => {
               const lookupValue: LookupValueDTO = new LookupValueDTO();
-              lookupValue.Id = item.id;
-              lookupValue.Name = item.name;
-              lookupValue.Description = item.description;
-              lookupValue.LookupGroupValueId = item.lookupGroupValueId;
-              lookupValue.LookupGroupValueValue = item.lookupGroupValueValue;
-              lookupValue.LookupListValueId = item.lookupListValueId;
-              lookupValue.LookupListValueValue = item.lookupListValueValue;
-              lookupValue.DateCreated = item.dateCreated;
+              lookupValue.id = item.id;
+              lookupValue.name = item.name;
+              lookupValue.description = item.description;
+              lookupValue.lookupGroupValueId = item.lookupGroupValueId;
+              lookupValue.lookupGroupValueValue = item.lookupGroupValueValue;
+              lookupValue.lookupListValueId = item.lookupListValueId;
+              lookupValue.lookupListValueValue = item.lookupListValueValue;
+              lookupValue.dateCreated = item.dateCreated;
               return lookupValue;
             });
-            this.filteredRoles = response.data.map((item: any) => {
+            this.filteredRoles = response.data.lookupValueDTOs!.map((item: any) => {
               const lookupValue: LookupValueDTO = new LookupValueDTO();
-              lookupValue.Id = item.id;
-              lookupValue.Name = item.name;
-              lookupValue.Description = item.description;
-              lookupValue.LookupGroupValueId = item.lookupGroupValueId;
-              lookupValue.LookupGroupValueValue = item.lookupGroupValueValue;
-              lookupValue.LookupListValueId = item.lookupListValueId;
-              lookupValue.LookupListValueValue = item.lookupListValueValue;
-              lookupValue.DateCreated = item.dateCreated;
+              lookupValue.id = item.id;
+              lookupValue.name = item.name;
+              lookupValue.description = item.description;
+              lookupValue.lookupGroupValueId = item.lookupGroupValueId;
+              lookupValue.lookupGroupValueValue = item.lookupGroupValueValue;
+              lookupValue.lookupListValueId = item.lookupListValueId;
+              lookupValue.lookupListValueValue = item.lookupListValueValue;
+              lookupValue.dateCreated = item.dateCreated;
               return lookupValue;
             });
             console.log(this.DropDownValues);
@@ -308,6 +302,6 @@ this.userRegistrationDTO.dateDeleted = this.local_data.dateDeleted;
 
   filterRoles(filter: string): void {
     const filterValue = filter ? filter.toLowerCase() : '';
-    this.filteredRoles = this.DropDownValues.filter(option => option.Name.toLowerCase().includes(filterValue));
+    this.filteredRoles = this.DropDownValues.filter(option => option.name.toLowerCase().includes(filterValue));
   }
 }

@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { BuildingDTO } from "../DTOs/buildingDTO";
 import { BuildingRepresentativeLinkDTO } from "../DTOs/buildingRepLinkDTO";
+import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
 
 @Injectable({
     providedIn: 'root'
@@ -11,8 +12,8 @@ import { BuildingRepresentativeLinkDTO } from "../DTOs/buildingRepLinkDTO";
     constructor(private http: HttpClient) { }
     private apiUrl = 'http://localhost:80/api';
 
-    addNewBuildingLinkToRepresentative(buildingToSave:BuildingRepresentativeLinkDTO):Observable<any>{{
-        var getResponse = this.http.post(`${this.apiUrl}/Linking`,buildingToSave);      
+    addNewBuildingLinkToRepresentative(buildingToSave:BuildingRepresentativeLinkDTO):Observable<OperationalResultDTO<TransactionDTO>>{{
+        var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Linking`,buildingToSave);      
         return getResponse;
     }
   }

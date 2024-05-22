@@ -6,6 +6,7 @@ import { LookupGroupDTO } from '../DTOs/lookupGroupDTO';
 import { LookupListDTO } from '../DTOs/lookupListDTO';
 import { LookupValueDTO } from '../DTOs/lookupValueDTO';
 import { userLoginDTO } from '../DTOs/userLoginDTO';
+import { OperationalResultDTO, TransactionDTO } from '../DTOs/dtoIndex';
 
 @Injectable({
   providedIn: 'root'
@@ -37,34 +38,34 @@ export class AuthService {
     return this.isauthenticated;
   }
 
-  register(userData: UserDataDTO): Observable<any> {
-    var postResponse =  this.http.post(`${this.apiUrl}/Auth/register`, userData);
+  register(userData: UserDataDTO): Observable<OperationalResultDTO<TransactionDTO>>{
+    var postResponse =  this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Auth/register`, userData);
     return postResponse;
   }
-getLookupValues(): Observable<any> {
-  var getResponse = this.http.get(`${this.apiUrl}/Roles`)
+getLookupValues(): Observable<OperationalResultDTO<TransactionDTO>> {
+  var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles`)
   return getResponse;
 }
-  getGroupLookups(): Observable<any> {
-  var getResponse = this.http.get(`${this.apiUrl}/Roles/Groups`)
+  getGroupLookups(): Observable<OperationalResultDTO<TransactionDTO>> {
+  var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/Groups`)
   return getResponse;
   }
-  getListLookups(): Observable<any> {
-    var getResponse = this.http.get(`${this.apiUrl}/Roles/Lists`)
+  getListLookups(): Observable<OperationalResultDTO<TransactionDTO>>{
+    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/Lists`)
   return getResponse;
   }
-  saveNewGroup(dataToSave:LookupGroupDTO): Observable<any> {
-    var saveResult = this.http.post(`${this.apiUrl}/Roles/SaveNewGroup`, dataToSave);
+  saveNewGroup(dataToSave:LookupGroupDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    var saveResult = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/SaveNewGroup`, dataToSave);
     return saveResult;
   }
-  saveNewList(dataToSave:LookupListDTO): Observable<any> {
-    var saveResult = this.http.post(`${this.apiUrl}/Roles/SaveNewList`, dataToSave);
+  saveNewList(dataToSave:LookupListDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    var saveResult = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/SaveNewList`, dataToSave);
     return saveResult;
   }
 
-  saveNewLookupValue(dataToSave:LookupValueDTO): Observable<any> 
+  saveNewLookupValue(dataToSave:LookupValueDTO): Observable<OperationalResultDTO<TransactionDTO>> 
   {
-    var saveResult = this.http.post(`${this.apiUrl}/Roles/SaveLookupValue`, dataToSave);
+    var saveResult = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/SaveLookupValue`, dataToSave);
     return saveResult;
   }
 }

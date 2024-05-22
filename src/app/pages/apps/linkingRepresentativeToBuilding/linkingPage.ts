@@ -3,7 +3,6 @@ import { UserData } from '../../tables/mix-table/mix-table.component';
 import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserDataDTO } from 'src/app/DTOs/userDataDTO';
-import { OperationalResultDTO } from 'src/app/DTOs/backendResponseDTO';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { UserService as PersonService } from 'src/app/services/user.service';
@@ -13,6 +12,7 @@ import { BuildingLinkingService } from 'src/app/services/linking.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
+import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 
 @Component({
   selector: 'app-buildingRepresentativeLink',
@@ -67,8 +67,8 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
   }
   loadUserListData(): void {
     this._personService.getUserDataList(true).subscribe({
-      next: (response: OperationalResultDTO<UserDataDTO[]>) => {
-        this.users = response.data ?? [];
+      next: (response: OperationalResultDTO<TransactionDTO>) => {
+        this.users = response.data?.userDataDTOs ?? [];
         this.filterRepresentatives(this.representativeFilterCtrl.value); // Apply initial filter
       },
       error: (error) => {
@@ -78,9 +78,9 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
   }
   loadBuildingListData(): void {
     this._buildingService.getAllBuildings(true).subscribe({
-      next: (response: OperationalResultDTO<BuildingDTO[]>) => {
+      next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response) {
-        this.buildings = response.data ?? [];
+        this.buildings = response.data?.buildingDTOs ?? [];
         }
       },
       error: (error) => {

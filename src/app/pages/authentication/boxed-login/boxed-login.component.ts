@@ -8,7 +8,6 @@ import { userLoginDTO } from 'src/app/DTOs/userLoginDTO';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PizzaPartyComponent } from '../../ui-components/snackbar/snackbar.component';
 import { SnackbarService } from 'src/app/services/snackbar.service';
-import { OperationalResultDTO } from 'src/app/DTOs/backendResponseDTO';
 import { TokenResponseDTO } from 'src/app/DTOs/tokenResponseDTO';
 
 @Component({

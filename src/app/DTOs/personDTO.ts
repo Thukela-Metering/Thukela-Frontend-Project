@@ -1,5 +1,6 @@
-export class PersonDTO {
-    id: number;
+import { BaseDTO } from "./baseDTO";
+
+export class PersonDTO  extends BaseDTO{
     name: string;
     surname: string;
     vatNo?: string;
