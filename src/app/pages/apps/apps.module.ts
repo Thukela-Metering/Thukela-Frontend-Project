@@ -80,6 +80,7 @@ import { AppAddBuildingComponent } from './buildings/add/add.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeToBuilding/linkingPage';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { BuildingAccountsComponent } from './building-account/building-account.component';
 
 
 @NgModule({
@@ -113,6 +114,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     AppTodoComponent,
     AppTaskboardComponent,
     TaskDialogComponent,
+    BuildingAccountsComponent,
     TestLayoutComponent,
     OkAppTaskComponent,
     DeleteAppTaskComponent,

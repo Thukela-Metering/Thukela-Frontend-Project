@@ -273,6 +273,7 @@ export class AppEmployeeDialogContentComponent implements OnInit {
       }
     );
   }
+  
   doAction(): void {
     if (this.action == "Add") {
       this.userRegistrationDTO.confirmPassword = this.confirmPassword;

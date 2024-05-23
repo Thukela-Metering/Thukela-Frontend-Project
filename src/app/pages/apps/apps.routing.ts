@@ -21,6 +21,7 @@ import { AppBlogsComponent } from './blogs/blogs.component';
 import { AppBlogDetailsComponent } from './blogs/details/details.component';
 import { AppBuildingComponent } from './buildings/building.component';
 import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeToBuilding/linkingPage';
+import { BuildingAccountsComponent } from './building-account/building-account.component';
 
 export const AppsRoutes: Routes = [
   {
@@ -210,6 +211,17 @@ export const AppsRoutes: Routes = [
         component: AppBuildingRepresentativeLinkComponent,
         data: {
           title: 'Building',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Building' },
+          ],
+        },
+      },
+      {
+        path: 'building/buildingAccount',
+        component: BuildingAccountsComponent,
+        data: {
+          title: 'Building Account',
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Building' },
