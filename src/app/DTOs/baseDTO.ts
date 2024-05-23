@@ -1,4 +1,5 @@
 export class BaseDTO {
+    isActive: boolean;
     id: number;
     guid: string;
     dateCreated?: Date;

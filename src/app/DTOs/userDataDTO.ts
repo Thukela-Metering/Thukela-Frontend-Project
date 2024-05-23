@@ -13,5 +13,4 @@ export class UserDataDTO  extends BaseDTO{
     confirmPassword?:string;
     userRole!:number;
     action?:string;
-    isActive:boolean;
 }

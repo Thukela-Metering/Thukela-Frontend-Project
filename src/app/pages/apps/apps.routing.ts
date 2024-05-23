@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { AppEmployeeComponent } from './employee/employee.component';
 import { AppBuildingComponent } from './buildings/building.component';
 import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeToBuilding/linkingPage';
+import { BuildingAccountsComponent } from './building-account/building-account.component';
 import { AppBuildingOwnerComponent } from './buildingOwner/buildingOwner.component';
 
 export const AppsRoutes: Routes = [
@@ -36,6 +37,17 @@ export const AppsRoutes: Routes = [
         component: AppBuildingRepresentativeLinkComponent,
         data: {
           title: 'Building',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Building' },
+          ],
+        },
+      },
+      {
+        path: 'building/buildingAccount',
+        component: BuildingAccountsComponent,
+        data: {
+          title: 'Building Account',
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Building' },

@@ -28,6 +28,11 @@ export const navItems: NavItem[] = [
         route: 'apps/building',     
       },
       {
+        displayName: 'Building Accounts',
+        iconName: 'point',
+        route: 'apps/building/buildingAccount',     
+      },
+      {
         displayName: 'Representative Link',
         iconName: 'point',
         route: 'apps/building/buildingRepresentative',     

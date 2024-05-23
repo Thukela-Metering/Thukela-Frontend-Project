@@ -7,6 +7,5 @@ export class BuildingDTO  extends BaseDTO{
     sdgMeterZone?: string;
     address?: string;
     notes?: string;
-    isActive: boolean;
     action?:string;
 }

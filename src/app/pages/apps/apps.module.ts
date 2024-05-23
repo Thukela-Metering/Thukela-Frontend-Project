@@ -33,7 +33,9 @@ import { AppAddBuildingComponent } from './buildings/add/add.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeToBuilding/linkingPage';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { BuildingAccountsComponent } from './building-account/building-account.component';
 import { AppBuildingOwnerComponent } from './buildingOwner/buildingOwner.component';
+
 
 
 @NgModule({
@@ -61,6 +63,7 @@ import { AppBuildingOwnerComponent } from './buildingOwner/buildingOwner.compone
   ],
   exports: [TablerIconsModule],
   declarations: [
+    BuildingAccountsComponent,
     AppBuildingOwnerComponent,
     AppEmployeeComponent,
     AppEmployeeDialogContentComponent,
