@@ -38,9 +38,9 @@ export const navItems: NavItem[] = [
         route: 'apps/building',     
       },
       {
-        displayName: 'Owner Link',
+        displayName: 'Building Owner Link',
         iconName: 'point',
-        route: 'apps/building',     
+        route: 'apps/building/buildingOwner',     
       },
     ],
   },

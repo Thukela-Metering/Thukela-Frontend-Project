@@ -14,7 +14,6 @@ import { AppSellingProductComponent } from '../../../components/dashboard1/selli
 import { AppWeeklyStatsComponent } from '../../../components/dashboard1/weekly-stats/weekly-stats.component';
 import { AppTopProjectsComponent } from '../../../components/dashboard1/top-projects/top-projects.component';
 import { AppProjectsComponent } from '../../../components/dashboard1/projects/projects.component';
-import { AppFormRegisterUserComponent } from "../../forms/form-register-User/form-register-user.component";
 
 @Component({
     selector: 'app-dashboard1',
@@ -34,7 +33,6 @@ import { AppFormRegisterUserComponent } from "../../forms/form-register-User/for
         AppWeeklyStatsComponent,
         AppTopProjectsComponent,
         AppProjectsComponent,
-        AppFormRegisterUserComponent
     ]
 })
 export class AppDashboard1Component {

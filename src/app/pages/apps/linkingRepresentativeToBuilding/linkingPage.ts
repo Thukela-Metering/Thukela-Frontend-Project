@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { UserData } from '../../tables/mix-table/mix-table.component';
 import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserDataDTO } from 'src/app/DTOs/userDataDTO';

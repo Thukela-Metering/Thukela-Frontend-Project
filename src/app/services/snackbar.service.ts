@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { PizzaPartyComponent } from '../pages/ui-components/snackbar/snackbar.component';
 
 
 @Injectable({
@@ -15,8 +14,8 @@ export class SnackbarService {
   }
 
   openCustomSnackBar() {
-    this._snackBar.openFromComponent(PizzaPartyComponent, {
-      duration: 5000
-    });
+    // this._snackBar.openFromComponent(PizzaPartyComponent, {
+    //   duration: 5000
+    // });
   }
 }

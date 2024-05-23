@@ -13,6 +13,11 @@
   color: white;
   background-color: rgb(38 55 97);
 }
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px; /* Adds some space above the button row */
+}
 
 .dark-theme {
   $textPrimary: #eaeff4;
