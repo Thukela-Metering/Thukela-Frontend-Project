@@ -3,8 +3,6 @@ import { Routes } from '@angular/router';
 // dashboards
 import { AppDashboard1Component } from './dashboard1/dashboard1.component';
 import { AppDashboard2Component } from './dashboard2/dashboard2.component';
-import { TestLayoutComponent } from '../apps/test-layout/test-layout.component';
-import { AppFormRegisterUserComponent } from '../forms/form-register-User/form-register-user.component';
 
 export const DashboardsRoutes: Routes = [
   {
@@ -32,10 +30,7 @@ export const DashboardsRoutes: Routes = [
           ],
         },
       },
-      {
-        path: 'testComp',
-        component: AppFormRegisterUserComponent,
-      },
+     
     ],
   },
 ];

@@ -1,0 +1,76 @@
+<h2 class="f-w-500 m-b-24"><strong>Create/Edit Building Owner Account</strong></h2>
+
+<div *ngIf="accountForm">
+  <form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" placeholder="Name">
+      <mat-error *ngIf="accountForm.get('name')?.hasError('required')">Name is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" placeholder="Email">
+      <mat-error *ngIf="accountForm.get('email')?.hasError('required')">Email is required</mat-error>
+      <mat-error *ngIf="accountForm.get('email')?.hasError('email')">Please enter a valid email</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Bank</mat-label>
+      <mat-select formControlName="bank" placeholder="Select Bank">
+        <mat-option *ngFor="let bank of banks" [value]="bank">{{ bank }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Fax</mat-label>
+      <input matInput formControlName="fax" placeholder="Fax">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Contact Number</mat-label>
+      <input matInput formControlName="contactNumber" placeholder="Contact Number">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Building ID</mat-label>
+      <input matInput formControlName="buildingId" placeholder="Building ID">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Account Number</mat-label>
+      <input matInput formControlName="accountNumber" placeholder="Account Number">
+    </mat-form-field>
+
+    <div class="w-100">
+        <label>
+          <span>Is Taxable?</span>
+          <mat-slide-toggle formControlName="taxable"></mat-slide-toggle>
+        </label>
+      </div>
+
+      <div class="w-100">
+        <mat-label>Preferred Communication</mat-label>
+        <mat-radio-group formControlName="preferredCommunication" aria-label="Select Preferred Communication">
+          <mat-radio-button value="email">Email</mat-radio-button>
+          <mat-radio-button value="mobile">Mobile</mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Additional Information</mat-label>
+      <textarea matInput formControlName="additionalInformation" placeholder="Additional Information"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Address</mat-label>
+      <textarea matInput formControlName="address" placeholder="Address"></textarea>
+    </mat-form-field>
+
+    <div class="form-actions">
+        <button mat-stroked-button color="warn" (click)="onCancel()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="!accountForm.valid">Submit</button>
+      </div>
+  </form>
+</div>
