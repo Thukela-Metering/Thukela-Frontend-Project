@@ -13,6 +13,7 @@ export class BuildingAccountsComponent implements OnInit {
   constructor(private fb: FormBuilder, private _buildingAccountService: BuildingAccountService, private snackbarService: SnackbarService) {}
   ngOnInit():void {
     this.accountsForm = this.fb.group({
+      buildingId: ['', Validators.required],
       municipalityOne: ['', Validators.required],
       municipalityTwo: [''],
       readingSlip: ['', Validators.required],
@@ -26,7 +27,8 @@ export class BuildingAccountsComponent implements OnInit {
           console.log(response);
 
           var buildingAccountDTO = new BuildingAccountDTO();
-          buildingAccountDTO.isActive = true;
+          buildingAccountDTO.buildingId = row_obj.buildingId,
+          buildingAccountDTO.isActive = true,
           buildingAccountDTO.centerOwner = row_obj.centerOwner,
           buildingAccountDTO.creditControl = row_obj.creditControl,
           buildingAccountDTO.municipalityOne = row_obj.municipalityOne,
