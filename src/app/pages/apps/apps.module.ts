@@ -34,7 +34,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeToBuilding/linkingPage';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { BuildingAccountsComponent } from './building-account/building-account.component';
-import { AppBuildingOwnerComponent } from './buildingOwner/buildingOwner.component';
+import { AppBuildingOwnerComponent} from './buildingOwner/buildingOwner.component';
+import { AppBuildingOwnerTableComponent } from './buildingOwner/buildingOwnerTable.component';
+import { AppBuildingAccountTableComponent } from './building-account/building-accountTable.component';
 
 
 
@@ -69,6 +71,8 @@ import { AppBuildingOwnerComponent } from './buildingOwner/buildingOwner.compone
     AppEmployeeDialogContentComponent,
     AppAddEmployeeComponent,
     AppBuildingComponent,
+    AppBuildingOwnerTableComponent,
+    AppBuildingAccountTableComponent,
     AppBuildingDialogContentComponent,
     AppAddBuildingComponent,    
     AppBuildingRepresentativeLinkComponent,

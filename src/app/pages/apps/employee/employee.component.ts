@@ -71,6 +71,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(AppEmployeeDialogContentComponent, {
       data: obj,
     });
+    
     dialogRef.afterClosed().subscribe((result) => {
       if (result.event === 'Add') {
         this.addRowData(result.data);

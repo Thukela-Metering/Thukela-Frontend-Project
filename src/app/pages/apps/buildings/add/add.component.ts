@@ -7,3 +7,6 @@ import { Component } from '@angular/core';
 export class AppAddBuildingComponent {
   constructor() { }
 }
+export class AppAddBuildingOwnerTableComponent{
+  constructor(){ }
+}

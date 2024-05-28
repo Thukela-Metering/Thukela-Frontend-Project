@@ -12,9 +12,10 @@ export class BuildingAccountService {
   constructor(private http: HttpClient) { }
   private apiUrl = 'http://localhost:80/api';
 
-  getAllBuildingAccounts():Observable<OperationalResultDTO<TransactionDTO>>{
+  getAllBuildingAccounts(isActive:boolean):Observable<OperationalResultDTO<TransactionDTO>>{
     {
-      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount`);
+      const params = new HttpParams().set('isactive', isActive.toString());
+      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount`, {params});
       return getResponse;
     }
   }
@@ -38,7 +39,7 @@ export class BuildingAccountService {
   }
   deleteBuildingAccount(buildingAccountData:BuildingAccountDTO):Observable<OperationalResultDTO<TransactionDTO>>{
     {
-      var getResponse = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount/Delete`,buildingAccountData);
+      var getResponse = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount/Delete/${buildingAccountData.id}`,buildingAccountData);
       return getResponse;
     }
   }
