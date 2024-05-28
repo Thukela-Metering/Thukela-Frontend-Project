@@ -35,6 +35,7 @@ import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeT
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { BuildingAccountsComponent } from './building-account/building-account.component';
 import { AppBuildingOwnerComponent } from './buildingOwner/buildingOwner.component';
+import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
 
 
 
@@ -71,6 +72,7 @@ import { AppBuildingOwnerComponent } from './buildingOwner/buildingOwner.compone
     AppBuildingComponent,
     AppBuildingDialogContentComponent,
     AppAddBuildingComponent,    
+    LookupValueManagerComponent,
     AppBuildingRepresentativeLinkComponent,
   ],
   providers: [DatePipe],

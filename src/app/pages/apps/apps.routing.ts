@@ -5,6 +5,7 @@ import { AppBuildingComponent } from './buildings/building.component';
 import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeToBuilding/linkingPage';
 import { BuildingAccountsComponent } from './building-account/building-account.component';
 import { AppBuildingOwnerComponent } from './buildingOwner/buildingOwner.component';
+import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
 
 export const AppsRoutes: Routes = [
   {
@@ -62,6 +63,16 @@ export const AppsRoutes: Routes = [
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Building Owner' },
+          ],
+        },
+      },{
+        path: 'building/buildingPropertyGroup',
+        component: LookupValueManagerComponent,
+        data: {
+          title: 'Building',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Building Property Group' },
           ],
         },
       },
