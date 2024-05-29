@@ -34,8 +34,11 @@ import { MatRadioModule } from '@angular/material/radio';
 import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeToBuilding/linkingPage';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { BuildingAccountsComponent } from './building-account/building-account.component';
-import { AppBuildingOwnerComponent } from './buildingOwner/buildingOwner.component';
+import { AppBuildingOwnerComponent} from './buildingOwner/buildingOwner.component';
+import { AppBuildingOwnerTableComponent } from './buildingOwner/buildingOwnerTable.component';
+import { AppBuildingAccountTableComponent } from './building-account/building-accountTable.component';
 import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
+
 
 
 
@@ -70,6 +73,8 @@ import { LookupValueManagerComponent } from './lookupValueManager/lookupValueMan
     AppEmployeeDialogContentComponent,
     AppAddEmployeeComponent,
     AppBuildingComponent,
+    AppBuildingOwnerTableComponent,
+    AppBuildingAccountTableComponent,
     AppBuildingDialogContentComponent,
     AppAddBuildingComponent,    
     LookupValueManagerComponent,

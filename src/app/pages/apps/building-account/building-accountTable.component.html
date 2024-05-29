@@ -1,0 +1,97 @@
+<mat-card class="cardWithShadow">
+  <div class="radio-group-label-container">
+    <label class="radio-group-label">Manage Active or inactive building accounts:</label>
+    <mat-radio-group [(ngModel)]="manageActiveBuildingAccounts" (change)="loadBuildingAccountListData()" name="isActive" class="w-100">
+      <mat-radio-button [value]="true">Active</mat-radio-button>
+      <mat-radio-button [value]="false">Inactive</mat-radio-button>
+    </mat-radio-group>
+  </div>
+</mat-card>
+
+<mat-card class="cardWithShadow">
+  <mat-card-content class="p-24">
+    <div class="row justify-content-between">
+      <div class="col-lg-4">
+        <mat-form-field appearance="outline" class="w-100 hide-hint">
+          <input matInput #searchInput placeholder="Search Building Account" (keyup)="applyFilter(searchInput.value)" />
+          <mat-icon matSuffix>
+            <i-tabler name="search" class="icon-20"></i-tabler>
+          </mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 d-flex align-items-center justify-content-end">
+        <button mat-flat-button (click)="openDialog('Add', {})" color="primary">
+          Add Building
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow">
+  <mat-card-content class="p-24">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" class="w-100">
+        <!-- Column Definitions -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">#</th>
+          <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="buildingId">
+          <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Building ID</th>
+          <td mat-cell *matCellDef="let element">{{ element.buildingId }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="municipalityOne">
+          <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Municipality One</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ element.municipalityOne }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="municipalityTwo">
+          <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Municipality Two</th>
+          <td mat-cell *matCellDef="let element">{{ element.municipalityTwo }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="readingSlip">
+          <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Reading Slip</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ element.readingSlip }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="creditControl">
+          <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Credit Control</th>
+          <td mat-cell *matCellDef="let element">{{ element.creditControl }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="centerOwner">
+          <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Center Owner</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ element.centerOwner }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">
+            action
+          </th>
+          <td mat-cell *matCellDef="let element" class="action-link">
+            <a (click)="openDialog('Update', element)" class="m-r-10 cursor-pointer"><i-tabler name="edit"
+                class="icon-18"></i-tabler></a>
+            <a *ngIf="manageActiveBuildingAccounts"  (click)="openDialog('Delete', element)" class="m-r-10 cursor-pointer">
+              <i-tabler name="trash" class="icon-18"></i-tabler>
+            </a>
+          </td>
+        </ng-container>
+
+        <!-- Header and Row Definitions -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

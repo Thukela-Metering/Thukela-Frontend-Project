@@ -5,7 +5,12 @@ import { AppBuildingComponent } from './buildings/building.component';
 import { AppBuildingRepresentativeLinkComponent } from './linkingRepresentativeToBuilding/linkingPage';
 import { BuildingAccountsComponent } from './building-account/building-account.component';
 import { AppBuildingOwnerComponent } from './buildingOwner/buildingOwner.component';
+
+import { AppBuildingOwnerTableComponent } from './buildingOwner/buildingOwnerTable.component';
+import { AppBuildingAccountTableComponent } from './building-account/building-accountTable.component';
+
 import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
+
 
 export const AppsRoutes: Routes = [
   {
@@ -15,7 +20,7 @@ export const AppsRoutes: Routes = [
         path: 'employee',
         component: AppEmployeeComponent,
         data: {
-          title: 'Employee',
+          title: 'Employee management',
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Employee' },
@@ -26,7 +31,7 @@ export const AppsRoutes: Routes = [
         path: 'building',
         component: AppBuildingComponent,
         data: {
-          title: 'Building',
+          title: 'Building management',
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Building' },
@@ -37,32 +42,32 @@ export const AppsRoutes: Routes = [
         path: 'building/buildingRepresentative',
         component: AppBuildingRepresentativeLinkComponent,
         data: {
-          title: 'Building',
+          title: 'Building Representative',
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
-            { title: 'Building' },
-          ],
-        },
-      },
-      {
-        path: 'building/buildingAccount',
-        component: BuildingAccountsComponent,
-        data: {
-          title: 'Building Account',
-          urls: [
-            { title: 'Dashboard', url: '/dashboards/dashboard1' },
-            { title: 'Building' },
+            { title: 'Representitive' },
           ],
         },
       },
       {
         path: 'building/buildingOwner',
-        component: AppBuildingOwnerComponent,
+        component: AppBuildingOwnerTableComponent,
         data: {
-          title: 'Building',
+          title: 'Building Owner Account',
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Building Owner' },
+          ],
+        },
+      },
+      {
+        path: 'building/buildingAccount',
+        component: AppBuildingAccountTableComponent,
+        data: {
+          title: 'Building Account',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Building Account' },
           ],
         },
       },{

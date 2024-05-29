@@ -12,4 +12,5 @@ export class BuildingOwnerDTO  extends BaseDTO{
     address?:string;
     preferedCommunication:boolean;
     additionalInformation?:string;
+    action?:string;
 }

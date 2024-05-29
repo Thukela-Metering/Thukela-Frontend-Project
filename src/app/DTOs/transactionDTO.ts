@@ -1,6 +1,7 @@
 import { AuthenticationResponseDTO } from "./AuthenticationResponseDTO";
 import { BuildingAccountDTO } from "./BuildingAccountDTO";
 import { BuildingDTO } from "./buildingDTO";
+import { BuildingOwnerDTO } from "./buildingOwnerDTO";
 import { BuildingRepresentativeLinkDTO } from "./buildingRepLinkDTO";
 import { LookupGroupDTO } from "./lookupGroupDTO";
 import { LookupListDTO } from "./lookupListDTO";
@@ -18,7 +19,7 @@ export class TransactionDTO {
     authenticationResponseDTOs?: AuthenticationResponseDTO[];
     buildingAccountDTOs?: BuildingAccountDTO[];
     buildingDTOs?: BuildingDTO[];
-    buildingOwnerAccountDTOs?: BuildingAccountDTO[];
+    buildingOwnerAccountDTOs?: BuildingOwnerDTO[];
     buildingRepresentativeLinkDTOs?: BuildingRepresentativeLinkDTO[];
     lookupGroupDTOs?: LookupGroupDTO[];
     lookupListDTOs?: LookupListDTO[];
