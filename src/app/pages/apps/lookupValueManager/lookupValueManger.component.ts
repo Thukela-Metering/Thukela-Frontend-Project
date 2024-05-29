@@ -11,6 +11,7 @@ import { SnackbarService } from "src/app/services/snackbar.service";
 })
 export class LookupValueManagerComponent implements OnInit, AfterViewInit {
     @Input() isAddForm: boolean = true;  // Input property to determine if it's an add or edit form
+    isExisting: boolean = false;
 
     constructor(
         private lookupValueService: LookupValueManagerService,
@@ -28,13 +29,16 @@ export class LookupValueManagerComponent implements OnInit, AfterViewInit {
     groupDropDownValues: LookupGroupDTO[] = [];
     listDropDownValues: LookupListDTO[] = [];
     buildings: BuildingDTO[] = [];
+    selectedBuildingId: number | null = null;
 
     ngOnInit(): void {
         this.getDropdownValues("PropertyGroup", "PropertyGroup");
         this.loadBuildingListData();
         this.getDropdownGroupValues();
         this.getDropdownListValues();
-        this.dropDownToSave = new LookupValueDTO();
+        this.setDefaultValues();
+    }
+    setDefaultValues() {
         this.dropDownToSave = new LookupValueDTO();
         this.dropDownToSave.lookupGroupValueId = 5;
         this.dropDownToSave.lookupGroupValueValue = "PropertyGroup";
@@ -124,12 +128,30 @@ export class LookupValueManagerComponent implements OnInit, AfterViewInit {
             }
         });
     }
+    onSwitchChange(event: any) {
+        this.isExisting = event.checked;
+        if (!this.isExisting) {
+            this.setDefaultValues();
+            this.dropDownToSave.buildingId = this.selectedBuildingId ?? -1;
+        }
+    }
+
+    onExistingSelectionChange(selectedId: number) {
+        const selectedItem = this.DropDownValues.find(item => item.id === selectedId);
+        if (selectedItem) {
+            this.dropDownToSave = { ...selectedItem };
+            this.dropDownToSave.buildingId = this.selectedBuildingId ?? -1;
+        }
+    }
+    onBuildingSelectionChange(event: any) {
+        this.selectedBuildingId = event.value;
+    }
     submit() {
         this.dropDownToSave.description = this.dropDownToSave.name;
         this.lookupValueService.addNewLookupValue(this.dropDownToSave).subscribe({
             next: (response: OperationalResultDTO<TransactionDTO>) => {
                 console.log(response);
-                if (response.success) {                    
+                if (response.success) {
                     this.snackbarService.openSnackBar(response.message, "dismiss");
                 }
             },
