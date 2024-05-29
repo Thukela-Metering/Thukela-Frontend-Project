@@ -40,10 +40,10 @@ export const navItems: NavItem[] = [
       {
         displayName: 'propertyGroup Link',
         iconName: 'point',
-        route: 'apps/building',     
+        route: 'apps/building/buildingPropertyGroup',     
       },
       {
-        displayName: 'Building Owner Link',
+        displayName: 'Building Owner',
         iconName: 'point',
         route: 'apps/building/buildingOwner',     
       },

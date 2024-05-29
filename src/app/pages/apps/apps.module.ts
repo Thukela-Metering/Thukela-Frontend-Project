@@ -37,6 +37,8 @@ import { BuildingAccountsComponent } from './building-account/building-account.c
 import { AppBuildingOwnerComponent} from './buildingOwner/buildingOwner.component';
 import { AppBuildingOwnerTableComponent } from './buildingOwner/buildingOwnerTable.component';
 import { AppBuildingAccountTableComponent } from './building-account/building-accountTable.component';
+import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
+
 
 
 
@@ -75,6 +77,7 @@ import { AppBuildingAccountTableComponent } from './building-account/building-ac
     AppBuildingAccountTableComponent,
     AppBuildingDialogContentComponent,
     AppAddBuildingComponent,    
+    LookupValueManagerComponent,
     AppBuildingRepresentativeLinkComponent,
   ],
   providers: [DatePipe],

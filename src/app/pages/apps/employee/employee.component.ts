@@ -237,8 +237,6 @@ export class AppEmployeeDialogContentComponent implements OnInit {
       (response: OperationalResultDTO<TransactionDTO>) => {
         if (response.success) {
           if (response.data != null) {
-
-
             this.DropDownValues = response.data.lookupValueDTOs!.map((item: any) => {
               const lookupValue: LookupValueDTO = new LookupValueDTO();
               lookupValue.id = item.id;
@@ -264,7 +262,6 @@ export class AppEmployeeDialogContentComponent implements OnInit {
               return lookupValue;
             });
             console.log(this.DropDownValues);
-
           }
         }
       },
