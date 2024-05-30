@@ -33,7 +33,7 @@ export class BuildingAccountService {
   }
   updateBuildingAccount(buildingAccountData:BuildingAccountDTO):Observable<OperationalResultDTO<TransactionDTO>>{
     {
-      var getResponse = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount`, buildingAccountData);
+      var getResponse = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount/${buildingAccountData.id}`, buildingAccountData);
       return getResponse;
     }
   }

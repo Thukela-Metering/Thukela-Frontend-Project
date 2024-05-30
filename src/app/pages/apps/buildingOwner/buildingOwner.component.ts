@@ -9,12 +9,14 @@ import { BuildingService } from 'src/app/services/building.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { LookupValueDTO } from 'src/app/DTOs/lookupValueDTO';
+import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { LookupValueManagerService } from 'src/app/services/lookupValueManager.service';
 
 @Component({
   selector: 'app-building-owner-dialog-content',
   templateUrl: 'buildingOwner.component.html',
 })
-export class AppBuildingOwnerComponent implements OnInit {
+export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
   action: string;
   local_data: BuildingOwnerDTO;
   DropDownValues: LookupValueDTO[] = [];
@@ -30,6 +32,7 @@ export class AppBuildingOwnerComponent implements OnInit {
     private fb: FormBuilder,
     private _buildingOwnerService: BuildingOwnerService,
     private _buildingService: BuildingService,
+    private lookupValueService: LookupValueManagerService,
     private snackbarService: SnackbarService,
     public dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingOwnerDTO,
@@ -49,16 +52,19 @@ export class AppBuildingOwnerComponent implements OnInit {
       bank: ['', Validators.required],
       taxable: [false, Validators.required],
       address: [''],
-      isActive:[''],
+      isActive: [''],
       preferredCommunication: ['', Validators.required],
       additionalInformation: ['']
     });
 
-    this.onPreferredCommunicationChange();
+    // this.onPreferredCommunicationChange();
+    this.getDropdownValues("Bank", "Bank");
     this.loadBuildingOwnerListData();
     this.setupBuildingFilter();
-    if(this.data != null){
-      this.accountForm.patchValue(this.data);
+    if (this.data != null) {
+      this.accountForm.patchValue(this.local_data);
+      this.accountForm.get('preferredCommunication')?.setValue(9);
+      console.log(this.accountForm);
     }
   }
 
@@ -92,13 +98,41 @@ export class AppBuildingOwnerComponent implements OnInit {
     this.formChangesSubscription = this.accountForm.get('preferredCommunication')!.valueChanges
       .subscribe(value => {
         const contactNumberControl = this.accountForm.get('contactNumber');
-        if (value === 'mobile') {
+        if (value === '10') {
           contactNumberControl?.setValidators([Validators.required]);
         } else {
           contactNumberControl?.clearValidators();
         }
         contactNumberControl?.updateValueAndValidity(); // Important to apply the validation changes
       });
+  }
+
+  getDropdownValues(lookupGroupValue: string, lookupListValue: string) {
+    this.lookupValueService.getLookupValueList(lookupGroupValue, lookupListValue).subscribe(
+      (response: OperationalResultDTO<TransactionDTO>) => {
+        if (response.success) {
+          if (response.data != null) {
+            this.DropDownValues = response.data.lookupValueDTOs!.map((item: any) => {
+              const lookupValue: LookupValueDTO = new LookupValueDTO();
+              lookupValue.id = item.id;
+              lookupValue.name = item.name;
+              lookupValue.description = item.description;
+              lookupValue.lookupGroupValueId = item.lookupGroupValueId;
+              lookupValue.lookupGroupValueValue = item.lookupGroupValueValue;
+              lookupValue.lookupListValueId = item.lookupListValueId;
+              lookupValue.lookupListValueValue = item.lookupListValueValue;
+              lookupValue.dateCreated = item.dateCreated;
+              return lookupValue;
+            });
+          }
+        }
+        console.log(response);
+      },
+      error => {
+        // Handle error
+        console.error(error);
+      }
+    );
   }
 
   onSubmit() {
@@ -110,7 +144,7 @@ export class AppBuildingOwnerComponent implements OnInit {
         });
         this._buildingOwnerService.addNewBuildingOwner(buildingOwnerData).subscribe(
           response => {
-            if(response.success){
+            if (response.success) {
               this.snackbarService.openSnackBar(response.message, "dismiss");
               this.accountForm.reset();
               this.dialogRef.close({ event: 'Add', data: buildingOwnerData });
@@ -124,14 +158,34 @@ export class AppBuildingOwnerComponent implements OnInit {
         );
       }
     } else {
+      this.mapFormValuesToLocalData();
       this.dialogRef.close({ event: this.action, data: this.local_data });
     }
   }
 
-  onCancel() {
-    this.accountForm.reset();
-    this.dialogRef.close({event: 'Cancel'});
+  private mapFormValuesToLocalData(): void {
+    this.local_data.name = this.accountForm.get('name')?.value;
+    this.local_data.email = this.accountForm.get('email')?.value;
+    this.local_data.fax = this.accountForm.get('fax')?.value;
+    this.local_data.contactNumber = this.accountForm.get('contactNumber')?.value;
+    this.local_data.buildingId = this.accountForm.get('buildingId')?.value;
+    this.local_data.accountNumber = this.accountForm.get('accountNumber')?.value;
+    this.local_data.bank = this.accountForm.get('bank')?.value;
+    this.local_data.taxable = this.accountForm.get('taxable')?.value;
+    this.local_data.address = this.accountForm.get('address')?.value;
+    this.local_data.isActive = this.accountForm.get('isActive')?.value;
+    this.local_data.preferredCommunication = this.accountForm.get('preferredCommunication')?.value;
+    this.local_data.additionalInformation = this.accountForm.get('additionalInformation')?.value;
   }
 
+  onCancel() {
+    this.accountForm.reset();
+    this.dialogRef.close({ event: 'Cancel' });
+  }
 
+  ngOnDestroy(): void {
+    if (this.formChangesSubscription) {
+      this.formChangesSubscription.unsubscribe();
+    }
+  }
 }

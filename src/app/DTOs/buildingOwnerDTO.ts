@@ -7,10 +7,10 @@ export class BuildingOwnerDTO  extends BaseDTO{
     contactNumber?: string;
     buildingId?: number;
     accountNumber?: string;
-    bank: string;
+    bank: number;
     taxable:boolean;
     address?:string;
-    preferedCommunication:boolean;
+    preferredCommunication:string;
     additionalInformation?:string;
     action?:string;
 }

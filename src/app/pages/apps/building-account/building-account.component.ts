@@ -103,11 +103,20 @@ export class BuildingAccountsComponent implements OnInit {
         }
     );
   }else{
+    this.mapFormValuesToLocalData();
     this.local_data.isActive = this.accountsForm.value.isActive;
     this.dialogRef.close({ event: this.action, data: this.local_data });
   }
   }
-
+  private mapFormValuesToLocalData(): void {
+    this.local_data.buildingId = this.accountsForm.get("buildingId")?.value;
+    this.local_data.municipalityOne = this.accountsForm.get("municipalityOne")?.value;
+    this.local_data.municipalityTwo = this.accountsForm.get("municipalityTwo")?.value;
+    this.local_data.readingSlip = this.accountsForm.get("readingSlip")?.value;
+    this.local_data.creditControl = this.accountsForm.get("creditControl")?.value;
+    this.local_data.centerOwner = this.accountsForm.get("centerOwner")?.value;
+    this.local_data.isActive = this.accountsForm.get("isActive")?.value;
+  }
   onCancel() {
     // Reset the form or navigate away
     this.accountsForm.reset();

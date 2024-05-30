@@ -75,7 +75,7 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
     });
   
     dialogRef.afterClosed().subscribe((result) => {
-      this.loadBuildingAccountListData();
+     // this.loadBuildingAccountListData();
       if (result && result.event) {
         if (result.event === 'Add') {
           this.addRowData(result.data);

@@ -74,7 +74,7 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe((result) => {
       if(result){
       if (result.event === 'Add') {
-        this.addRowData(result.data);
+     //   this.addRowData(result.data);
       } else if (result.event === 'Update') {
         this.updateRowData(result.data);
       } else if (result.event === 'Delete') {
@@ -102,7 +102,7 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
         value.id = row_obj.id;
         value.isActive = row_obj.isActive;
         value.name = row_obj.name;
-        value.preferedCommunication = row_obj.preferedCommunication;
+        value.preferredCommunication = row_obj.preferredCommunication;
         value.taxable = row_obj.taxable;
         value.dateCreated = row_obj.dateCreated;
         value.dateLastUpdated = row_obj.dateLastUpdated;
