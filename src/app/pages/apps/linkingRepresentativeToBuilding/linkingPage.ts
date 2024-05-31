@@ -18,31 +18,42 @@ import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
   templateUrl: './linkingPage.html',
 })
 export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterViewInit {
-  constructor(public dialog: MatDialog, private _personService: PersonService, private snackbarService: SnackbarService, public datePipe: DatePipe, private linkingService: BuildingLinkingService, private authService: AuthService, private _buildingService: BuildingService,) { }// private _personService: PersonService,
+  constructor(
+    public dialog: MatDialog,
+    private _personService: PersonService,
+    private snackbarService: SnackbarService,
+    public datePipe: DatePipe,
+    private linkingService: BuildingLinkingService,
+    private authService: AuthService,
+    private _buildingService: BuildingService,
+  ) { }
+
   representativeFilterCtrl: FormControl = new FormControl();
   buildingFilterCtrl: FormControl = new FormControl();
+
   ngAfterViewInit(): void {
-    //   throw new Error('Method not implemented.');
+    // No implementation needed here for this issue
   }
+
   ngOnInit(): void {
     this.representativeFilterCtrl.valueChanges.pipe(
-     debounceTime(300),
+      debounceTime(300),
       distinctUntilChanged()
     ).subscribe(value => {
       this.filterRepresentatives(value || ''); // Use an empty string if value is falsy
     });
-  
+
     this.buildingFilterCtrl.valueChanges.pipe(
-    //  debounceTime(300),
+      debounceTime(300),
       distinctUntilChanged()
     ).subscribe(value => {
       this.filterBuildings(value || ''); // Use an empty string if value is falsy
     });
-  
-    this.loadUserListData();
 
-    this.loadBuildingListData();   
+    this.loadUserListData();
+    this.loadBuildingListData();
   }
+
   hide = true;
   hide2 = true;
   conhide = true;
@@ -51,10 +62,10 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
   buildings: BuildingDTO[] = [];
   selectedRepresentative: number = 0;
   selectedBuilding: number = 0;
- 
-  filteredBuildings: BuildingDTO[] = [...this.buildings];
-  filteredRepresentatives: UserDataDTO[] = [...this.users];
-  // 3 accordian
+
+  filteredBuildings: BuildingDTO[] = [];
+  filteredRepresentatives: UserDataDTO[] = [];
+  
   step = 0;
 
   setStep(index: number) {
@@ -64,10 +75,16 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
   nextStep() {
     this.step++;
   }
+
+  prevStep() {
+    this.step--;
+  }
+
   loadUserListData(): void {
     this._personService.getUserDataList(true).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         this.users = response.data?.userDataDTOs ?? [];
+        this.filteredRepresentatives = [...this.users];
         this.filterRepresentatives(this.representativeFilterCtrl.value); // Apply initial filter
       },
       error: (error) => {
@@ -75,11 +92,14 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
       }
     });
   }
+
   loadBuildingListData(): void {
     this._buildingService.getAllBuildings(true).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response) {
-        this.buildings = response.data?.buildingDTOs ?? [];
+          this.buildings = response.data?.buildingDTOs ?? [];
+          this.filteredBuildings = [...this.buildings];
+          this.filterBuildings(this.buildingFilterCtrl.value); // Apply initial filter
         }
       },
       error: (error) => {
@@ -87,20 +107,18 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
       }
     });
   }
-  prevStep() {
-    this.step--;
-  }
+
   saveBuildingRepLink() {
-    var dataToSave = new BuildingRepresentativeLinkDTO();
+    const dataToSave = new BuildingRepresentativeLinkDTO();
     dataToSave.buildingId = this.selectedBuilding;
     dataToSave.representativeId = this.selectedRepresentative;
     dataToSave.isActive = true;
     dataToSave.dateCreated = new Date(Date.now());
+    
     this.linkingService.addNewBuildingLinkToRepresentative(dataToSave).subscribe({
       next: (response) => {
         if (response) {
-          console.log(response);          
-          this.snackbarService.openSnackBar("SuccessFully created new link Between Building And Representative", "dismiss");
+          this.snackbarService.openSnackBar("Successfully created new link Between Building And Representative", "dismiss");
           this.selectedBuilding = 0;
           this.selectedRepresentative = 0;
         }
@@ -111,14 +129,16 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
       }
     });
   }
+
   filterRepresentatives(filter: string): void {
     const filterValue = filter ? filter.toLowerCase() : '';
     this.filteredRepresentatives = this.users.filter(option => option.name.toLowerCase().includes(filterValue));
   }
-  
+
   filterBuildings(filter: string): void {
     const filterValue = filter ? filter.toLowerCase() : '';
     this.filteredBuildings = this.buildings.filter(option => option.name!.toLowerCase().includes(filterValue));
   }
+
   panelOpenState = false;
 }

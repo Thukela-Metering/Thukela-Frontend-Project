@@ -7,7 +7,7 @@ import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { BuildingService } from 'src/app/services/building.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { LookupValueDTO } from 'src/app/DTOs/lookupValueDTO';
 import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { LookupValueManagerService } from 'src/app/services/lookupValueManager.service';
@@ -25,7 +25,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
   private formChangesSubscription: Subscription;
   buildingFilterCtrl: FormControl = new FormControl();
   buildings: BuildingDTO[] = [];
-  filteredBuildings: BuildingDTO[] = [...this.buildings];
+  filteredBuildings: BuildingDTO[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<AppBuildingOwnerComponent>,
@@ -34,7 +34,6 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
     private _buildingService: BuildingService,
     private lookupValueService: LookupValueManagerService,
     private snackbarService: SnackbarService,
-    public dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingOwnerDTO,
   ) {
     this.local_data = { ...data };
@@ -50,21 +49,21 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
       buildingId: ['', Validators.required],
       accountNumber: [''],
       bank: ['', Validators.required],
-      taxable: [false, Validators.required],
+      taxable: [false],
       address: [''],
-      isActive: [''],
+      isActive: [true],
       preferredCommunication: ['', Validators.required],
-      additionalInformation: ['']
+      additionalInformation: [''],
+      dateDeleted: [''],
     });
 
-    // this.onPreferredCommunicationChange();
     this.getDropdownValues("Bank", "Bank");
     this.loadBuildingOwnerListData();
     this.setupBuildingFilter();
+
     if (this.data != null) {
       this.accountForm.patchValue(this.local_data);
-      this.accountForm.get('preferredCommunication')?.setValue(9);
-      console.log(this.accountForm);
+     
     }
   }
 
@@ -116,6 +115,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
               const lookupValue: LookupValueDTO = new LookupValueDTO();
               lookupValue.id = item.id;
               lookupValue.name = item.name;
+              lookupValue.isActive = item.isActive;
               lookupValue.description = item.description;
               lookupValue.lookupGroupValueId = item.lookupGroupValueId;
               lookupValue.lookupGroupValueValue = item.lookupGroupValueValue;
@@ -126,10 +126,8 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
             });
           }
         }
-        console.log(response);
       },
       error => {
-        // Handle error
         console.error(error);
       }
     );
@@ -174,8 +172,9 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
     this.local_data.taxable = this.accountForm.get('taxable')?.value;
     this.local_data.address = this.accountForm.get('address')?.value;
     this.local_data.isActive = this.accountForm.get('isActive')?.value;
-    this.local_data.preferredCommunication = this.accountForm.get('preferredCommunication')?.value;
+    this.local_data.preferredCommunication = this.accountForm.get('preferredCommunication')?.value == "9"? "9":"10";
     this.local_data.additionalInformation = this.accountForm.get('additionalInformation')?.value;
+    this.local_data.dateDeleted = this.accountForm.get('dateDeleted')?.value;
   }
 
   onCancel() {

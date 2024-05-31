@@ -1,11 +1,11 @@
 <h2 class="f-w-500 m-b-24" mat-dialog-title><strong>{{ data.action }}</strong></h2>
 <div *ngIf="data.action !== 'Delete'">
   <mat-dialog-content style="max-width: 600px">
-    <form [formGroup]="accountsForm"(ngSubmit)="onSubmit()">
+    <form #userForm="ngForm" (ngSubmit)="onSubmit()">
       <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
-            <mat-select id="buildingId" formControlName="buildingId" required placeholder="Select a building">
+            <mat-select id="buildingId" name="buildingId" required placeholder="Select a building" [(ngModel)]="local_data.buildingId">
               <mat-option>
                 <ngx-mat-select-search placeholderLabel="Find building..." noEntriesFoundLabel="no matching record found" class="searchfield-class" [formControl]="buildingFilterCtrl"></ngx-mat-select-search>
               </mat-option>
@@ -15,57 +15,50 @@
             </mat-select>
           </mat-form-field>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Municipality One</mat-label>
-            <input matInput formControlName="municipalityOne" placeholder="Municipality One" />
+            <input matInput name="municipalityOne" placeholder="Municipality One" [(ngModel)]="local_data.municipalityOne" required />
           </mat-form-field>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
+
+        <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Municipality Two</mat-label>
-            <input matInput formControlName="municipalityTwo" placeholder="Municipality Two" />
+            <input matInput name="municipalityTwo" placeholder="Municipality Two" [(ngModel)]="local_data.municipalityTwo" />
           </mat-form-field>
-        </div>   
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
+        </div>
+
+        <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Reading Slip</mat-label>
-            <input matInput formControlName="readingSlip" placeholder="Reading Slip" />
+            <input matInput name="readingSlip" placeholder="Reading Slip" [(ngModel)]="local_data.readingSlip" required />
           </mat-form-field>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
+
+        <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Credit Control</mat-label>
-            <input matInput formControlName="creditControl" placeholder="Credit Control" />
+            <input matInput name="creditControl" placeholder="Credit Control" [(ngModel)]="local_data.creditControl" />
           </mat-form-field>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
+
+        <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Center Owner</mat-label>
-            <input matInput formControlName="centerOwner" placeholder="Center Owner" />
+            <input matInput name="centerOwner" placeholder="Center Owner" [(ngModel)]="local_data.centerOwner" required />
           </mat-form-field>
         </div>
-      </div>
-      <div class="col-lg-6">
-        <!-- <mat-form-field appearance="outline" class="w-100"> -->
-          <mat-radio-group name="isActive" class="w-100" formControlName="isActive">
+
+        <div class="col-lg-6">
+          <mat-radio-group name="isActive" class="w-100" [(ngModel)]="local_data.isActive">
             <mat-radio-button [value]="true">Active</mat-radio-button>
             <mat-radio-button [value]="false">Inactive</mat-radio-button>
           </mat-radio-group>
-          {{ local_data.isActive }} <!-- Debug output -->
           <ng-container *ngIf="local_data.isActive === false">
             <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Inactive from</mat-label>
               <input
                 matInput
                 [matDatepicker]="startDateDP"
@@ -80,18 +73,20 @@
               <mat-datepicker #startDateDP></mat-datepicker>
             </mat-form-field>
           </ng-container>
-
+        </div>
       </div>
+
       <div class="form-actions">
         <button mat-stroked-button color="warn" type="button" (click)="onCancel()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="!accountsForm.valid">{{ data.action }}</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="!userForm.valid">{{ data.action }}</button>
       </div>
     </form>
   </mat-dialog-content>
 </div>
+
 <div *ngIf="data.action === 'Delete'">
   <div class="p-x-24">
-    <p>Sure to delete <span class="f-w-600">{{ data.name }}</span> ?</p>
+    <p class="mat-drawer-container">Sure to delete <span class="f-w-600">{{ data.name }}</span> ?</p>
   </div>
   <div mat-dialog-actions class="p-x-24 p-b-24">
     <button mat-button mat-flat-button (click)="onSubmit()" color="warn">{{ data.action }}</button>

@@ -1,5 +1,15 @@
 <mat-card class="cardWithShadow">
   <mat-card-content class="p-24">
+    <label class="radio-group-label">Manage Active or Inactive Building Owners:</label>
+    <mat-radio-group [(ngModel)]="manageActiveBuildingOwners" (change)="filterBuildingOwners()" name="isActive" class="w-100">
+      <mat-radio-button [value]="true">Active</mat-radio-button>
+      <mat-radio-button [value]="false">Inactive</mat-radio-button>
+    </mat-radio-group>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow">
+  <mat-card-content class="p-24">
     <div class="row justify-content-between">
       <div class="col-lg-4">
         <mat-form-field appearance="outline" class="w-100 hide-hint">
@@ -72,9 +82,9 @@
           <td mat-cell *matCellDef="let element">{{ element.address }}</td>
         </ng-container>
 
-        <ng-container matColumnDef="preferedCommunication">
+        <ng-container matColumnDef="preferredCommunication">
           <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Preferred Communication</th>
-          <td mat-cell *matCellDef="let element">{{ element.preferedCommunication }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.preferredCommunication === 9 ? 'email' : 'mobile' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="additionalInformation">
@@ -87,7 +97,7 @@
           <td mat-cell *matCellDef="let element" class="action-link">
             <a (click)="openDialog('Update', element)" class="m-r-10 cursor-pointer"><i-tabler name="edit"
                 class="icon-18"></i-tabler></a>
-            <a (click)="openDialog('Delete', element)" class="m-r-10 cursor-pointer">
+            <a *ngIf="manageActiveBuildingOwners" (click)="openDialog('Delete', element)" class="m-r-10 cursor-pointer">
               <i-tabler name="trash" class="icon-18"></i-tabler>
             </a>
           </td>

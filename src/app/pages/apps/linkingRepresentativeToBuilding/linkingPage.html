@@ -32,7 +32,9 @@
         <mat-form-field appearance="outline" class="w-100">
           <mat-select id="building" name="building"  required placeholder="Select a building" [(value)]="selectedBuilding">
             <mat-option>
-              <ngx-mat-select-search class="searchfield-class" [formControl]="buildingFilterCtrl"></ngx-mat-select-search>
+              <ngx-mat-select-search placeholderLabel="Find building..." 
+      
+            noEntriesFoundLabel="'no matching record found'" class="searchfield-class" [formControl]="buildingFilterCtrl"></ngx-mat-select-search>
              </mat-option>
             <mat-option *ngFor="let building of filteredBuildings" [value]="building.id">
               {{ building.name }}

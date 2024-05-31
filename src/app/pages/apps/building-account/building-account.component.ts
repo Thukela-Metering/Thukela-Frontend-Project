@@ -53,7 +53,7 @@ export class BuildingAccountsComponent implements OnInit {
       this.filterBuildings(value || ''); // Use an empty string if value is falsy
     });
     if(this.data != null){
-      this.accountsForm.patchValue(this.data);
+      this.accountsForm.patchValue(this.local_data);
     }
   }
 
@@ -87,11 +87,11 @@ export class BuildingAccountsComponent implements OnInit {
     some.centerOwner = this.accountsForm.get("centerOwner")?.value;
     some.isActive = true;
     console.log("the value in onSubmit: ");
-    console.log(some);
-      this._buildingAccountService.addNewBuildingAccount(some).subscribe(
+    console.log(this.local_data);
+      this._buildingAccountService.addNewBuildingAccount(this.local_data).subscribe(
         response => {
           console.log(response);
-          this.buildingAccount.push(some);
+          this.buildingAccount.push(this.local_data);
           console.log(some);
           this.snackbarService.openSnackBar(response.message, "dismiss");
           this.accountsForm.reset();
@@ -103,8 +103,8 @@ export class BuildingAccountsComponent implements OnInit {
         }
     );
   }else{
-    this.mapFormValuesToLocalData();
-    this.local_data.isActive = this.accountsForm.value.isActive;
+  //  this.mapFormValuesToLocalData();
+    //this.local_data.isActive = this.accountsForm.value.isActive;
     this.dialogRef.close({ event: this.action, data: this.local_data });
   }
   }

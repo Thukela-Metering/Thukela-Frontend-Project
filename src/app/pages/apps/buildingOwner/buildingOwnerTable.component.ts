@@ -25,7 +25,7 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
     'bank',
     'taxable',
     'address',
-    'preferedCommunication',
+    'preferredCommunication',
     'additionalInformation',
     'action',
   ];
@@ -40,6 +40,7 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    this.manageActiveBuildingOwners = true;
     this.loadBuildingOwnerListData();
   }
 
@@ -55,7 +56,8 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
     this._buildingOwnerService.getAllBuildingOwners().subscribe({
       next: (response) => {
         if (response && response.data) {
-          this.dataSource.data = response.data.buildingOwnerAccountDTOs ?? [];
+          this.buildingOwners = response.data.buildingOwnerAccountDTOs ?? [];
+          this.filterBuildingOwners();
         }
       },
       error: (error) => {
@@ -64,8 +66,17 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
     });
   }
 
+  filterBuildingOwners(): void {
+    if (this.manageActiveBuildingOwners) {
+      this.dataSource.data = this.buildingOwners.filter(owner => owner.isActive);
+    } else {
+      this.dataSource.data = this.buildingOwners.filter(owner => !owner.isActive);
+    }
+  }
+
   openDialog(action: string, obj: any): void {
     obj.action = action;
+    this.loadBuildingOwnerListData();
     const dialogRef = this.dialog.open(AppBuildingOwnerComponent, {
       width: '500px',
       data: obj,
@@ -73,14 +84,14 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if(result){
-      if (result.event === 'Add') {
-     //   this.addRowData(result.data);
-      } else if (result.event === 'Update') {
-        this.updateRowData(result.data);
-      } else if (result.event === 'Delete') {
-        this.deleteRowData(result.data);
+        if (result.event === 'Add') {
+          // this.addRowData(result.data);
+        } else if (result.event === 'Update') {
+          this.updateRowData(result.data);
+        } else if (result.event === 'Delete') {
+          this.deleteRowData(result.data);
+        }
       }
-    }
     });
   }
 
@@ -106,7 +117,13 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
         value.taxable = row_obj.taxable;
         value.dateCreated = row_obj.dateCreated;
         value.dateLastUpdated = row_obj.dateLastUpdated;
-        value.dateDeleted = row_obj.dateDeleted;      
+        value.dateDeleted = row_obj.dateDeleted;
+        if (value.isActive != false) {
+          this.manageActiveBuildingOwners = true;
+        }
+        else{
+          this.manageActiveBuildingOwners = false;
+        }
       }
       this._buildingOwnerService.updateBuildingOwnerData(row_obj).subscribe({
         next: (response) => {
@@ -116,17 +133,16 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
           }
         },
         error: (error) => {
+          this.manageActiveBuildingOwners = true;
           console.error('There was an error!', error);
+          this.loadBuildingOwnerListData();
         }
       });
       return true;
     });
   }
 
-  deleteRowData(row_obj: BuildingOwnerDTO):boolean | any {
-    // this.dataSource.data = this.dataSource.data.filter((value: any) => {
-    //   return value.id !== row_obj.id;
-    // });
+  deleteRowData(row_obj: BuildingOwnerDTO): boolean | any {
     row_obj.isActive = false;
     row_obj.dateDeleted = new Date();
     row_obj.dateDeleted.setHours(0, 0, 0, 0);

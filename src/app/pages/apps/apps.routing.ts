@@ -74,7 +74,7 @@ export const AppsRoutes: Routes = [
         path: 'building/buildingPropertyGroup',
         component: LookupValueManagerComponent,
         data: {
-          title: 'Building',
+          title: 'Building Property Group',
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Building Property Group' },
