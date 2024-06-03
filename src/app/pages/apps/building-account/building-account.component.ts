@@ -24,7 +24,7 @@ export class BuildingAccountsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<BuildingAccountsComponent>,
+    @Optional() public dialogRef: MatDialogRef<BuildingAccountsComponent>,
     private _buildingAccountService: BuildingAccountService,
     private snackbarService: SnackbarService,
     private _buildingService: BuildingService,

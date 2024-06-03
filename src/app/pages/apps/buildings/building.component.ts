@@ -180,12 +180,12 @@ export class AppBuildingDialogContentComponent implements OnInit {
   local_data: BuildingDTO;
   DropDownValues: LookupValueDTO[] = [];
   constructor(
+    @Optional() public dialogRef: MatDialogRef<AppBuildingDialogContentComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingDTO,
     public datePipe: DatePipe,
-    public dialogRef: MatDialogRef<AppBuildingDialogContentComponent>,
     private authService: AuthService,
     private personService: PersonService,
-    // @Optional() is used to prevent error if no data is passed
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingDTO,
+  
   ) {
     this.local_data = { ...data };
     this.action = this.local_data.action ? this.local_data.action : "Update";

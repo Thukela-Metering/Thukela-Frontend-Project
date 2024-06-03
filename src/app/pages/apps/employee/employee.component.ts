@@ -206,10 +206,9 @@ export class AppEmployeeDialogContentComponent implements OnInit {
   roleFilterCtrl: FormControl = new FormControl();
   constructor(
     public datePipe: DatePipe,
-    public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
+    @Optional() public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
     private authService: AuthService,
     private personService: PersonService,
-    // @Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: UserDataDTO,
   ) {
     this.local_data = { ...data };

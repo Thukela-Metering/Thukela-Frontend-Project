@@ -38,6 +38,7 @@ import { AppBuildingOwnerComponent} from './buildingOwner/buildingOwner.componen
 import { AppBuildingOwnerTableComponent } from './buildingOwner/buildingOwnerTable.component';
 import { AppBuildingAccountTableComponent } from './building-account/building-accountTable.component';
 import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
+import { PortfolioComponent } from './portfolio/portfolio.component';
 
 
 
@@ -79,6 +80,7 @@ import { LookupValueManagerComponent } from './lookupValueManager/lookupValueMan
     AppAddBuildingComponent,    
     LookupValueManagerComponent,
     AppBuildingRepresentativeLinkComponent,
+    PortfolioComponent,
   ],
   providers: [DatePipe],
 })

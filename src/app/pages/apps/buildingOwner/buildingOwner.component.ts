@@ -28,7 +28,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
   filteredBuildings: BuildingDTO[] = [...this.buildings];
 
   constructor(
-    public dialogRef: MatDialogRef<AppBuildingOwnerComponent>,
+    @Optional() public dialogRef: MatDialogRef<AppBuildingOwnerComponent>,
     private fb: FormBuilder,
     private _buildingOwnerService: BuildingOwnerService,
     private _buildingService: BuildingService,
