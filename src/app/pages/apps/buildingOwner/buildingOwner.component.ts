@@ -48,7 +48,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
       contactNumber: [''],
       buildingId: ['', Validators.required],
       accountNumber: [''],
-      bank: ['', Validators.required],
+     // bank: ['', Validators.required],
       taxable: [false],
       address: [''],
       isActive: [true],
@@ -65,6 +65,11 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
       this.accountForm.patchValue(this.local_data);
      
     }
+    if(this.action == "Update")
+      {
+        this.accountForm.get('buildingId')?.disable();
+        this.accountForm.get('buildingId')?.clearValidators();
+      }
   }
 
   setupBuildingFilter(): void {
@@ -137,17 +142,18 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
     if (this.action == "Add") {
       if (this.accountForm.valid) {
         const buildingOwnerData = new BuildingOwnerDTO();
-        Object.assign(buildingOwnerData, this.accountForm.value, {
-          preferredCommunication: this.accountForm.value.preferredCommunication === 'email'
-        });
+        Object.assign(buildingOwnerData, this.accountForm.value);
+        buildingOwnerData.bank = 16;
+        buildingOwnerData.dateDeleted = undefined;
         this._buildingOwnerService.addNewBuildingOwner(buildingOwnerData).subscribe(
           response => {
             if (response.success) {
               this.snackbarService.openSnackBar(response.message, "dismiss");
               this.accountForm.reset();
               this.dialogRef.close({ event: 'Add', data: buildingOwnerData });
-              this.loadBuildingOwnerListData();
+              
             }
+            
           },
           error => {
             this.snackbarService.openSnackBar(error, "dismiss");
@@ -168,7 +174,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
     this.local_data.contactNumber = this.accountForm.get('contactNumber')?.value;
     this.local_data.buildingId = this.accountForm.get('buildingId')?.value;
     this.local_data.accountNumber = this.accountForm.get('accountNumber')?.value;
-    this.local_data.bank = this.accountForm.get('bank')?.value;
+    this.local_data.bank = 16;
     this.local_data.taxable = this.accountForm.get('taxable')?.value;
     this.local_data.address = this.accountForm.get('address')?.value;
     this.local_data.isActive = this.accountForm.get('isActive')?.value;
