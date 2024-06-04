@@ -79,11 +79,16 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
     
       if (result && result.event) {
         if (result.event === 'Add') {
-          this.addRowData(result.data);
+        //  this.addRowData(result.data);
+        this.manageActiveBuildingAccounts = result.data.isActive;
+          this.loadBuildingAccountListData();
+      
         } else if (result.event === 'Update') {
           this.updateRowData(result.data);
+          this.loadBuildingAccountListData();
         } else if (result.event === 'Delete') {
           this.deleteRowData(result.data);
+          this.loadBuildingAccountListData();
         }
       }
     });

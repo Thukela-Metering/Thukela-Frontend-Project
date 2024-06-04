@@ -43,7 +43,7 @@ export class LookupValueManagerComponent implements OnInit, AfterViewInit {
         this.dropDownToSave.lookupGroupValueId = 5;
         this.dropDownToSave.lookupGroupValueValue = "PropertyGroup";
         this.dropDownToSave.lookupListValueId = 6;
-        this.dropDownToSave.lookupGroupValueValue = "PropertyGroup";
+        this.dropDownToSave.lookupListValueValue = "PropertyGroup";
     }
 
     ngAfterViewInit(): void {
@@ -132,6 +132,8 @@ export class LookupValueManagerComponent implements OnInit, AfterViewInit {
         this.isExisting = event.checked;
         if (!this.isExisting) {
             this.setDefaultValues();
+            this.dropDownToSave.name = "";
+            this.dropDownToSave.description = "";
             this.dropDownToSave.buildingId = this.selectedBuildingId ?? -1;
         }
     }
@@ -152,6 +154,7 @@ export class LookupValueManagerComponent implements OnInit, AfterViewInit {
             next: (response: OperationalResultDTO<TransactionDTO>) => {
                 console.log(response);
                 if (response.success) {
+                    this.getDropdownValues("PropertyGroup", "PropertyGroup");
                     this.snackbarService.openSnackBar(response.message, "dismiss");
                 }
             },

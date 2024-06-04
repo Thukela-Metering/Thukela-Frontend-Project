@@ -58,7 +58,8 @@
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Select a building</mat-label>
-            <mat-select id="buildingId" formControlName="buildingId" required placeholder="Select a building">
+            <mat-select id="buildingId" formControlName="buildingId" required placeholder="Select a building"  > 
+              <!-- [disabled]="action == 'update'" -->
               <mat-option>
                 <ngx-mat-select-search placeholderLabel="Find building..." noEntriesFoundLabel="no matching record found" class="searchfield-class" [formControl]="buildingFilterCtrl"></ngx-mat-select-search>
               </mat-option>

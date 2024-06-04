@@ -86,10 +86,13 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
       if(result){
         if (result.event === 'Add') {
           // this.addRowData(result.data);
+          this.loadBuildingOwnerListData();
         } else if (result.event === 'Update') {
           this.updateRowData(result.data);
+          this.loadBuildingOwnerListData();
         } else if (result.event === 'Delete') {
           this.deleteRowData(result.data);
+          this.loadBuildingOwnerListData();
         }
       }
     });
@@ -105,7 +108,8 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
         value.accountNumber = row_obj.accountNumber;
         value.additionalInformation = row_obj.additionalInformation;
         value.address = row_obj.address;
-        value.bank = row_obj.bank;
+      //  value.bank = row_obj.bank;
+      value.bank = 16;
         value.buildingId = row_obj.buildingId;
         value.contactNumber = row_obj.contactNumber;
         value.email = row_obj.email;
