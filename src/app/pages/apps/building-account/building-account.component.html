@@ -33,7 +33,7 @@
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Reading Slip</mat-label>
-            <input matInput name="readingSlip" placeholder="Reading Slip" [(ngModel)]="local_data.readingSlip" required />
+            <input matInput name="readingSlip" placeholder="Reading Slip" [(ngModel)]="local_data.readingSlip" />
           </mat-form-field>
         </div>
 
@@ -78,7 +78,7 @@
 
       <div class="form-actions">
         <button mat-stroked-button color="warn" type="button" (click)="onCancel()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="!userForm.valid">{{ data.action }}</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="!userForm.form.valid">{{ data.action }}</button>
       </div>
     </form>
   </mat-dialog-content>

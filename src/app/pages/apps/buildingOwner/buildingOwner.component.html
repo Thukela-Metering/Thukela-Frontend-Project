@@ -1,13 +1,13 @@
 <h2 class="f-w-500 m-b-24" mat-dialog-title><strong>{{ data.action }}</strong></h2>
 <div *ngIf="action !== 'Delete'">
   <mat-dialog-content style="max-width: 600px">
-    <form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="accountForm" (ngSubmit)="onSubmit()" #formDirective="ngForm">
       <div class="row">
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Name</mat-label>
             <input matInput formControlName="name" placeholder="Name">
-            <mat-error *ngIf="accountForm.get('name')?.hasError('required')">Name is required</mat-error>
+            <mat-error *ngIf="accountForm.get('name')?.hasError('required') && accountForm.get('name')?.touched">Name is required</mat-error>
           </mat-form-field>
         </div>
 
@@ -15,8 +15,8 @@
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Email</mat-label>
             <input matInput formControlName="email" placeholder="Email">
-            <mat-error *ngIf="accountForm.get('email')?.hasError('required')">Email is required</mat-error>
-            <mat-error *ngIf="accountForm.get('email')?.hasError('email')">Please enter a valid email</mat-error>
+            <mat-error *ngIf="accountForm.get('email')?.hasError('required') && accountForm.get('email')?.touched">Email is required</mat-error>
+            <mat-error *ngIf="accountForm.get('email')?.hasError('email') && accountForm.get('email')?.touched">Please enter a valid email</mat-error>
           </mat-form-field>
         </div>
 
@@ -30,7 +30,9 @@
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Contact Number</mat-label>
-            <input matInput formControlName="contactNumber" placeholder="Contact Number">
+            <input matInput required formControlName="contactNumber" placeholder="Contact Number">
+            <mat-error *ngIf="accountForm.get('contactNumber')?.hasError('required') && accountForm.get('contactNumber')?.touched">Contact Number is required</mat-error>
+            <mat-error *ngIf="accountForm.get('contactNumber')?.hasError('pattern') && accountForm.get('contactNumber')?.touched">Please enter a valid South African contact number</mat-error>
           </mat-form-field>
         </div>
 
@@ -51,15 +53,15 @@
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Address</mat-label>
-            <textarea matInput formControlName="address" placeholder="Address"></textarea>
+            <textarea matInput required formControlName="address" placeholder="Address"></textarea>
+            <mat-error *ngIf="accountForm.get('address')?.hasError('required') && accountForm.get('address')?.touched">Address is required</mat-error>
           </mat-form-field>
         </div>
 
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Select a building</mat-label>
-            <mat-select id="buildingId" formControlName="buildingId" required placeholder="Select a building"  > 
-              <!-- [disabled]="action == 'update'" -->
+            <mat-select id="buildingId" formControlName="buildingId" required placeholder="Select a building"> 
               <mat-option>
                 <ngx-mat-select-search placeholderLabel="Find building..." noEntriesFoundLabel="no matching record found" class="searchfield-class" [formControl]="buildingFilterCtrl"></ngx-mat-select-search>
               </mat-option>
@@ -67,16 +69,27 @@
                 {{ building.name }}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="accountForm.get('buildingId')?.hasError('required') && accountForm.get('buildingId')?.touched">Building selection is required</mat-error>
           </mat-form-field>
         </div>
         
+        <!-- <div class="col-lg-6">
+        <div class="w-100">
+          <label>
+            <span>Is Taxable?</span>
+            <mat-slide-toggle formControlName="taxable"></mat-slide-toggle>
+          </label>
+        </div>
+        </div> -->
+
         <div class="col-lg-6">
           <div class="w-100">
             <mat-label>Preferred Communication</mat-label>
-            <mat-radio-group formControlName="preferredCommunication" aria-label="Select Preferred Communication">
+            <mat-radio-group formControlName="preferredCommunication" required aria-label="Select Preferred Communication">
               <mat-radio-button value="9">Email</mat-radio-button>
               <mat-radio-button value="10">Mobile</mat-radio-button>
             </mat-radio-group>
+            <mat-error *ngIf="accountForm.get('preferredCommunication')?.hasError('required') && accountForm.get('preferredCommunication')?.touched">Preferred Communication is required</mat-error>
           </div>
         </div>
 
@@ -106,7 +119,7 @@
       
       <div class="form-actions">
         <button mat-stroked-button color="warn" type="button" (click)="onCancel()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="!accountForm.valid">{{ data.action }}</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="!accountForm.valid" (click)="formDirective.onSubmit($event)">{{ data.action }}</button>
       </div>
     </form>
   </mat-dialog-content>

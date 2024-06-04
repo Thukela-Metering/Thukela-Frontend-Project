@@ -1,55 +1,57 @@
-<h2 class="f-w-500 m-b-24" mat-dialog-title><strong>{{action}}</strong></h2>
+<h2 class="f-w-500 m-b-24" mat-dialog-title><strong>{{ action }}</strong></h2>
 
-@if(action !== 'Delete') {
-<mat-dialog-content style="max-width: 600px">
-  <form #userForm="ngForm">
-    <div class="row">
-      <div class="col-lg-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="name" name="name" [(ngModel)]="local_data.name" placeholder="Name" />
-        </mat-form-field>
-      </div>
-      <div class="col-lg-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="nSquareMetersame" name="nSquareMetersame" [(ngModel)]="local_data.nSquareMetersame"
-            placeholder="nSquareMetersame" />
-        </mat-form-field>
-      </div>   
-      <div class="col-lg-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="buildingOwner" name="buildingOwner" [(ngModel)]="local_data.buildingOwner"
-            placeholder="buildingOwner" />
-        </mat-form-field>
-      </div>
-      <div class="col-lg-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="sdgMeterZone" name="sdgMeterZone" [(ngModel)]="local_data.sdgMeterZone"
-          placeholder="sdgMeterZone" />
-          <!-- <mat-select [(value)]="local_data.sdgMeterZone" placeholder="sdgMeterZone">
-            <mat-option *ngFor="let role of DropDownValues" [value]="role.Id">{{ local_data.sdgMeterZone }}</mat-option>
-          </mat-select> -->
-        </mat-form-field>
-      </div>
-      <div class="col-lg-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="address" name="address" [(ngModel)]="local_data.address"
-            placeholder="address" />
-        </mat-form-field>
-      </div>
-      <div class="col-lg-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="notes" name="notes" [(ngModel)]="local_data.notes"
-            placeholder="notes" />
-        </mat-form-field>
-      </div>     
-      <div class="col-lg-6">
-        <!-- <mat-form-field appearance="outline" class="w-100"> -->
+<div *ngIf="action !== 'Delete'">
+  <mat-dialog-content style="max-width: 600px">
+    <form #userForm="ngForm" (ngSubmit)="doAction()">
+      <div class="row">
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Name</mat-label>
+            <input matInput required id="name" name="name" [(ngModel)]="local_data.name" placeholder="Name" #name="ngModel">
+            <mat-error *ngIf="name.invalid && name.touched">Name is required</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Square Meters</mat-label>
+            <input matInput required id="nSquareMetersame" name="nSquareMetersame" [(ngModel)]="local_data.nSquareMetersame" placeholder="Square Meters" #nSquareMetersame="ngModel">
+            <mat-error *ngIf="nSquareMetersame.invalid && nSquareMetersame.touched">Square Meters is required</mat-error>
+          </mat-form-field>
+        </div>   
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Building Owner</mat-label>
+            <input matInput required id="buildingOwner" name="buildingOwner" [(ngModel)]="local_data.buildingOwner" placeholder="Building Owner" #buildingOwner="ngModel">
+            <mat-error *ngIf="buildingOwner.invalid && buildingOwner.touched">Building Owner is required</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>SDG Meter Zone</mat-label>
+            <input matInput id="sdgMeterZone" name="sdgMeterZone" [(ngModel)]="local_data.sdgMeterZone" placeholder="SDG Meter Zone">
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Address</mat-label>
+            <input matInput required id="address" name="address" [(ngModel)]="local_data.address" placeholder="Address" #address="ngModel">
+            <mat-error *ngIf="address.invalid && address.touched">Address is required</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Notes</mat-label>
+            <input matInput id="notes" name="notes" [(ngModel)]="local_data.notes" placeholder="Notes">
+          </mat-form-field>
+        </div>     
+        <div class="col-lg-6">
           <mat-radio-group name="isActive" class="w-100" [(ngModel)]="local_data.isActive">
             <mat-radio-button [value]="true">Active</mat-radio-button>
             <mat-radio-button [value]="false">Inactive</mat-radio-button>
           </mat-radio-group>
           <ng-container *ngIf="local_data.isActive === false">
             <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Inactive from</mat-label>
               <input
                 matInput
                 [matDatepicker]="startDateDP"
@@ -64,47 +66,24 @@
               <mat-datepicker #startDateDP></mat-datepicker>
             </mat-form-field>
           </ng-container>
-          
-          <!-- <input type="text" matInput required id="isActive" name="isActive" [(ngModel)]="local_data.isActive"
-            placeholder="isActive" /> -->
-        <!-- </mat-form-field> -->
+        </div>
       </div>
-      <!-- <div class="col-lg-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="email" name="email" [(ngModel)]="local_data.email"
-            placeholder="Email" />
-        </mat-form-field>
-      </div> -->
-      <!-- <div class="col-lg-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="mobile" name="mobile" [(ngModel)]="local_data.mobile"
-            placeholder="Mobile" />
-        </mat-form-field>
+      <div class="form-actions">
+        <button mat-stroked-button color="warn" type="button" (click)="closeDialog()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="userForm.invalid || name.invalid || buildingOwner.invalid || nSquareMetersame.invalid || address.invalid">
+          {{ action }}
+        </button>
       </div>
-      <div class="col-lg-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <textarea type="text" matInput required id="Address" name="Address" [(ngModel)]="local_data.address"
-            placeholder="Address">
-        </textarea>
-        </mat-form-field>
-      </div> -->
-    </div>
-    <button mat-flat-button (click)="doAction()" mat-flat-button color="primary" [disabled]="!userForm.valid">
-      {{action}}
-    </button>
-    <button mat-stroked-button color="warn" class="m-l-8" (click)="closeDialog()">
-      Cancel
-    </button>
-  </form>
-</mat-dialog-content>
-} @else {
-<div class="p-x-24">
-  <p  class="mat-drawer-container">Sure to delete <span class="f-w-600">{{local_data.name}}</span> ?</p>
+    </form>
+  </mat-dialog-content>
 </div>
-<div mat-dialog-actions class="p-x-24 p-b-24">
-  <button mat-button (click)="doAction()" mat-flat-button color="warn">
-    {{action}}
-  </button>
-  <button mat-button (click)="closeDialog()" class="m-l-8">Cancel</button>
+
+<div *ngIf="action === 'Delete'">
+  <div class="p-x-24">
+    <p class="mat-drawer-container">Sure to delete <span class="f-w-600">{{ local_data.name }}</span>?</p>
+  </div>
+  <div mat-dialog-actions class="p-x-24 p-b-24">
+    <button mat-button (click)="doAction()" mat-flat-button color="warn">{{ action }}</button>
+    <button mat-button (click)="closeDialog()" class="m-l-8">Cancel</button>
+  </div>
 </div>
-}

@@ -45,12 +45,12 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       fax: [''],
-      contactNumber: [''],
+      contactNumber: ['', [Validators.required, Validators.pattern(/^(?:\+27|0)[6-8][0-9]{8}$/)]],
       buildingId: ['', Validators.required],
       accountNumber: [''],
      // bank: ['', Validators.required],
       taxable: [false],
-      address: [''],
+      address: ['', Validators.required],
       isActive: [true],
       preferredCommunication: ['', Validators.required],
       additionalInformation: [''],
@@ -156,7 +156,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
             
           },
           error => {
-            this.snackbarService.openSnackBar(error, "dismiss");
+            this.snackbarService.openSnackBar(error.error, "dismiss");
             console.error('Error adding building owner:', error);
           }
         );
