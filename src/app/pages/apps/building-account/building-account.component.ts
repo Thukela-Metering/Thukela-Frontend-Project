@@ -95,6 +95,7 @@ export class BuildingAccountsComponent implements OnInit {
           console.log(some);
           this.snackbarService.openSnackBar(response.message, "dismiss");
           this.accountsForm.reset();
+          this.dialogRef.close({ event: "Add", data: this.local_data });
           // this.onCancel();
         },
         error => {
@@ -102,7 +103,7 @@ export class BuildingAccountsComponent implements OnInit {
           this.snackbarService.openSnackBar(error.message, "dismiss");
         }
     );
-    this.dialogRef.close({ event: this.action, data: this.local_data });
+    
   }else{
   //  this.mapFormValuesToLocalData();
     //this.local_data.isActive = this.accountsForm.value.isActive;
