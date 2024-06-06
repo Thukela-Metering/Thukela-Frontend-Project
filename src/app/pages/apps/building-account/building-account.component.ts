@@ -7,7 +7,6 @@ import { BuildingService } from 'src/app/services/building.service';
 import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { da } from 'date-fns/locale';
 
 @Component({
   selector: 'app-building-accounts',
@@ -30,19 +29,22 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
     private snackbarService: SnackbarService,
     private buildingAccountService: BuildingAccountService,
     private _buildingService: BuildingService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingDTO,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingDTO
   ) {
-    this.local_data = { ...data };
-    this.action = this.local_data.action ? this.local_data.action : "Update";
+    this.local_data = { ...data } || {}; // Ensure local_data is always an object
+    this.action = this.local_data.action ? this.local_data.action : 'Update';
+    this.local_data.action = this.local_data.action ? this.local_data.action : 'Update';
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
       if (this.accountsForm) {
+        this.localDataFromComponent.action = 'Update';
         this.accountsForm.patchValue(this.localDataFromComponent);
       }
-
     }
   }
+
   ngOnInit(): void {
     this.accountsForm = this.fb.group({
       buildingId: ['', Validators.required],
@@ -50,17 +52,15 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       municipalityTwo: [''],
       readingSlip: ['', Validators.required],
       creditControl: [''],
-      centerOwner: ['', Validators.required],
       isActive: [''],
     });
 
     this.loadBuildingListData();
-    this.buildingFilterCtrl.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(value => {
-      this.filterBuildings(value || ''); // Use an empty string if value is falsy
-    });
+    this.buildingFilterCtrl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((value) => {
+        this.filterBuildings(value || ''); // Use an empty string if value is falsy
+      });
 
     if (this.data != null) {
       this.accountsForm.patchValue(this.data);
@@ -80,46 +80,46 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       },
       error: (error) => {
         console.error('There was an error!', error);
-      }
+      },
     });
   }
 
   filterBuildings(filter: string): void {
     const filterValue = filter ? filter.toLowerCase() : '';
-    this.filteredBuildings = this.buildings.filter(option => option.name?.toLowerCase().includes(filterValue));
+    this.filteredBuildings = this.buildings.filter((option) =>
+      option.name?.toLowerCase().includes(filterValue)
+    );
   }
 
   onSubmit(): void {
-    if (this.action == "Add") {
+    if (this.action == 'Add') {
       var some = new BuildingAccountDTO();
-      some.buildingId = this.accountsForm.get("buildingId")?.value;
-      some.municipalityOne = this.accountsForm.get("municipalityOne")?.value;
-      some.municipalityTwo = this.accountsForm.get("municipalityTwo")?.value;
-      some.readingSlip = this.accountsForm.get("readingSlip")?.value;
-      some.creditControl = this.accountsForm.get("creditControl")?.value;
-      some.centerOwner = this.accountsForm.get("centerOwner")?.value;
+      some.buildingId = this.accountsForm.get('buildingId')?.value;
+      some.municipalityOne = this.accountsForm.get('municipalityOne')?.value;
+      some.municipalityTwo = this.accountsForm.get('municipalityTwo')?.value;
+      some.readingSlip = this.accountsForm.get('readingSlip')?.value;
+      some.creditControl = this.accountsForm.get('creditControl')?.value;
       some.isActive = true;
-      console.log("the value in onSubmit: ");
+      console.log('the value in onSubmit: ');
       console.log(some);
       this._buildingAccountService.addNewBuildingAccount(this.local_data).subscribe(
-        response => {
+        (response) => {
           console.log(response);
           this.buildingAccount.push(this.local_data);
           console.log(some);
-          this.snackbarService.openSnackBar(response.message, "dismiss");
+          this.snackbarService.openSnackBar(response.message, 'dismiss');
           this.accountsForm.reset();
-          this.dialogRef.close({ event: "Add", data: this.local_data });
+          this.dialogRef.close({ event: 'Add', data: this.local_data });
           // this.onCancel();
         },
-        error => {
+        (error) => {
           console.error(error);
-          this.snackbarService.openSnackBar(error.message, "dismiss");
+          this.snackbarService.openSnackBar(error.message, 'dismiss');
         }
-
       );
     } else {
-     // this.mapFormValuesToLocalData();
-     // this.local_data.isActive = this.accountsForm.value.isActive;
+      // this.mapFormValuesToLocalData();
+      // this.local_data.isActive = this.accountsForm.value.isActive;
       if (this.dialogRef) {
         this.dialogRef.close({ event: this.action, data: this.local_data });
       } else {
@@ -127,20 +127,22 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       }
     }
   }
+
   private mapFormValuesToLocalData(): void {
-    this.local_data.buildingId = this.accountsForm.get("buildingId")?.value;
-    this.local_data.municipalityOne = this.accountsForm.get("municipalityOne")?.value;
-    this.local_data.municipalityTwo = this.accountsForm.get("municipalityTwo")?.value;
-    this.local_data.readingSlip = this.accountsForm.get("readingSlip")?.value;
-    this.local_data.creditControl = this.accountsForm.get("creditControl")?.value;
-    this.local_data.centerOwner = this.accountsForm.get("centerOwner")?.value;
-    this.local_data.isActive = this.accountsForm.get("isActive")?.value;
+    this.local_data.buildingId = this.accountsForm.get('buildingId')?.value;
+    this.local_data.municipalityOne = this.accountsForm.get('municipalityOne')?.value;
+    this.local_data.municipalityTwo = this.accountsForm.get('municipalityTwo')?.value;
+    this.local_data.readingSlip = this.accountsForm.get('readingSlip')?.value;
+    this.local_data.creditControl = this.accountsForm.get('creditControl')?.value;
+    this.local_data.isActive = this.accountsForm.get('isActive')?.value;
   }
+
   onCancel() {
     // Reset the form or navigate away
     this.accountsForm.reset();
     this.dialogRef.close({ event: 'Cancel' });
   }
+
   updateRowData(row_obj: BuildingAccountDTO): boolean | any {
     this.buildingAccountService.updateBuildingAccount(row_obj).subscribe({
       next: (response) => {
@@ -150,9 +152,8 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       },
       error: (error) => {
         console.error('There was an error!', error);
-      }
+      },
     });
     return true;
-
   }
 }

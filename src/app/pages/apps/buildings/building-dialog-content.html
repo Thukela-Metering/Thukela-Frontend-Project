@@ -17,14 +17,7 @@
             <input matInput required id="nSquareMetersame" name="nSquareMetersame" [(ngModel)]="local_data.nSquareMetersame" placeholder="Square Meters" #nSquareMetersame="ngModel">
             <mat-error *ngIf="nSquareMetersame.invalid && nSquareMetersame.touched">Square Meters is required</mat-error>
           </mat-form-field>
-        </div>   
-        <div class="col-lg-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Building Owner</mat-label>
-            <input matInput required id="buildingOwner" name="buildingOwner" [(ngModel)]="local_data.buildingOwner" placeholder="Building Owner" #buildingOwner="ngModel">
-            <mat-error *ngIf="buildingOwner.invalid && buildingOwner.touched">Building Owner is required</mat-error>
-          </mat-form-field>
-        </div>
+        </div>           
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>SDG Meter Zone</mat-label>
@@ -70,7 +63,7 @@
       </div>
       <div class="form-actions">
         <button mat-stroked-button color="warn" type="button" (click)="closeDialog()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="userForm.invalid || name.invalid || buildingOwner.invalid || nSquareMetersame.invalid || address.invalid">
+        <button mat-flat-button color="primary" type="submit" [disabled]="userForm.invalid || name.invalid || nSquareMetersame.invalid || address.invalid">
           {{ action }}
         </button>
       </div>

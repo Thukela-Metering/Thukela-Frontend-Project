@@ -27,7 +27,6 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
     'municipalityTwo',
     'readingSlip',
     'creditControl',
-    'centerOwner',
     'action'
   ];
 
@@ -97,21 +96,7 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
   addRowData(row_obj: BuildingAccountDTO): void {
    
     this.loadBuildingAccountListData();
-    this.manageActiveBuildingAccounts = row_obj.isActive;
-    // row_obj.isActive = true;
-    // this.buildingAccountService.addNewBuildingAccount(row_obj).subscribe({
-    //   next: (response) => {
-    //     this.snackbarService.openSnackBar('Building account added successfully!', 'dismiss');
-    //     this.loadBuildingAccountListData();
-        
-    //   },
-    //   error: (error) => {
-    //     console.error('There was an error!', error);
-    //     this.snackbarService.openSnackBar('Failed to add building account.', 'dismiss');
-    //     this.loadBuildingAccountListData();
-    //   }
-    // });
-    
+    this.manageActiveBuildingAccounts = row_obj.isActive;    
   }
 
   updateRowData(row_obj: BuildingAccountDTO): boolean | any{
@@ -119,7 +104,6 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
       if(value.id === row_obj.id){
         value.id = row_obj.id;
         value.buildingId = row_obj.buildingId;
-        value.centerOwner = row_obj.centerOwner;
         value.creditControl = row_obj.creditControl;
         value.municipalityOne = row_obj.municipalityOne;
         value.municipalityTwo = row_obj.municipalityTwo;

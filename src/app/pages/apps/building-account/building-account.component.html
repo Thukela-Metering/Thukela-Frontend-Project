@@ -1,4 +1,3 @@
-
 <h2 class="f-w-500 m-b-24" mat-dialog-title><strong>{{ data.action }}</strong></h2>
 <div *ngIf="data.action !== 'Delete'">
   <mat-dialog-content style="max-width: 600px">
@@ -42,13 +41,6 @@
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Credit Control</mat-label>
             <input matInput name="creditControl" placeholder="Credit Control" [(ngModel)]="local_data.creditControl" />
-          </mat-form-field>
-        </div>
-
-        <div class="col-lg-6">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Center Owner</mat-label>
-            <input matInput name="centerOwner" placeholder="Center Owner" [(ngModel)]="local_data.centerOwner" required />
           </mat-form-field>
         </div>
 

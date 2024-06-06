@@ -94,7 +94,6 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
         userDataDTO.id = row_obj.id,
           userDataDTO.name = row_obj.name,
           userDataDTO.nSquareMetersame = row_obj.nSquareMetersame,
-          userDataDTO.buildingOwner = row_obj.buildingOwner,
           userDataDTO.sdgMeterZone = row_obj.sdgMeterZone,
           userDataDTO.address = row_obj.address,
           userDataDTO.notes = row_obj.notes,
@@ -119,7 +118,6 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
         value.name = row_obj.name;
         value.id = row_obj.id;
         value.nSquareMetersame = row_obj.nSquareMetersame;
-        value.buildingOwner = row_obj.buildingOwner;
         value.sdgMeterZone = row_obj.sdgMeterZone;
         value.address = row_obj.address;
         value.notes = row_obj.notes;
@@ -247,7 +245,6 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
     if (this.action == "Add") {
       this.buildingDTO.name = this.local_data.name;
       this.buildingDTO.nSquareMetersame = this.local_data.nSquareMetersame;
-      this.buildingDTO.buildingOwner = this.local_data.buildingOwner;
       this.buildingDTO.sdgMeterZone = this.local_data.sdgMeterZone;
       this.buildingDTO.name = this.local_data.name;
       this.buildingDTO.address = this.local_data.address;
