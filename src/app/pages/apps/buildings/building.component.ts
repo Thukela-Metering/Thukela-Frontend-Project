@@ -101,6 +101,7 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
           this.buildings.push(userDataDTO);
         ////////////////////////////////////////////////////        
         console.log(row_obj);
+        this.manageActiveBuildings = row_obj.isActive
         this.loadBuildingListData();
       },
       error => {

@@ -101,7 +101,7 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       some.isActive = true;
       console.log("the value in onSubmit: ");
       console.log(some);
-      this._buildingAccountService.addNewBuildingAccount(some).subscribe(
+      this._buildingAccountService.addNewBuildingAccount(this.local_data).subscribe(
         response => {
           console.log(response);
           this.buildingAccount.push(this.local_data);
@@ -118,8 +118,8 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
 
       );
     } else {
-      this.mapFormValuesToLocalData();
-      this.local_data.isActive = this.accountsForm.value.isActive;
+     // this.mapFormValuesToLocalData();
+     // this.local_data.isActive = this.accountsForm.value.isActive;
       if (this.dialogRef) {
         this.dialogRef.close({ event: this.action, data: this.local_data });
       } else {
