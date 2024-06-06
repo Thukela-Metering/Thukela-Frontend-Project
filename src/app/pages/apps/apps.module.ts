@@ -38,7 +38,10 @@ import { AppBuildingOwnerComponent} from './buildingOwner/buildingOwner.componen
 import { AppBuildingOwnerTableComponent } from './buildingOwner/buildingOwnerTable.component';
 import { AppBuildingAccountTableComponent } from './building-account/building-accountTable.component';
 import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
+import { AppInvoiceListComponent } from './invoice/invoice.component';
+import { AppAddInvoiceComponent } from './invoice/add-invoice.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
+
 
 
 
@@ -77,6 +80,8 @@ import { PortfolioComponent } from './portfolio/portfolio.component';
     AppBuildingOwnerTableComponent,
     AppBuildingAccountTableComponent,
     AppBuildingDialogContentComponent,
+    AppInvoiceListComponent,
+    AppAddInvoiceComponent,
     AppAddBuildingComponent,    
     LookupValueManagerComponent,
     AppBuildingRepresentativeLinkComponent,

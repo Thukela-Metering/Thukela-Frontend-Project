@@ -11,6 +11,7 @@ import { AppBuildingAccountTableComponent } from './building-account/building-ac
 
 import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
+import { AppInvoiceListComponent } from './invoice/invoice.component';
 
 
 export const AppsRoutes: Routes = [
@@ -81,7 +82,18 @@ export const AppsRoutes: Routes = [
             { title: 'Building Property Group' },
           ],
         },
+      },{
+        path: 'invoice',
+        component: AppInvoiceListComponent,
+        data: {
+          title: 'Invoicing',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Invoicing' },
+          ],
+        },
       },
+
       {
         path: 'building/Portfolio',
         component: PortfolioComponent,

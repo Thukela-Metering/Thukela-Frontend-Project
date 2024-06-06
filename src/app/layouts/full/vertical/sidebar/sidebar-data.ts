@@ -7,7 +7,7 @@ export const navItems: NavItem[] = [
  
   {
     displayName: 'User Management',
-    iconName: 'box-multiple',
+    iconName: 'user-plus',
     route: '/apps',
     children: [
       {
@@ -18,8 +18,11 @@ export const navItems: NavItem[] = [
     ],
   },
   {
+    navCap: 'Buildings ',
+  },
+  {
     displayName: 'Building Management',
-    iconName: 'box-multiple',
+    iconName: 'apps',
     route: '/menu-level',
     children: [
       {
@@ -54,22 +57,20 @@ export const navItems: NavItem[] = [
       },
     ],
   },
-
   {
-    displayName: 'Forgot Password',
-    iconName: 'rotate',
-    route: '/authentication',
-    children: [      
+    navCap: 'Accounts',
+  },
+  {
+    displayName: 'Invoicing',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
       {
-        displayName: 'Boxed Forgot Password',
+        displayName: 'Invoice List',
         iconName: 'point',
-        route: '/authentication/boxed-forgot-pwd',
+        route: 'apps/invoice',     
       },
     ],
   },
-  {
-    displayName: 'Error',
-    iconName: 'alert-circle',
-    route: '/authentication/error',
-  },
+  
 ];
