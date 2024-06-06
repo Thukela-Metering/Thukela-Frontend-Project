@@ -10,15 +10,12 @@
   </mat-form-field>
 
   <mat-card class="b-1 shadow-none" *ngIf="transactionData">
-    <mat-card-header>
-      <mat-card-title>
-        Expand/collapse all toggles
-      </mat-card-title>
-    </mat-card-header>
     <mat-card-content class="b-t-1">
       <div class="d-flex align-items-center m-b-16">
-        <button mat-flat-button color="primary" (click)="accordion.openAll()">Expand All</button>
-        <button mat-stroked-button color="primary" (click)="accordion.closeAll()" class="m-l-8">Collapse All</button>
+        <div style="display: flex; align-items: center;">
+          <span style="margin-right: 8px;">Toggle Panels</span>
+          <mat-slide-toggle (change)="togglePanels($event.checked)" color="primary"></mat-slide-toggle>
+        </div>
       </div>
 
       <mat-accordion #accordion="matAccordion" multi>

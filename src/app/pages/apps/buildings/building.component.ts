@@ -27,7 +27,6 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
     'id',
     'name',
     'nSquareMetersame',
-    'buildingOwner',
     'sdgMeterZone',
     'address',
     'notes',

@@ -70,4 +70,11 @@ export class PortfolioComponent implements OnInit {
       }
     });
   }
+  togglePanels(isExpanded: boolean): void {
+    if (isExpanded) {
+      this.accordion.openAll();
+    } else {
+      this.accordion.closeAll();
+    }
+  }
 }
