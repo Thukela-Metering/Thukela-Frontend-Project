@@ -17,3 +17,4 @@ export * from './transactionDTO';
 export * from './userDataDTO';
 export * from './userLoginDTO';
 export * from './buildingOwnerDTO';
+export * from './InvoiceDTO';

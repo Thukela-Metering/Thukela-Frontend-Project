@@ -10,6 +10,7 @@ import { AppBuildingOwnerTableComponent } from './buildingOwner/buildingOwnerTab
 import { AppBuildingAccountTableComponent } from './building-account/building-accountTable.component';
 
 import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
+import { PortfolioComponent } from './portfolio/portfolio.component';
 import { AppInvoiceListComponent } from './invoice/invoice.component';
 
 
@@ -89,6 +90,18 @@ export const AppsRoutes: Routes = [
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Invoicing' },
+          ],
+        },
+      },
+
+      {
+        path: 'building/Portfolio',
+        component: PortfolioComponent,
+        data: {
+          title: 'Building',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Building Portfolio' },
           ],
         },
       },

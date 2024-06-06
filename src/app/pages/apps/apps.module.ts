@@ -40,6 +40,7 @@ import { AppBuildingAccountTableComponent } from './building-account/building-ac
 import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
 import { AppInvoiceListComponent } from './invoice/invoice.component';
 import { AppAddInvoiceComponent } from './invoice/add-invoice.component';
+import { PortfolioComponent } from './portfolio/portfolio.component';
 
 
 
@@ -84,6 +85,7 @@ import { AppAddInvoiceComponent } from './invoice/add-invoice.component';
     AppAddBuildingComponent,    
     LookupValueManagerComponent,
     AppBuildingRepresentativeLinkComponent,
+    PortfolioComponent,
   ],
   providers: [DatePipe],
 })

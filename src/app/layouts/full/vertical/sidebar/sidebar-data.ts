@@ -50,6 +50,11 @@ export const navItems: NavItem[] = [
         iconName: 'point',
         route: 'apps/building/buildingOwner',     
       },
+      {
+        displayName: 'Building Portfolio',
+        iconName: 'point',
+        route: 'apps/building/Portfolio',     
+      },
     ],
   },
   {

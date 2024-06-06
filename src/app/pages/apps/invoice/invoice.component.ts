@@ -3,10 +3,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { InvoiceService } from 'src/app/services/invoice.service';
-import { InvoiceDTO } from 'src/app/DTOs/invoiceDTO';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { AppAddInvoiceComponent } from './add-invoice.component';
 import { MatDialog } from '@angular/material/dialog';
+import { InvoiceDTO } from 'src/app/DTOs/dtoIndex';
 
 @Component({
   selector: 'app-invoice',
