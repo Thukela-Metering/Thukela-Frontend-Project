@@ -1,4 +1,4 @@
-import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit } from '@angular/core';
+import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit, OnChanges, SimpleChanges, Input } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -72,7 +72,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(AppEmployeeDialogContentComponent, {
       data: obj,
     });
-    
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result.event === 'Add') {
         this.addRowData(result.data);
@@ -180,7 +180,10 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
   selector: 'app-dialog-content',
   templateUrl: 'employee-dialog-content.html',
 })
-export class AppEmployeeDialogContentComponent implements OnInit {
+
+// tslint:disable-next-line: component-class-suffix
+export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
+ @Input() localDataFromComponent: UserDataDTO;
   action: string;
   userRegistrationDTO: UserDataDTO = new UserDataDTO();
   local_data: UserDataDTO;
@@ -196,7 +199,7 @@ export class AppEmployeeDialogContentComponent implements OnInit {
   roleFilterCtrl: FormControl = new FormControl();
   constructor(
     public datePipe: DatePipe,
-    public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
+    @Optional() public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
     private authService: AuthService,
     private personService: PersonService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: UserDataDTO,
@@ -213,6 +216,15 @@ export class AppEmployeeDialogContentComponent implements OnInit {
 
     this.filteredRoles = [...this.DropDownValues];
     this.getDropdownValues();
+    if (this.localDataFromComponent) {
+      this.local_data = this.localDataFromComponent;
+    }
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
+      this.local_data = this.localDataFromComponent;
+    }
+
   }
   filterRole(filter: string): void {
     const filterValue = filter ? filter.toLowerCase() : '';
@@ -256,7 +268,7 @@ export class AppEmployeeDialogContentComponent implements OnInit {
       }
     );
   }
-  
+
   doAction(): void {
     if (this.action == "Add") {
       this.userRegistrationDTO.confirmPassword = this.confirmPassword;

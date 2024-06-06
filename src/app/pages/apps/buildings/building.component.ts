@@ -1,4 +1,4 @@
-import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit } from '@angular/core';
+import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -16,12 +16,12 @@ import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 
 @Component({
   templateUrl: './building.component.html',
-  selector:"ng-component-building"
+  selector: "ng-component-building"
 })
 export class AppBuildingComponent implements OnInit, AfterViewInit {
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   searchText: any;
-  manageActiveBuildings:boolean = true;
+  manageActiveBuildings: boolean = true;
   buildings: BuildingDTO[] = [];
   displayedColumns: string[] = [
     'id',
@@ -30,7 +30,7 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
     'buildingOwner',
     'sdgMeterZone',
     'address',
-    'notes',   
+    'notes',
     'action',
   ];
   dataSource = new MatTableDataSource(this.buildings);
@@ -97,8 +97,8 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
           userDataDTO.buildingOwner = row_obj.buildingOwner,
           userDataDTO.sdgMeterZone = row_obj.sdgMeterZone,
           userDataDTO.address = row_obj.address,
-          userDataDTO.notes = row_obj.notes,              
-        this.buildings.push(userDataDTO);
+          userDataDTO.notes = row_obj.notes,
+          this.buildings.push(userDataDTO);
         ////////////////////////////////////////////////////        
         console.log(row_obj);
         this.loadBuildingListData();
@@ -125,6 +125,7 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
         value.isActive = row_obj.isActive;
         value.dateCreated = row_obj.dateCreated;
         value.dateLastUpdated = row_obj.dateLastUpdated;
+
         value.dateDeleted = row_obj.dateDeleted;   
         if (value.isActive != false) {
           this.manageActiveBuildings = true;
@@ -132,6 +133,9 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
         else{
           this.manageActiveBuildings = false;
         }     
+
+        value.dateDeleted = row_obj.dateDeleted;
+
       }
       this._buildingService.updateBuildingData(row_obj).subscribe({
         next: (response) => {
@@ -179,22 +183,30 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
   templateUrl: 'building-dialog-content.html',
 })
 // tslint:disable-next-line: component-class-suffix
-export class AppBuildingDialogContentComponent implements OnInit {
+export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
+
+  @Input() localDataFromComponent: BuildingDTO;
   action: string;
   buildingDTO: BuildingDTO = new BuildingDTO();
   // tslint:disable-next-line - Disables all
   local_data: BuildingDTO;
   DropDownValues: LookupValueDTO[] = [];
   constructor(
+    @Optional() public dialogRef: MatDialogRef<AppBuildingDialogContentComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingDTO,
+    private _buildingService: BuildingService,
     public datePipe: DatePipe,
-    public dialogRef: MatDialogRef<AppBuildingDialogContentComponent>,
     private authService: AuthService,
     private personService: PersonService,
-    // @Optional() is used to prevent error if no data is passed
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingDTO,
+
   ) {
     this.local_data = { ...data };
     this.action = this.local_data.action ? this.local_data.action : "Update";
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
+      this.local_data = this.localDataFromComponent;
+    }
   }
   ngOnInit(): void {
     this.getDropdownValues();
@@ -241,12 +253,30 @@ export class AppBuildingDialogContentComponent implements OnInit {
       this.buildingDTO.notes = this.local_data.notes;
       this.buildingDTO.isActive = this.local_data.isActive;
       // this.buildingDTO.dateCreated = this.local_data.dateLastUpdated;
-      // this.buildingDTO.dateDeleted = this.local_data.dateDeleted;    
-      this.dialogRef.close({ event: this.action, data: this.buildingDTO });
+      // this.buildingDTO.dateDeleted = this.local_data.dateDeleted;   
+      if (this.dialogRef) {
+        this.dialogRef.close({ event: this.action, data: this.local_data });
+      }
     } else {
-      this.dialogRef.close({ event: this.action, data: this.local_data });
+      if (this.dialogRef) {
+        this.dialogRef.close({ event: this.action, data: this.local_data });
+      }else{
+        this.updateRowData(this.local_data);
+      }
     }
-
+  }
+  updateRowData(row_obj: BuildingDTO): boolean | any {
+      this._buildingService.updateBuildingData(row_obj).subscribe({
+        next: (response) => {
+          if (response) {
+            console.log(response);        
+          }
+        },
+        error: (error) => {
+          console.error('There was an error!', error);
+        }
+      });
+      return true;
   }
   closeDialog(): void {
     this.dialogRef.close({ event: 'Cancel' });
