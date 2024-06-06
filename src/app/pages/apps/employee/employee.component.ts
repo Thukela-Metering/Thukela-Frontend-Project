@@ -38,6 +38,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
   constructor(public dialog: MatDialog, public datePipe: DatePipe, private _personService: PersonService, private authService: AuthService) { }
+  
   ngOnInit(): void {
     this.loadUserListData();
   }
@@ -83,13 +84,9 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // tslint:disable-next-line - Disables all
   addRowData(row_obj: UserDataDTO): void {
     this.authService.register(row_obj).subscribe(
       response => {
-        // Handle successful registration
-        console.log(response);
-        //////////////////////////////////////////////////////
         var userDataDTO = new UserDataDTO();
         userDataDTO.id = row_obj.id,
           userDataDTO.name = row_obj.name,
@@ -105,19 +102,15 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
           userDataDTO.password = row_obj.password,
           userDataDTO.username = row_obj.username,
           this.persons.push(userDataDTO);
-        ////////////////////////////////////////////////////
-        console.log(row_obj);
         this.loadUserListData();
       },
       error => {
-        // Handle error
         console.error(error);
       }
     );
     this.dialog.open(AppAddEmployeeComponent);
   }
 
-  // tslint:disable-next-line - Disables all
   updateRowData(row_obj: UserDataDTO): boolean | any {
     this.dataSource.data = this.dataSource.data.filter((value: UserDataDTO) => {
       if (value.id === row_obj.id) {
@@ -135,6 +128,12 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
         value.guid = row_obj.guid;
         value.confirmPassword = row_obj.confirmPassword;
         value.userRole = row_obj.userRole;
+        if (value.isActive != false) {
+          this.manageActiveUsers = true;
+        }
+        else{
+          this.manageActiveUsers = false;
+        }
       }
       if (row_obj.isActive) {
         row_obj.dateDeleted = undefined;
@@ -143,7 +142,6 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
         next: (response) => {
           if (response) {
             this.loadUserListData();
-            console.log(response);
           }
         },
         error: (error) => {
@@ -155,11 +153,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // tslint:disable-next-line - Disables all
   deleteRowData(row_obj: UserDataDTO): boolean | any {
-    // this.dataSource.data = this.dataSource.data.filter((value: any) => {
-    //   return value.id !== row_obj.id;
-    // });
     if (row_obj.confirmPassword == "" || row_obj.confirmPassword == null) {
       row_obj.confirmPassword = "some";
     }
@@ -169,7 +163,6 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
     this._personService.deleteUserData(row_obj).subscribe({
       next: (response) => {
         if (response) {
-          console.log(response);
           this.loadUserListData();
         }
       },
@@ -184,16 +177,15 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
 }
 
 @Component({
-  // tslint:disable-next-line: component-selector
   selector: 'app-dialog-content',
   templateUrl: 'employee-dialog-content.html',
 })
+
 // tslint:disable-next-line: component-class-suffix
 export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
  @Input() localDataFromComponent: UserDataDTO;
   action: string;
   userRegistrationDTO: UserDataDTO = new UserDataDTO();
-  // tslint:disable-next-line - Disables all
   local_data: UserDataDTO;
   local_data_systemUser: SystemUserDTO;
   username: string;
@@ -217,10 +209,9 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
   }
   ngOnInit(): void {
     this.roleFilterCtrl.valueChanges.pipe(
-      //  debounceTime(300),
       distinctUntilChanged()
     ).subscribe(value => {
-      this.filterRoles(value || ''); // Use an empty string if value is falsy
+      this.filterRoles(value || '');
     });
 
     this.filteredRoles = [...this.DropDownValues];
@@ -233,6 +224,7 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
     if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
       this.local_data = this.localDataFromComponent;
     }
+
   }
   filterRole(filter: string): void {
     const filterValue = filter ? filter.toLowerCase() : '';
@@ -240,7 +232,7 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
   }
 
   getDropdownValues() {
-    var userRoleResponse = this.authService.getLookupValues().subscribe(
+    this.authService.getLookupValues().subscribe(
       (response: OperationalResultDTO<TransactionDTO>) => {
         if (response.success) {
           if (response.data != null) {
@@ -268,12 +260,10 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
               lookupValue.dateCreated = item.dateCreated;
               return lookupValue;
             });
-            console.log(this.DropDownValues);
           }
         }
       },
       error => {
-        // Handle error
         console.error(error);
       }
     );
@@ -301,8 +291,8 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
     } else {
       this.dialogRef.close({ event: this.action, data: this.local_data });
     }
-
   }
+
   closeDialog(): void {
     this.dialogRef.close({ event: 'Cancel' });
   }

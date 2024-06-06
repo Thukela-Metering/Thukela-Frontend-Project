@@ -38,7 +38,7 @@ export const navItems: NavItem[] = [
         route: 'apps/building/buildingRepresentative',     
       },
       {
-        displayName: 'propertyGroup Link',
+        displayName: 'PropertyGroup Link',
         iconName: 'point',
         route: 'apps/building/buildingPropertyGroup',     
       },

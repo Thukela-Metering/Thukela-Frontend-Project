@@ -61,6 +61,7 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
     ).subscribe(value => {
       this.filterBuildings(value || ''); // Use an empty string if value is falsy
     });
+
     if (this.data != null) {
       this.accountsForm.patchValue(this.data);
     }
@@ -103,16 +104,18 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       this._buildingAccountService.addNewBuildingAccount(some).subscribe(
         response => {
           console.log(response);
-          this.buildingAccount.push(some);
+          this.buildingAccount.push(this.local_data);
           console.log(some);
           this.snackbarService.openSnackBar(response.message, "dismiss");
           this.accountsForm.reset();
-          this.onCancel();
+          this.dialogRef.close({ event: "Add", data: this.local_data });
+          // this.onCancel();
         },
         error => {
           console.error(error);
           this.snackbarService.openSnackBar(error.message, "dismiss");
         }
+
       );
     } else {
       this.mapFormValuesToLocalData();

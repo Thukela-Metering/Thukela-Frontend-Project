@@ -22,7 +22,6 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
   buildingAccounts: BuildingAccountDTO[] = [];
 
   displayedColumns: string[] = [
-    'id',
     'buildingId',
     'municipalityOne',
     'municipalityTwo',
@@ -44,6 +43,7 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    this.manageActiveBuildingAccounts = true;
     this.loadBuildingAccountListData();
   }
 
@@ -76,30 +76,42 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
   
     dialogRef.afterClosed().subscribe((result) => {
      // this.loadBuildingAccountListData();
+    
       if (result && result.event) {
         if (result.event === 'Add') {
-          this.addRowData(result.data);
+        //  this.addRowData(result.data);
+        this.manageActiveBuildingAccounts = result.data.isActive;
+          this.loadBuildingAccountListData();
+      
         } else if (result.event === 'Update') {
           this.updateRowData(result.data);
+          this.loadBuildingAccountListData();
         } else if (result.event === 'Delete') {
           this.deleteRowData(result.data);
+          this.loadBuildingAccountListData();
         }
       }
     });
   }
   
   addRowData(row_obj: BuildingAccountDTO): void {
-    row_obj.isActive = true;
-    this.buildingAccountService.addNewBuildingAccount(row_obj).subscribe({
-      next: (response) => {
-        this.loadBuildingAccountListData();
-        this.snackbarService.openSnackBar('Building account added successfully!', 'dismiss');
-      },
-      error: (error) => {
-        console.error('There was an error!', error);
-        this.snackbarService.openSnackBar('Failed to add building account.', 'dismiss');
-      }
-    });
+   
+    this.loadBuildingAccountListData();
+    this.manageActiveBuildingAccounts = row_obj.isActive;
+    // row_obj.isActive = true;
+    // this.buildingAccountService.addNewBuildingAccount(row_obj).subscribe({
+    //   next: (response) => {
+    //     this.snackbarService.openSnackBar('Building account added successfully!', 'dismiss');
+    //     this.loadBuildingAccountListData();
+        
+    //   },
+    //   error: (error) => {
+    //     console.error('There was an error!', error);
+    //     this.snackbarService.openSnackBar('Failed to add building account.', 'dismiss');
+    //     this.loadBuildingAccountListData();
+    //   }
+    // });
+    
   }
 
   updateRowData(row_obj: BuildingAccountDTO): boolean | any{
@@ -118,6 +130,12 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
         value.dateCreated = row_obj.dateCreated;
         value.dateLastUpdated = row_obj.dateLastUpdated;
         value.dateDeleted = row_obj.dateDeleted;
+        if (value.isActive != false) {
+          this.manageActiveBuildingAccounts = true;
+        }
+        else{
+          this.manageActiveBuildingAccounts = false;
+        }
         
       }
       this.buildingAccountService.updateBuildingAccount(row_obj).subscribe({
@@ -128,6 +146,7 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
           }
         },
         error:(error) => {
+          this.manageActiveBuildingAccounts = true;
           console.error('There was an error!', error);
         }
       });

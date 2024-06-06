@@ -125,7 +125,17 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
         value.isActive = row_obj.isActive;
         value.dateCreated = row_obj.dateCreated;
         value.dateLastUpdated = row_obj.dateLastUpdated;
+
+        value.dateDeleted = row_obj.dateDeleted;   
+        if (value.isActive != false) {
+          this.manageActiveBuildings = true;
+        }
+        else{
+          this.manageActiveBuildings = false;
+        }     
+
         value.dateDeleted = row_obj.dateDeleted;
+
       }
       this._buildingService.updateBuildingData(row_obj).subscribe({
         next: (response) => {
