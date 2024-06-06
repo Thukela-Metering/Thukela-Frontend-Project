@@ -2,7 +2,7 @@
     <mat-form-field appearance="outline" class="w-100">
       <mat-label>Select Building</mat-label>
       <mat-select formControlName="building" (selectionChange)="onBuildingChange($event.value)">
-        <mat-option *ngFor="let building of buildings" [value]="building.guid">
+        <mat-option *ngFor="let building of buildings" [value]="building.id">
           {{ building.name }}
         </mat-option>
       </mat-select>
@@ -21,6 +21,16 @@
         </div>
   
         <mat-accordion #accordion="matAccordion" multi>
+           <!-- Building -->
+           <mat-expansion-panel class="cardWithShadow">
+            <mat-expansion-panel-header>
+              <mat-panel-title class="f-w-600">
+                Building
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <app-building-dialog-content [localDataFromComponent]="selectedBuilding"></app-building-dialog-content>
+            <!-- *ngIf="transactionData.buildingDTOs?.length" -->
+          </mat-expansion-panel>
           <!-- Building Account -->
           <mat-expansion-panel class="cardWithShadow">
             <mat-expansion-panel-header>
@@ -28,7 +38,7 @@
                 Building Account
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <app-building-accounts></app-building-accounts>
+            <app-building-accounts [localDataFromComponent]="selectedBuildingAccount"></app-building-accounts>
             <!-- *ngIf="transactionData.buildingAccountDTOs?.length" -->
           </mat-expansion-panel>
   
@@ -39,19 +49,8 @@
                 Building Owner Account
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <app-building-owner-dialog-content ></app-building-owner-dialog-content>
+            <app-building-owner-dialog-content [localDataFromComponent]="selectedOwnerAccount"></app-building-owner-dialog-content>
             <!-- *ngIf="transactionData.buildingOwnerAccountDTOs?.length" -->
-          </mat-expansion-panel>
-  
-          <!-- Building -->
-          <mat-expansion-panel class="cardWithShadow">
-            <mat-expansion-panel-header>
-              <mat-panel-title class="f-w-600">
-                Building
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-            <app-building-dialog-content ></app-building-dialog-content>
-            <!-- *ngIf="transactionData.buildingDTOs?.length" -->
           </mat-expansion-panel>
   
           <!-- Person -->
@@ -61,7 +60,7 @@
                 Person
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <app-dialog-content ></app-dialog-content>
+            <app-dialog-content [localDataFromComponent]="selectedPerson"></app-dialog-content>
             <!-- *ngIf="transactionData.personDTOs?.length" -->
           </mat-expansion-panel>
         </mat-accordion>

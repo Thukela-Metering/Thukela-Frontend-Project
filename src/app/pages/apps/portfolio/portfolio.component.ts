@@ -63,7 +63,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BuildingService } from 'src/app/services/building.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAccordion } from '@angular/material/expansion';
-import { BuildingDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { BuildingAccountDTO, BuildingDTO, BuildingOwnerDTO, OperationalResultDTO, PersonDTO, TransactionDTO, UserDataDTO } from 'src/app/DTOs/dtoIndex';
 import { PortfolioService } from 'src/app/services/portfolio.service';
 
 @Component({
@@ -74,6 +74,9 @@ export class PortfolioComponent implements OnInit {
   portfolioForm: FormGroup;
   buildings: BuildingDTO[] = [];
   selectedBuilding: BuildingDTO;
+  selectedBuildingAccount: BuildingAccountDTO;
+  selectedOwnerAccount:BuildingOwnerDTO;
+  selectedPerson: UserDataDTO;
   transactionData: TransactionDTO;
 
   @ViewChild(MatAccordion) accordion: MatAccordion;
@@ -105,11 +108,16 @@ export class PortfolioComponent implements OnInit {
     });
   }
 
-  onBuildingChange(buildingGuid: string): void {
-    this.portfolioService.getPortfolioBuildingById(buildingGuid).subscribe({
+  onBuildingChange(buildingId: number): void {
+    this.portfolioService.getPortfolioBuildingById(buildingId).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response.success) {
+        console.log(response);
           this.transactionData = response.data!;
+          this.selectedBuilding = this.transactionData!.buildingDTOs![0];
+          this.selectedBuildingAccount = this.transactionData!.buildingAccountDTOs![0];
+          this.selectedOwnerAccount = this.transactionData!.buildingOwnerAccountDTOs![0];
+          this.selectedPerson =this.transactionData!.userDataDTOs![0];
         } else {
           this.snackBar.open('Failed to load building data', 'Close', { duration: 3000 });
         }

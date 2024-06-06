@@ -17,8 +17,12 @@ import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
       return response;
     }
     
-    getPortfolioBuildingById(buildingId:string):Observable<OperationalResultDTO<TransactionDTO>>{
-      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Portfolio/Building/${buildingId}`);      
+    getPortfolioBuildingById(buildingId:number):Observable<OperationalResultDTO<TransactionDTO>>{
+      var getResponse =  this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Portfolio/CompletePortfolio`, {
+        params: {
+          buildingId: buildingId
+        }
+      });      
       return getResponse;
     }
    

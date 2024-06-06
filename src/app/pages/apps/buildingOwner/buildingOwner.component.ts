@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Optional, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Optional, Inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -16,7 +16,8 @@ import { LookupValueManagerService } from 'src/app/services/lookupValueManager.s
   selector: 'app-building-owner-dialog-content',
   templateUrl: 'buildingOwner.component.html',
 })
-export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
+export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() localDataFromComponent: BuildingOwnerDTO;
   action: string;
   local_data: BuildingOwnerDTO;
   DropDownValues: LookupValueDTO[] = [];
@@ -40,7 +41,13 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
     this.local_data = { ...data };
     this.action = this.local_data.action ? this.local_data.action : "Update";
   }
-
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
+      if (this.accountForm) {
+        this.accountForm.patchValue(this.localDataFromComponent);
+      }
+    }
+  }
   ngOnInit(): void {
     this.accountForm = this.fb.group({
       name: ['', Validators.required],
@@ -65,6 +72,9 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
       this.accountForm.patchValue(this.local_data);
       this.accountForm.get('preferredCommunication')?.setValue(9);
       console.log(this.accountForm);
+    }
+    if (this.localDataFromComponent) {
+      this.accountForm.patchValue(this.localDataFromComponent);
     }
   }
 
@@ -159,7 +169,12 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
       }
     } else {
       this.mapFormValuesToLocalData();
-      this.dialogRef.close({ event: this.action, data: this.local_data });
+      if (this.dialogRef) {
+        this.dialogRef.close({ event: this.action, data: this.local_data });
+      }else
+      {
+        this.updateRowData(this.local_data);
+      }
     }
   }
 
@@ -176,6 +191,20 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy {
     this.local_data.isActive = this.accountForm.get('isActive')?.value;
     this.local_data.preferredCommunication = this.accountForm.get('preferredCommunication')?.value;
     this.local_data.additionalInformation = this.accountForm.get('additionalInformation')?.value;
+  }
+  updateRowData(row_obj: BuildingOwnerDTO): boolean | any {
+      this._buildingOwnerService.updateBuildingOwnerData(row_obj).subscribe({
+        next: (response) => {
+          if (response) {
+            console.log(response);
+            this.loadBuildingOwnerListData();
+          }
+        },
+        error: (error) => {
+          console.error('There was an error!', error);
+        }
+      });
+      return true;
   }
 
   onCancel() {
