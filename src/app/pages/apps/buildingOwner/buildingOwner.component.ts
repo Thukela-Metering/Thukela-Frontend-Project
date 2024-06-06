@@ -7,7 +7,7 @@ import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { BuildingService } from 'src/app/services/building.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { LookupValueDTO } from 'src/app/DTOs/lookupValueDTO';
 import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { LookupValueManagerService } from 'src/app/services/lookupValueManager.service';
@@ -26,7 +26,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
   private formChangesSubscription: Subscription;
   buildingFilterCtrl: FormControl = new FormControl();
   buildings: BuildingDTO[] = [];
-  filteredBuildings: BuildingDTO[] = [];
+  filteredBuildings: BuildingDTO[] = [...this.buildings];
 
   constructor(
     @Optional() public dialogRef: MatDialogRef<AppBuildingOwnerComponent>,
@@ -35,6 +35,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
     private _buildingService: BuildingService,
     private lookupValueService: LookupValueManagerService,
     private snackbarService: SnackbarService,
+    public dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingOwnerDTO,
   ) {
     this.local_data = { ...data };
@@ -52,37 +53,29 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       fax: [''],
-      contactNumber: ['', [Validators.required, Validators.pattern(/^(?:\+27|0)[6-8][0-9]{8}$/)]],
+      contactNumber: [''],
       buildingId: ['', Validators.required],
       accountNumber: [''],
-     // bank: ['', Validators.required],
-      taxable: [false],
-      address: ['', Validators.required],
-      isActive: [true],
+      bank: ['', Validators.required],
+      taxable: [false, Validators.required],
+      address: [''],
+      isActive: [''],
       preferredCommunication: ['', Validators.required],
-      additionalInformation: [''],
-      dateDeleted: [''],
+      additionalInformation: ['']
     });
 
+    // this.onPreferredCommunicationChange();
     this.getDropdownValues("Bank", "Bank");
     this.loadBuildingOwnerListData();
     this.setupBuildingFilter();
-
     if (this.data != null) {
       this.accountForm.patchValue(this.local_data);
-     
+      this.accountForm.get('preferredCommunication')?.setValue(9);
+      console.log(this.accountForm);
     }
-
-    if(this.action == "Update")
-      {
-        this.accountForm.get('buildingId')?.disable();
-        this.accountForm.get('buildingId')?.clearValidators();
-      }
-
     if (this.localDataFromComponent) {
       this.accountForm.patchValue(this.localDataFromComponent);
     }
-
   }
 
   setupBuildingFilter(): void {
@@ -133,7 +126,6 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
               const lookupValue: LookupValueDTO = new LookupValueDTO();
               lookupValue.id = item.id;
               lookupValue.name = item.name;
-              lookupValue.isActive = item.isActive;
               lookupValue.description = item.description;
               lookupValue.lookupGroupValueId = item.lookupGroupValueId;
               lookupValue.lookupGroupValueValue = item.lookupGroupValueValue;
@@ -144,8 +136,10 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
             });
           }
         }
+        console.log(response);
       },
       error => {
+        // Handle error
         console.error(error);
       }
     );
@@ -155,21 +149,20 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
     if (this.action == "Add") {
       if (this.accountForm.valid) {
         const buildingOwnerData = new BuildingOwnerDTO();
-        Object.assign(buildingOwnerData, this.accountForm.value);
-        buildingOwnerData.bank = 16;
-        buildingOwnerData.dateDeleted = undefined;
+        Object.assign(buildingOwnerData, this.accountForm.value, {
+          preferredCommunication: this.accountForm.value.preferredCommunication === 'email'
+        });
         this._buildingOwnerService.addNewBuildingOwner(buildingOwnerData).subscribe(
           response => {
             if (response.success) {
               this.snackbarService.openSnackBar(response.message, "dismiss");
               this.accountForm.reset();
               this.dialogRef.close({ event: 'Add', data: buildingOwnerData });
-              
+              this.loadBuildingOwnerListData();
             }
-            
           },
           error => {
-            this.snackbarService.openSnackBar(error.error, "dismiss");
+            this.snackbarService.openSnackBar(error, "dismiss");
             console.error('Error adding building owner:', error);
           }
         );
@@ -192,13 +185,12 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
     this.local_data.contactNumber = this.accountForm.get('contactNumber')?.value;
     this.local_data.buildingId = this.accountForm.get('buildingId')?.value;
     this.local_data.accountNumber = this.accountForm.get('accountNumber')?.value;
-    this.local_data.bank = 16;
+    this.local_data.bank = this.accountForm.get('bank')?.value;
     this.local_data.taxable = this.accountForm.get('taxable')?.value;
     this.local_data.address = this.accountForm.get('address')?.value;
     this.local_data.isActive = this.accountForm.get('isActive')?.value;
-    this.local_data.preferredCommunication = this.accountForm.get('preferredCommunication')?.value == "9"? "9":"10";
+    this.local_data.preferredCommunication = this.accountForm.get('preferredCommunication')?.value;
     this.local_data.additionalInformation = this.accountForm.get('additionalInformation')?.value;
-    this.local_data.dateDeleted = this.accountForm.get('dateDeleted')?.value;
   }
   updateRowData(row_obj: BuildingOwnerDTO): boolean | any {
       this._buildingOwnerService.updateBuildingOwnerData(row_obj).subscribe({
