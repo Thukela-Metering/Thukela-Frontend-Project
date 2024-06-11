@@ -13,6 +13,7 @@ import { SystemUserDTO } from 'src/app/DTOs/systemUserDTO';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   templateUrl: './employee.component.html',
@@ -31,7 +32,6 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
     'mobile',
     'username',
     'address',
-    'vatNo',
     'action',
   ];
   dataSource = new MatTableDataSource(this.persons);
@@ -91,7 +91,6 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
         userDataDTO.id = row_obj.id,
           userDataDTO.name = row_obj.name,
           userDataDTO.surname = row_obj.surname,
-          userDataDTO.vatNo = row_obj.vatNo,
           userDataDTO.email = row_obj.email,
           userDataDTO.mobile = row_obj.mobile,
           userDataDTO.username = row_obj.username,
@@ -119,7 +118,6 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
         value.isActive = row_obj.isActive;
         value.dateDeleted = row_obj.dateDeleted;
         value.surname = row_obj.surname;
-        value.vatNo = row_obj.vatNo;
         value.email = row_obj.email;
         value.mobile = row_obj.mobile;
         value.address = row_obj.address;
@@ -148,7 +146,6 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
           console.error('There was an error!', error);
         }
       });
-
       return true;
     });
   }
@@ -201,7 +198,8 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
     public datePipe: DatePipe,
     @Optional() public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
     private authService: AuthService,
-    private personService: PersonService,
+    private _personService: PersonService,
+    private snackbarService: SnackbarService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: UserDataDTO,
   ) {
     this.local_data = { ...data };
@@ -280,7 +278,6 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
       this.userRegistrationDTO.password = this.local_data.password;
       this.userRegistrationDTO.confirmPassword = this.local_data.confirmPassword;
       this.userRegistrationDTO.surname = this.local_data.surname;
-      this.userRegistrationDTO.vatNo = this.local_data.vatNo;
       this.userRegistrationDTO.userRole = this.local_data.userRole;
       this.userRegistrationDTO.email = this.local_data.email;
       this.userRegistrationDTO.mobile = this.local_data.mobile;
@@ -300,5 +297,35 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
   filterRoles(filter: string): void {
     const filterValue = filter ? filter.toLowerCase() : '';
     this.filteredRoles = this.DropDownValues.filter(option => option.name.toLowerCase().includes(filterValue));
+  }
+
+  addRowData(row_obj: UserDataDTO): void {
+    this.authService.register(row_obj).subscribe(
+      response => {
+        if(response)
+          {
+            this.snackbarService.openSnackBar(response.message, "dismiss");
+          }             
+      },
+      error => {
+        console.error(error);
+        this.snackbarService.openSnackBar(error.message, "dismiss");
+      }
+    );
+   
+  }
+
+  updateRowData(row_obj: UserDataDTO): boolean | any {    
+    this._personService.updateUserData(row_obj).subscribe({
+      next: (response) => {
+        if (response) {
+          this.snackbarService.openSnackBar(response.message, "dismiss");
+        }
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+        this.snackbarService.openSnackBar(error.message, "dismiss");
+      }
+    });
   }
 }

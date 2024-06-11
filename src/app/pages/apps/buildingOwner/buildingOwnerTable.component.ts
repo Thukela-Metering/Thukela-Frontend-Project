@@ -88,7 +88,7 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
           // this.addRowData(result.data);
           this.loadBuildingOwnerListData();
         } else if (result.event === 'Update') {
-          this.updateRowData(result.data);
+          //this.updateRowData(result.data);
           this.loadBuildingOwnerListData();
         } else if (result.event === 'Delete') {
           this.deleteRowData(result.data);
@@ -100,50 +100,6 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
 
   addRowData(row_obj: BuildingOwnerDTO): void {
     // Implementation for adding row
-  }
-
-  updateRowData(row_obj: BuildingOwnerDTO): boolean | any {
-    this.dataSource.data = this.dataSource.data.filter((value: BuildingOwnerDTO) => {
-      if (value.id === row_obj.id) {
-        value.accountNumber = row_obj.accountNumber;
-        value.additionalInformation = row_obj.additionalInformation;
-        value.address = row_obj.address;
-      //  value.bank = row_obj.bank;
-      value.bank = 16;
-        value.buildingId = row_obj.buildingId;
-        value.contactNumber = row_obj.contactNumber;
-        value.email = row_obj.email;
-        value.fax = row_obj.fax ?? "12312312";
-        value.id = row_obj.id;
-        value.isActive = row_obj.isActive;
-        value.name = row_obj.name;
-        value.preferredCommunication = row_obj.preferredCommunication;
-        value.taxable = row_obj.taxable;
-        value.dateCreated = row_obj.dateCreated;
-        value.dateLastUpdated = row_obj.dateLastUpdated;
-        value.dateDeleted = row_obj.dateDeleted;
-        if (value.isActive != false) {
-          this.manageActiveBuildingOwners = true;
-        }
-        else{
-          this.manageActiveBuildingOwners = false;
-        }
-      }
-      this._buildingOwnerService.updateBuildingOwnerData(row_obj).subscribe({
-        next: (response) => {
-          if (response) {
-            console.log(response);
-            this.loadBuildingOwnerListData();
-          }
-        },
-        error: (error) => {
-          this.manageActiveBuildingOwners = true;
-          console.error('There was an error!', error);
-          this.loadBuildingOwnerListData();
-        }
-      });
-      return true;
-    });
   }
 
   deleteRowData(row_obj: BuildingOwnerDTO): boolean | any {

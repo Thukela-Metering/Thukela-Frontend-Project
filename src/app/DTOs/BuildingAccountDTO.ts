@@ -8,4 +8,6 @@ export class BuildingAccountDTO extends BaseDTO {
     municipalityTwo?: string; // Optional property
     readingSlip?: boolean; // Optional property
     creditControl?: boolean; // Optional property
+    buildingTaxNumber?:string;
+    bookNumber?: string;
 }

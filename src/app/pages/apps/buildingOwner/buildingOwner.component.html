@@ -44,17 +44,7 @@
             </mat-option>
           </mat-select>
           <input matInput [formControl]="buildingFilterCtrl" placeholder="Filter buildings">
-        </mat-form-field>
-        <!-- <mat-form-field appearance="outline" class="w-100">
-          <mat-select id="buildingId" formControlName="buildingId"  required placeholder="Select a building">
-            <mat-option>
-              <ngx-mat-select-search placeholderLabel="Find building..." noEntriesFoundLabel="no matching record found" class="searchfield-class" [formControl]="buildingFilterCtrl"></ngx-mat-select-search>
-            </mat-option>
-            <mat-option *ngFor="let building of filteredBuildings" [value]="local_data.buildingId">
-              {{ building.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field> -->
+        </mat-form-field>        
       </div>
     </div>
 
@@ -119,7 +109,7 @@
 
     <div class="form-actions">
         <button mat-stroked-button color="warn" (click)="onCancel()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="!accountForm.valid">Submit</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="!accountForm.valid">{{action}}</button>
       </div>
   </form>
 </mat-dialog-content>

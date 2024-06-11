@@ -13,6 +13,7 @@ import { SystemUserDTO } from 'src/app/DTOs/systemUserDTO';
 import { BuildingService } from 'src/app/services/building.service';
 import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   templateUrl: './building.component.html',
@@ -71,90 +72,18 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result.event === 'Add') {
-        this.addRowData(result.data);
+        //  this.addRowData(result.data);
+        this.loadBuildingListData();
       } else if (result.event === 'Update') {
-
-        this.updateRowData(result.data);
+        this.loadBuildingListData();
+        //  this.updateRowData(result.data);
       } else if (result.event === 'Delete') {
         this.deleteRowData(result.data);
       }
     });
   }
-
-  // tslint:disable-next-line - Disables all
-  addRowData(row_obj: BuildingDTO): void {
-
-    this._buildingService.addNewBuilding(row_obj).subscribe(
-      response => {
-        // Handle successful registration
-        console.log(response);
-        //////////////////////////////////////////////////////
-        var userDataDTO = new BuildingDTO();
-        userDataDTO.id = row_obj.id,
-          userDataDTO.name = row_obj.name,
-          userDataDTO.nSquareMetersame = row_obj.nSquareMetersame,
-          userDataDTO.sdgMeterZone = row_obj.sdgMeterZone,
-          userDataDTO.address = row_obj.address,
-          userDataDTO.notes = row_obj.notes,
-          this.buildings.push(userDataDTO);
-        ////////////////////////////////////////////////////        
-        console.log(row_obj);
-        this.manageActiveBuildings = row_obj.isActive
-        this.loadBuildingListData();
-      },
-      error => {
-        // Handle error
-        console.error(error);
-      }
-    );
-    this.dialog.open(AppAddBuildingComponent);
-  }
-
-  // tslint:disable-next-line - Disables all
-  updateRowData(row_obj: BuildingDTO): boolean | any {
-    this.dataSource.data = this.dataSource.data.filter((value: BuildingDTO) => {
-      if (value.id === row_obj.id) {
-        value.name = row_obj.name;
-        value.id = row_obj.id;
-        value.nSquareMetersame = row_obj.nSquareMetersame;
-        value.sdgMeterZone = row_obj.sdgMeterZone;
-        value.address = row_obj.address;
-        value.notes = row_obj.notes;
-        value.isActive = row_obj.isActive;
-        value.dateCreated = row_obj.dateCreated;
-        value.dateLastUpdated = row_obj.dateLastUpdated;
-
-        value.dateDeleted = row_obj.dateDeleted;   
-        if (value.isActive != false) {
-          this.manageActiveBuildings = true;
-        }
-        else{
-          this.manageActiveBuildings = false;
-        }     
-
-        value.dateDeleted = row_obj.dateDeleted;
-
-      }
-      this._buildingService.updateBuildingData(row_obj).subscribe({
-        next: (response) => {
-          if (response) {
-            console.log(response);
-            this.loadBuildingListData();
-          }
-        },
-        error: (error) => {
-          console.error('There was an error!', error);
-        }
-      });
-      return true;
-    });
-  }
-
   // tslint:disable-next-line - Disables all
   deleteRowData(row_obj: BuildingDTO): boolean | any {
-    // this.dataSource.data = this.dataSource.data.filter((value: any) => {
-    //   return value.id !== row_obj.id;
-    // });
     row_obj.isActive = false;
     row_obj.dateDeleted = new Date();
     row_obj.dateDeleted.setHours(0, 0, 0, 0);
@@ -176,17 +105,15 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
 }
 
 @Component({
-  // tslint:disable-next-line: component-selector
   selector: 'app-building-dialog-content',
   templateUrl: 'building-dialog-content.html',
 })
-// tslint:disable-next-line: component-class-suffix
+
 export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
 
   @Input() localDataFromComponent: BuildingDTO;
   action: string;
   buildingDTO: BuildingDTO = new BuildingDTO();
-  // tslint:disable-next-line - Disables all
   local_data: BuildingDTO;
   DropDownValues: LookupValueDTO[] = [];
   constructor(
@@ -196,6 +123,7 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
     public datePipe: DatePipe,
     private authService: AuthService,
     private personService: PersonService,
+    private snackbarService: SnackbarService,
 
   ) {
     this.local_data = { ...data };
@@ -215,8 +143,6 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
       (response: OperationalResultDTO<TransactionDTO>) => {
         if (response.success) {
           if (response.data != null) {
-
-
             this.DropDownValues = response.data.lookupValueDTOs!.map((item: any) => {
               const lookupValue: LookupValueDTO = new LookupValueDTO();
               lookupValue.id = item.id;
@@ -249,32 +175,55 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
       this.buildingDTO.address = this.local_data.address;
       this.buildingDTO.notes = this.local_data.notes;
       this.buildingDTO.isActive = this.local_data.isActive;
-      // this.buildingDTO.dateCreated = this.local_data.dateLastUpdated;
-      // this.buildingDTO.dateDeleted = this.local_data.dateDeleted;   
+      this.addRowData(this.buildingDTO);
       if (this.dialogRef) {
         this.dialogRef.close({ event: this.action, data: this.local_data });
       }
     } else {
+      this.updateRowData(this.local_data);
       if (this.dialogRef) {
         this.dialogRef.close({ event: this.action, data: this.local_data });
-      }else{
-        this.updateRowData(this.local_data);
       }
     }
   }
   updateRowData(row_obj: BuildingDTO): boolean | any {
-      this._buildingService.updateBuildingData(row_obj).subscribe({
-        next: (response) => {
-          if (response) {
-            console.log(response);        
-          }
-        },
-        error: (error) => {
-          console.error('There was an error!', error);
+    this._buildingService.updateBuildingData(row_obj).subscribe({
+      next: (response) => {
+        if (response) {
+          console.log(response);
+          this.snackbarService.openSnackBar(response.message, "dismiss");
         }
-      });
-      return true;
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+        this.snackbarService.openSnackBar(error.message, "dismiss");
+      }
+    });
+    return true;
   }
+  addRowData(row_obj: BuildingDTO): void {
+    this._buildingService.addNewBuilding(row_obj).subscribe(
+      response => {
+        console.log(response);
+        var userDataDTO = new BuildingDTO();
+        userDataDTO.id = row_obj.id,
+          userDataDTO.name = row_obj.name,
+          userDataDTO.nSquareMetersame = row_obj.nSquareMetersame,
+          userDataDTO.sdgMeterZone = row_obj.sdgMeterZone,
+          userDataDTO.address = row_obj.address,
+          userDataDTO.notes = row_obj.notes,
+          
+        this.snackbarService.openSnackBar(response.message, "dismiss");
+        console.log(row_obj);
+      },
+      error => {
+        this.snackbarService.openSnackBar(error.message, "dismiss");
+        console.error(error);
+      }
+    );
+  }
+
+
   closeDialog(): void {
     this.dialogRef.close({ event: 'Cancel' });
   }

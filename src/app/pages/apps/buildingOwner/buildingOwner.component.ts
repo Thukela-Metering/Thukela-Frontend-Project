@@ -198,10 +198,12 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
           if (response) {
             console.log(response);
             this.loadBuildingOwnerListData();
+            this.snackbarService.openSnackBar(response.message, "dismiss");
           }
         },
         error: (error) => {
           console.error('There was an error!', error);
+          this.snackbarService.openSnackBar(error.message, "dismiss");
         }
       });
       return true;

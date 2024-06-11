@@ -7,7 +7,6 @@ import { BuildingService } from 'src/app/services/building.service';
 import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { da } from 'date-fns/locale';
 
 @Component({
   selector: 'app-building-accounts',
@@ -33,25 +32,33 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingDTO,
   ) {
     this.local_data = { ...data };
-    this.action = this.local_data.action ? this.local_data.action : "Update";
+    if(this.data != null){
+      this.action = this.local_data.action ? this.local_data.action : "Update";
+    }else
+    {
+      this.action = "Add";
+    }
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
       if (this.accountsForm) {
         this.accountsForm.patchValue(this.localDataFromComponent);
       }
-
+      this.action = this.localDataFromComponent.action ? this.localDataFromComponent.action : "Update";
     }
   }
+
   ngOnInit(): void {
     this.accountsForm = this.fb.group({
       buildingId: ['', Validators.required],
       municipalityOne: ['', Validators.required],
       municipalityTwo: [''],
-      readingSlip: ['', Validators.required],
-      creditControl: [''],
-      centerOwner: ['', Validators.required],
-      isActive: [''],
+      readingSlip: [false, Validators.required], // Initialize as boolean
+      creditControl: [false], // Initialize as boolean
+      isActive: [false],
+      buildingTaxNumber: [''],
+      bookNumber: ['',Validators.required],
     });
 
     this.loadBuildingListData();
@@ -61,6 +68,7 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
     ).subscribe(value => {
       this.filterBuildings(value || ''); // Use an empty string if value is falsy
     });
+
     if (this.data != null) {
       this.accountsForm.patchValue(this.data);
     }
@@ -96,7 +104,10 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       some.municipalityTwo = this.accountsForm.get("municipalityTwo")?.value;
       some.readingSlip = this.accountsForm.get("readingSlip")?.value;
       some.creditControl = this.accountsForm.get("creditControl")?.value;
-      some.isActive = true;
+      some.isActive = this.accountsForm.get("isActive")?.value;
+      some.buildingTaxNumber = this.accountsForm.get("buildingTaxNumber")?.value;
+      some.bookNumber = this.accountsForm.get("bookNumber")?.value;
+
       console.log("the value in onSubmit: ");
       console.log(some);
       this._buildingAccountService.addNewBuildingAccount(some).subscribe(
@@ -123,6 +134,7 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       }
     }
   }
+
   private mapFormValuesToLocalData(): void {
     this.local_data.buildingId = this.accountsForm.get("buildingId")?.value;
     this.local_data.municipalityOne = this.accountsForm.get("municipalityOne")?.value;
@@ -130,24 +142,29 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
     this.local_data.readingSlip = this.accountsForm.get("readingSlip")?.value;
     this.local_data.creditControl = this.accountsForm.get("creditControl")?.value;
     this.local_data.isActive = this.accountsForm.get("isActive")?.value;
+    this.local_data.buildingTaxNumber = this.accountsForm.get("buildingTaxNumber")?.value;
+    this.local_data.bookNumber = this.accountsForm.get("bookNumber")?.value;
   }
+
   onCancel() {
     // Reset the form or navigate away
     this.accountsForm.reset();
     this.dialogRef.close({ event: 'Cancel' });
   }
+
   updateRowData(row_obj: BuildingAccountDTO): boolean | any {
     this.buildingAccountService.updateBuildingAccount(row_obj).subscribe({
       next: (response) => {
         if (response) {
           console.log(response);
+          this.snackbarService.openSnackBar(response.message, "dismiss");
         }
       },
       error: (error) => {
         console.error('There was an error!', error);
+        this.snackbarService.openSnackBar(error.message, "dismiss");
       }
     });
     return true;
-
   }
 }

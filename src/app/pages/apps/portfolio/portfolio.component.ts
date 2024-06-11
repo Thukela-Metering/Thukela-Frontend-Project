@@ -16,7 +16,7 @@ export class PortfolioComponent implements OnInit {
   buildings: BuildingDTO[] = [];
   selectedBuilding: BuildingDTO;
   selectedBuildingAccount: BuildingAccountDTO;
-  selectedOwnerAccount:BuildingOwnerDTO;
+  selectedOwnerAccount: BuildingOwnerDTO;
   selectedPerson: UserDataDTO;
   transactionData: TransactionDTO;
 
@@ -25,9 +25,9 @@ export class PortfolioComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private buildingService: BuildingService,
-    private portfolioService:PortfolioService,
+    private portfolioService: PortfolioService,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.portfolioForm = this.fb.group({
@@ -53,12 +53,29 @@ export class PortfolioComponent implements OnInit {
     this.portfolioService.getPortfolioBuildingById(buildingId).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response.success) {
-        console.log(response);
+          console.log(response);
           this.transactionData = response.data!;
           this.selectedBuilding = this.transactionData!.buildingDTOs![0];
-          this.selectedBuildingAccount = this.transactionData!.buildingAccountDTOs![0];
-          this.selectedOwnerAccount = this.transactionData!.buildingOwnerAccountDTOs![0];
-          this.selectedPerson =this.transactionData!.userDataDTOs![0];
+          //  this.transactionData!.buildingAccountDTOs! = [];
+          if (this.transactionData!.buildingAccountDTOs![0] == null) {
+            this.selectedBuildingAccount = new BuildingAccountDTO();
+            this.selectedBuildingAccount.action = "Add";
+          } else {
+            this.selectedBuildingAccount = this.transactionData!.buildingAccountDTOs![0];
+            this.selectedBuildingAccount.action = "Update";
+          }
+          if (this.transactionData!.buildingOwnerAccountDTOs![0] == null) {
+            this.selectedOwnerAccount.action = "Add";
+          } else {
+            this.selectedOwnerAccount = this.transactionData!.buildingOwnerAccountDTOs![0];
+            this.selectedOwnerAccount.action = "Update";
+          }
+          if (this.transactionData!.userDataDTOs![0] == null) {
+            this.selectedPerson.action = "Add";
+          } else {
+            this.selectedPerson = this.transactionData!.userDataDTOs![0];
+            this.selectedPerson.action = "Update";
+          }
         } else {
           this.snackBar.open('Failed to load building data', 'Close', { duration: 3000 });
         }
