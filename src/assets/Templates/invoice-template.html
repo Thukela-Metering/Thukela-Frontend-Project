@@ -30,6 +30,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            page-break-inside: avoid;
         }
         .header {
             margin-bottom: 20px;
@@ -45,7 +46,8 @@
             text-align: left;
             font-size: small;
             justify-content: flex-start;
-            margin-top: 20px; 
+            margin-top: 20px;
+            page-break-inside: avoid;
         }
         .company-details p {
             margin: 0 0 5px;
@@ -62,16 +64,18 @@
             font-size: 14px;
             width: 30%;
             display: flex;
+            page-break-inside: avoid;
         }
         .invoice-details .titles, .invoice-details .values {
-            width: 50%;
-            padding: 5px;
+            width: 95%;
+            padding: 1px;
         }
         .invoice-details .titles {
             background-color: #e0e0e0; /* Shading for titles */
         }
         .invoice-details p {
-            margin: 5px 0;
+            text-align: left;
+            margin: 3px 0;
         }
         .due-date {
             font-weight: bold;
@@ -85,6 +89,7 @@
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
+            page-break-inside: avoid;
         }
         .bill-from {
             width: 48%;
@@ -92,22 +97,24 @@
         .bill-to {
             width: 48%;
             text-align: left;
-            margin-top: 20px; 
+            margin-top: 20px;
         }
         .bill-to-content {
             text-align: left; /* Ensure content is aligned to the left */
         }
         .bill-to-content p {
-            margin: 0; 
+            margin: 0;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            page-break-inside: auto;
         }
         th, td {
             padding: 8px;
             text-align: left;
+            page-break-inside: avoid;
         }
         th {
             background-color: #8aa8ff;
@@ -115,47 +122,60 @@
         tr:nth-child(even) {
             background-color: #e0e0e0;
         }
+        .itemsHeadings {
+            font-size: 14px;
+        }
+        .items {
+            font-size: 12px;
+        }
         .summary {
             width: 100%;
             margin-top: 20px;
             display: flex;
             justify-content: flex-end;
             flex-direction: column;
-            align-items: flex-end; /* Align items to the right */
+            align-items: flex-end;
+            page-break-inside: avoid;
         }
         .summary-table {
             width: 40%;
         }
         .summary-table th, .summary-table td {
-            text-align: center;
+            text-align: right;
             padding: 5px;
             border: none;
         }
         .summary-table th {
-            font-size: 12px; 
+            font-size: 12px;
         }
         .summary-table td {
-            font-size: 12px; 
+            font-size: 12px;
         }
         .grand-total-wrapper {
             width: 40%;
             display: flex;
             justify-content: space-between;
             margin-top: 10px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            page-break-inside: avoid;
         }
         .grand-total-label {
             font-size: 18px;
             font-weight: bold;
-            margin-left: 7%;
-            text-align: right;
-            color: #8aa8ff;
+            text-align: left;
+            color: #000000;
         }
         .grand-total-value {
-            font-size: 18px; 
+            font-size: 18px;
             font-weight: bold;
-            color: #8aa8ff;
-            text-align: left;
-            width: 100px;
+            color: #000000;
+            text-align: right;
+            margin-right: 2%;
+        }
+        .note {
+            padding-top: 10mm;
+            font-size: 12px;
         }
         .footer {
             position: absolute;
@@ -163,6 +183,7 @@
             width: calc(100% - 20mm);
             padding: 10mm;
             box-sizing: border-box;
+            page-break-inside: avoid;
         }
         .footer p {
             text-align: center;
@@ -187,7 +208,7 @@
             </div>
             <div class="invoice-details">
                 <div class="titles">
-                    <p>Tax Invoice #:</p>
+                    <p>Ref #:</p>
                     <p>VAT No:</p>
                     <p>Invoice Date:</p>
                     <p class="due-date">Due Date:</p>
@@ -200,34 +221,36 @@
                 </div>
             </div>
         </div>
-        
         <div class="bill-section">
             <div class="bill-to">
                 <h3>Bill To</h3>
                 <div class="bill-to-content">
                     <p>{{customerName}}</p>
                     <p>{{customerAddress}}</p>
-                    <p>{{customerCityZip}}</p>
                     <p>{{customerPhone}}</p>
                     <p>{{customerEmail}}</p>
+                    <p>{{taxNumber}}</p>
                 </div>
             </div>
         </div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Unit Price</th>
-                    <th>Units</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{items}}
-            </tbody>
-        </table>
-        
+        <div>
+            <table>
+                <thead>
+                    <tr class="itemsHeadings">
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Unit Price</th>
+                        <th>Units</th>
+                        <th>Discount</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody class="items">
+                    {{items}}
+                    <br>
+                </tbody>
+            </table>
+        </div>
         <div class="summary">
             <table class="summary-table">
                 <tr>
@@ -235,12 +258,12 @@
                     <td>{{subtotal}}</td>
                 </tr>
                 <tr>
-                    <th>VAT:</th>
-                    <td>{{vat}}</td>
-                </tr>
-                <tr>
                     <th>Discount:</th>
                     <td>{{discount}}</td>
+                </tr>
+                <tr>
+                    <th>VAT(15%):</th>
+                    <td>{{vat}}</td>
                 </tr>
             </table>
             <div class="grand-total-wrapper">
@@ -248,12 +271,14 @@
                 <span class="grand-total-value">{{grandTotal}}</span>
             </div>
         </div>
-        
+        <div class="note">
+            {{note}}
+        </div>
         <div class="footer">
             <p>Website: www.thukelametering.co.za</p>
-            <p>Phone: (123)456-7890</p>
+            <p>Phone: (123) 456-7890</p>
             <p>Email: info@thukela.co.za</p>
         </div>
-    </div>
+    </div>      
 </body>
 </html>

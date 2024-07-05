@@ -25,6 +25,12 @@ export class BuildingAccountService {
       return getResponse;
     }
   }
+  getBuildingAccountByBuildingId(buildingId:number):Observable<OperationalResultDTO<TransactionDTO>>{
+    {
+      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount/Building/${buildingId}`);
+      return getResponse;
+    }
+  }
   addNewBuildingAccount(buildingAccountToSave:BuildingAccountDTO):Observable<OperationalResultDTO<TransactionDTO>>{
     {
     var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount`,buildingAccountToSave);

@@ -70,6 +70,11 @@ export const navItems: NavItem[] = [
         iconName: 'point',
         route: 'apps/invoice',     
       },
+      {
+        displayName: 'Credit Note',
+        iconName: 'point',
+        route: 'apps/creditNote',     
+      },
     ],
   },
   

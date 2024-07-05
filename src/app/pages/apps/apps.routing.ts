@@ -12,6 +12,7 @@ import { AppBuildingAccountTableComponent } from './building-account/building-ac
 import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
 import { AppInvoiceListComponent } from './invoice/invoice.component';
+import { CreditNoteTableComponent } from './credit-note/credit-note-table.component';
 
 
 export const AppsRoutes: Routes = [
@@ -93,7 +94,17 @@ export const AppsRoutes: Routes = [
           ],
         },
       },
-
+      {
+        path: 'creditNote',
+        component: CreditNoteTableComponent,
+        data: {
+          title: 'Credit Notes',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Credit Notes' },
+          ],
+        },
+      },
       {
         path: 'building/Portfolio',
         component: PortfolioComponent,

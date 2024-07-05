@@ -1,11 +1,10 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, ChangeDetectorRef, AfterViewInit, QueryList, ViewChildren, PipeTransform, ChangeDetectionStrategy, Pipe } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, ChangeDetectorRef, AfterViewInit, Pipe, PipeTransform } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { BuildingOwnerDTO, BuildingAccountDTO, InvoiceDTO, PaymentStatus } from 'src/app/DTOs/dtoIndex';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import { PdfPreviewComponent } from './pdf-preview/pdf-preview.component';
 import { UserPreferencesService } from 'src/app/services/user-preferences.service';
 import { ConfirmDownloadDialogComponent } from '../confirm-download-dialog.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -16,19 +15,24 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 import { PDFDocument } from 'pdf-lib';
 import { CreditNoteComponent } from '../credit-note/credit-note.component';
 import { LineItemDTO } from 'src/app/DTOs/LineItemDTO';
+import { CreditNoteDTO } from 'src/app/DTOs/CreditNoteDTO';
+import { PdfPreviewComponent } from '../invoice/pdf-preview/pdf-preview.component';
+import { AppInvoiceViewComponent } from '../invoice/view-invoice.component';
+import { CreditNoteService } from 'src/app/services/credit-note.service';
 
 @Component({
-  selector: 'app-invoice-view',
-  templateUrl: './view-invoice.component.html',
-  changeDetection: ChangeDetectionStrategy.Default,
+  selector: 'app-credit-note-view',
+  templateUrl: './credit-note-view.component.html',
 })
-export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
+export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   itemDetail: InvoiceDTO;
   invoiceDetail: InvoiceDTO;
   retrievedBuildings: BuildingOwnerDTO[] = [];
   retrievedAccounts: BuildingAccountDTO[] = [];
+  creditNoteDetail: CreditNoteDTO | null = null;
+  retreivedCreditNotes: CreditNoteDTO[] = [];
   dataSource: MatTableDataSource<LineItemDTO>;
-  displayedColumns: string[] = ['itemName', 'Description', 'unitPrice', 'units', 'lineDiscount', 'itemTotal'];
+  displayedColumns: string[] = ['itemName', 'Description', 'unitPrice', 'units', 'lineDiscount', 'itemTotal', 'creditTotal'];
   pdfDataUrl: string = '';
   foundOwnerAccount: BuildingOwnerDTO | undefined;
   showPdfPreview: boolean = false;
@@ -46,6 +50,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
     private _emailService: CommunicationService,
     private snackbarService: SnackbarService,
     private _buildingAccountService: BuildingAccountService,
+    private _CreditNoteService: CreditNoteService,
     private userPreferencesService: UserPreferencesService
   ) {
     this.invoiceDetail = data;
@@ -59,6 +64,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.loadBuildingOwnerListData();
     this.loadBuildingAccount();
+    this.loadCreditNoteDetail(this.creditNoteDetail?.guid || " ");
   }
 
   ngAfterViewInit(): void {}
@@ -103,6 +109,17 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
         this.retrievedAccounts = response.data?.buildingAccountDTOs ?? [];
       }
     })
+  }
+
+  loadCreditNoteDetail(id: string): void {
+    this._CreditNoteService.getCreditNoteByGuid(id).subscribe({
+      next: (response: any) => {
+        this.retreivedCreditNotes = response;
+      },
+      error: (error) => {
+        console.error('There was an error fetching credit note details!', error);
+      }
+    });
   }
 
   downloadInvoice(): void {

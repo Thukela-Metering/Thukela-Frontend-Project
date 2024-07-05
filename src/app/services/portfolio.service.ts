@@ -6,29 +6,35 @@ import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
 
 @Injectable({
     providedIn: 'root'
-  })
-  export class PortfolioService {
+})
+export class PortfolioService {
     constructor(private http: HttpClient) { }
 
     private apiUrl = 'http://localhost:80/api';
-  
-    updateBuildingData(buildingData:BuildingDTO):Observable<OperationalResultDTO<TransactionDTO>>{
-      var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building/${buildingData.id}`,buildingData)
-      return response;
+
+    updateBuildingData(buildingData: BuildingDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+        var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building/${buildingData.id}`, buildingData);
+        return response;
     }
-    
-    getPortfolioBuildingById(buildingId:number):Observable<OperationalResultDTO<TransactionDTO>>{
-      var getResponse =  this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Portfolio/CompletePortfolio`, {
-        params: {
-          buildingId: buildingId
-        }
-      });      
-      return getResponse;
+
+    getPortfolioBuildingById(buildingId: number): Observable<OperationalResultDTO<TransactionDTO>> {
+        var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Portfolio/CompletePortfolio`, {
+            params: {
+                buildingId: buildingId
+            }
+        });
+        return getResponse;
     }
-   
-    deleteBuilding(BuildingData:BuildingDTO): Observable<OperationalResultDTO<TransactionDTO>>{
-      var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building/delete/${BuildingData.id}`,BuildingData)
-      return response;
+
+    deleteBuilding(BuildingData: BuildingDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+        var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building/delete/${BuildingData.id}`, BuildingData);
+        return response;
     }
-    
-  }
+
+    getBuildingOwnerAccountById(id: number, isActive: boolean): Observable<OperationalResultDTO<TransactionDTO>> {
+        const params = new HttpParams()
+            .set('isActive', isActive.toString());
+
+        return this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingOwnerAccount/${id}`, { params });
+    }
+}

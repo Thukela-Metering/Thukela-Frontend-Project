@@ -1,5 +1,7 @@
 import { AuthenticationResponseDTO } from "./AuthenticationResponseDTO";
 import { BuildingAccountDTO } from "./BuildingAccountDTO";
+import { CreditNoteDTO } from "./CreditNoteDTO";
+import { InvoiceDTO } from "./InvoiceDTO";
 import { BuildingDTO } from "./buildingDTO";
 import { BuildingOwnerDTO } from "./buildingOwnerDTO";
 import { BuildingRepresentativeLinkDTO } from "./buildingRepLinkDTO";
@@ -32,6 +34,8 @@ export class TransactionDTO {
     systemUserDTOs?: SystemUserDTO[];
     userDataDTOs?: UserDataDTO[];
     userLoginDTOs?: userLoginDTO[];
+    creditNoteDTOs?: CreditNoteDTO[];
+    invoicesDTOs?: InvoiceDTO[];
 
     stringResponseProperty?: string;
     intResponseProperty?: number;

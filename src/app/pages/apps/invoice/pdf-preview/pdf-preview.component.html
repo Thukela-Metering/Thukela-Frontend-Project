@@ -1,6 +1,7 @@
 <style>
     .pdf-container {
       width: 100%;
+      overflow: hidden; 
       height: 100%;
       display: flex;
       justify-content: center;
@@ -9,13 +10,13 @@
     }
     iframe {
       width: 100%;
+      overflow: hidden;
       height: 100%;
-      border: none;
     }
   </style>
   
   <div class="pdf-container">
-    <iframe id="pdfIframe" [src]="pdfDataUrl" frameborder="0"></iframe>
+    <iframe style="overflow: hidden;" id="pdfIframe" [src]="pdfDataUrl"></iframe>
   </div>
   
   <mat-dialog-actions align="end">
