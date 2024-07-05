@@ -4,7 +4,45 @@
   flex-direction: column;
   align-items: flex-start; /* Aligns the content to the left */
 }
+//////////Global search styling////////////////
+.search-item {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  cursor: pointer; /* Hand icon */
+  color: white; /* Ensure text is white and readable */
+  z-index: 2; /* Ensure the text is above the pseudo-element */
+}
 
+.search-item::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: #3D52A0; /* New background color */
+  transition: transform 1.0s, opacity 0.5s;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  z-index: 1; /* Ensure the pseudo-element is behind the text */
+}
+
+.search-item:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.ripple-wrapper {
+  position: relative;
+  z-index: 3; /* Ensure the ripple wrapper is above the pseudo-element */
+}
+
+mat-card-content {
+  position: relative;
+  z-index: 4; /* Ensure the text is always on top */
+}
+//////////Global search styling end////////////////
 .radio-group-label {
   margin-bottom: 8px; /* Space between label and radio buttons */
   font-weight: bold; /* Optional: makes the label bold */
@@ -18,7 +56,18 @@
   justify-content: space-between;
   margin-top: 20px; /* Adds some space above the button row */
 }
+.mat-card-content .table-responsive {
+  overflow-x: auto;
+}
 
+.mat-card-content .row.justify-content-end {
+  margin-right: 0;
+  flex-wrap: nowrap;
+}
+
+.mat-card-content .col-auto {
+  padding-right: 0;
+}
 .dark-theme {
   $textPrimary: #eaeff4;
   $textSecondary: #7c8fac;

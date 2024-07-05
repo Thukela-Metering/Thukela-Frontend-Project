@@ -41,6 +41,9 @@ import { LookupValueManagerComponent } from './lookupValueManager/lookupValueMan
 import { AppInvoiceListComponent } from './invoice/invoice.component';
 import { AppAddInvoiceComponent } from './invoice/add-invoice.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
+import { AppStatementScreenComponent } from './statement/statement.component';
+import { SearchComponent } from './seachComponent/filterSearch.component';
+import { PaymentComponent } from './payment/payment.component';
 
 
 
@@ -86,6 +89,9 @@ import { PortfolioComponent } from './portfolio/portfolio.component';
     LookupValueManagerComponent,
     AppBuildingRepresentativeLinkComponent,
     PortfolioComponent,
+    AppStatementScreenComponent,
+    SearchComponent,
+    PaymentComponent
   ],
   providers: [DatePipe],
 })

@@ -70,6 +70,16 @@ export const navItems: NavItem[] = [
         iconName: 'point',
         route: 'apps/invoice',     
       },
+      {
+        displayName: 'Statement Screen',
+        iconName: 'point',
+        route: 'apps/statement',     
+      },
+      {
+        displayName: 'Search Screen',
+        iconName: 'point',
+        route: 'apps/statementSearch',     
+      },
     ],
   },
   

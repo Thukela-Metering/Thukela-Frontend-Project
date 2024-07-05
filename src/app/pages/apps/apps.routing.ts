@@ -12,6 +12,9 @@ import { AppBuildingAccountTableComponent } from './building-account/building-ac
 import { LookupValueManagerComponent } from './lookupValueManager/lookupValueManger.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
 import { AppInvoiceListComponent } from './invoice/invoice.component';
+import { AppStatementScreenComponent } from './statement/statement.component';
+import { SearchComponent } from './seachComponent/filterSearch.component';
+import { PaymentComponent } from './payment/payment.component';
 
 
 export const AppsRoutes: Routes = [
@@ -72,7 +75,8 @@ export const AppsRoutes: Routes = [
             { title: 'Building Account' },
           ],
         },
-      },{
+      },
+      {
         path: 'building/buildingPropertyGroup',
         component: LookupValueManagerComponent,
         data: {
@@ -82,7 +86,8 @@ export const AppsRoutes: Routes = [
             { title: 'Building Property Group' },
           ],
         },
-      },{
+      },
+      {
         path: 'invoice',
         component: AppInvoiceListComponent,
         data: {
@@ -93,7 +98,39 @@ export const AppsRoutes: Routes = [
           ],
         },
       },
-
+      {
+        path: 'statement',
+        component: AppStatementScreenComponent,
+        data: {
+          title: 'Statement',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Invoicing' },
+          ],
+        },
+      },
+      {
+        path: 'statementSearch',
+        component: SearchComponent,
+        data: {
+          title: 'search',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Filter' },
+          ],
+        },
+      },
+      {
+        path: 'payment/:id',
+        component: PaymentComponent,
+        data: {
+          title: 'Payment',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Payment' },
+          ],
+        },
+      },
       {
         path: 'building/Portfolio',
         component: PortfolioComponent,
@@ -105,7 +142,6 @@ export const AppsRoutes: Routes = [
           ],
         },
       },
-
     ],
   },
 ];

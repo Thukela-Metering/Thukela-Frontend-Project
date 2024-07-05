@@ -12,60 +12,50 @@ import { OperationalResultDTO, TransactionDTO } from '../DTOs/dtoIndex';
   providedIn: 'root'
 })
 export class AuthService {
-  isauthenticated:boolean = false;
-  private apiUrl = 'http://localhost:80/api'; // Replace with your API URL
+  isauthenticated: boolean = false;
+  private apiUrl = 'http://102.214.9.97/api'; // Replace with your API URL
 
   constructor(private http: HttpClient) { }
 
   login(credentials: userLoginDTO): Observable<any> {
-    var postResponse =this.http.post(`${this.apiUrl}/auth/login`, credentials);
-    return postResponse;
+    return this.http.post(`${this.apiUrl}/auth/login`, credentials);
   }
+
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/signout`, {});
   }
 
-  checkIfIsLoggedIn():boolean
-  {
-    var token = localStorage.getItem('token');
-    if(token != null && token !='')
-    {
-      this.isauthenticated = true;
-    }else
-    {
-      this.isauthenticated = false;    
-    }
+  checkIfIsLoggedIn(): boolean {
+    const token = localStorage.getItem('token');
+    this.isauthenticated = token !== null && token !== '';
     return this.isauthenticated;
   }
 
-  register(userData: UserDataDTO): Observable<OperationalResultDTO<TransactionDTO>>{
-    var postResponse =  this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Auth/register`, userData);
-    return postResponse;
-  }
-getLookupValues(): Observable<OperationalResultDTO<TransactionDTO>> {
-  var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles`)
-  return getResponse;
-}
-  getGroupLookups(): Observable<OperationalResultDTO<TransactionDTO>> {
-  var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/Groups`)
-  return getResponse;
-  }
-  getListLookups(): Observable<OperationalResultDTO<TransactionDTO>>{
-    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/Lists`)
-  return getResponse;
-  }
-  saveNewGroup(dataToSave:LookupGroupDTO): Observable<OperationalResultDTO<TransactionDTO>> {
-    var saveResult = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/SaveNewGroup`, dataToSave);
-    return saveResult;
-  }
-  saveNewList(dataToSave:LookupListDTO): Observable<OperationalResultDTO<TransactionDTO>> {
-    var saveResult = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/SaveNewList`, dataToSave);
-    return saveResult;
+  register(userData: UserDataDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    return this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Auth/register`, userData);
   }
 
-  saveNewLookupValue(dataToSave:LookupValueDTO): Observable<OperationalResultDTO<TransactionDTO>> 
-  {
-    var saveResult = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/SaveLookupValue`, dataToSave);
-    return saveResult;
+  getLookupValues(): Observable<OperationalResultDTO<TransactionDTO>> {
+    return this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles`);
+  }
+
+  getGroupLookups(): Observable<OperationalResultDTO<TransactionDTO>> {
+    return this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/Groups`);
+  }
+
+  getListLookups(): Observable<OperationalResultDTO<TransactionDTO>> {
+    return this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/Lists`);
+  }
+
+  saveNewGroup(dataToSave: LookupGroupDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    return this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/SaveNewGroup`, dataToSave);
+  }
+
+  saveNewList(dataToSave: LookupListDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    return this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/SaveNewList`, dataToSave);
+  }
+
+  saveNewLookupValue(dataToSave: LookupValueDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    return this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Roles/SaveLookupValue`, dataToSave);
   }
 }

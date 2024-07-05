@@ -18,3 +18,7 @@ export * from './userDataDTO';
 export * from './userLoginDTO';
 export * from './buildingOwnerDTO';
 export * from './InvoiceDTO';
+export * from './StatementItemDTO';
+export * from './StatementFIlterDTO';
+export * from './searchResult.DTO';
+export * from './paymentInvoiceItemDTO'
