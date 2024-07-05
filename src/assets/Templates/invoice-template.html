@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 210mm;
+            height: 297mm;
+            box-sizing: border-box;
+            position: relative;
+        }
+        #invoice {
+            width: 190mm;
+            padding: 10mm;
+            margin: auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            position: relative;
+            min-height: 100%;
+            padding-bottom: 50mm; /* Space for footer */
+            box-sizing: border-box;
+        }
+        .header, .footer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .header {
+            margin-bottom: 20px;
+        }
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-right: 20px;
+        }
+        .company-details {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            font-size: small;
+            justify-content: flex-start;
+            margin-top: 20px; 
+        }
+        .company-details p {
+            margin: 0 0 5px;
+        }
+        .invoice-title {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .invoice-details {
+            text-align: right;
+            border: 1px solid #000000;
+            padding: 10px;
+            font-size: 14px;
+            width: 30%;
+            display: flex;
+        }
+        .invoice-details .titles, .invoice-details .values {
+            width: 50%;
+            padding: 5px;
+        }
+        .invoice-details .titles {
+            background-color: #e0e0e0; /* Shading for titles */
+        }
+        .invoice-details p {
+            margin: 5px 0;
+        }
+        .due-date {
+            font-weight: bold;
+            color: #7e0000;
+            font-size: 16px;
+        }
+        h1, h2, h3, p {
+            margin: 0 0 10px;
+        }
+        .bill-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .bill-from {
+            width: 48%;
+        }
+        .bill-to {
+            width: 48%;
+            text-align: left;
+            margin-top: 20px; 
+        }
+        .bill-to-content {
+            text-align: left; /* Ensure content is aligned to the left */
+        }
+        .bill-to-content p {
+            margin: 0; 
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #8aa8ff;
+        }
+        tr:nth-child(even) {
+            background-color: #e0e0e0;
+        }
+        .summary {
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            flex-direction: column;
+            align-items: flex-end; /* Align items to the right */
+        }
+        .summary-table {
+            width: 40%;
+        }
+        .summary-table th, .summary-table td {
+            text-align: center;
+            padding: 5px;
+            border: none;
+        }
+        .summary-table th {
+            font-size: 12px; 
+        }
+        .summary-table td {
+            font-size: 12px; 
+        }
+        .grand-total-wrapper {
+            width: 40%;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .grand-total-label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-left: 7%;
+            text-align: right;
+            color: #8aa8ff;
+        }
+        .grand-total-value {
+            font-size: 18px; 
+            font-weight: bold;
+            color: #8aa8ff;
+            text-align: left;
+            width: 100px;
+        }
+        .footer {
+            position: absolute;
+            bottom: 10mm;
+            width: calc(100% - 20mm);
+            padding: 10mm;
+            box-sizing: border-box;
+        }
+        .footer p {
+            text-align: center;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="invoice">
+        <div class="invoice-title">
+            <h1>Thukela Metering (Pty) Ltd</h1>
+        </div>
+        <div class="header">
+            <div class="company-name">
+                <img src="/assets/images/logos/thukela-logo.png" alt="Logo" class="logo">
+            </div>
+            <div class="company-details">
+                <p>{{companyAddress}}</p>
+                <p>{{companyPhone}}</p>
+                <p>{{companyRegNo}}</p>
+            </div>
+            <div class="invoice-details">
+                <div class="titles">
+                    <p>Tax Invoice #:</p>
+                    <p>VAT No:</p>
+                    <p>Invoice Date:</p>
+                    <p class="due-date">Due Date:</p>
+                </div>
+                <div class="values">
+                    <p>{{invoiceNumber}}</p>
+                    <p>{{vatNumber}}</p>
+                    <p>{{invoiceDate}}</p>
+                    <p class="due-date">{{dueDate}}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bill-section">
+            <div class="bill-to">
+                <h3>Bill To</h3>
+                <div class="bill-to-content">
+                    <p>{{customerName}}</p>
+                    <p>{{customerAddress}}</p>
+                    <p>{{customerCityZip}}</p>
+                    <p>{{customerPhone}}</p>
+                    <p>{{customerEmail}}</p>
+                </div>
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Unit Price</th>
+                    <th>Units</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{items}}
+            </tbody>
+        </table>
+        
+        <div class="summary">
+            <table class="summary-table">
+                <tr>
+                    <th>Subtotal:</th>
+                    <td>{{subtotal}}</td>
+                </tr>
+                <tr>
+                    <th>VAT:</th>
+                    <td>{{vat}}</td>
+                </tr>
+                <tr>
+                    <th>Discount:</th>
+                    <td>{{discount}}</td>
+                </tr>
+            </table>
+            <div class="grand-total-wrapper">
+                <span class="grand-total-label">Grand Total:</span>
+                <span class="grand-total-value">{{grandTotal}}</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Website: www.thukelametering.co.za</p>
+            <p>Phone: (123)456-7890</p>
+            <p>Email: info@thukela.co.za</p>
+        </div>
+    </div>
+</body>
+</html>
