@@ -323,9 +323,9 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
     this.statementItems.forEach(ax => {
       ax.account = this.selectedBuildingAccount.bookNumber!;
       if (ax.transaction == "Invoice") {
-        ax.transaction = ax.transaction.concat(" ", ax.id.toString())
+        ax.transaction = ax.transaction.concat(" ", ax.id!.toString())
       } else if (ax.transaction == "CreditNote") {
-        ax.transaction = ax.transaction.concat(" ", ax.id.toString())
+        ax.transaction = ax.transaction.concat(" ", ax.id!.toString())
       }
 
     });
