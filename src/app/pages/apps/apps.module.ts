@@ -44,6 +44,12 @@ import { PortfolioComponent } from './portfolio/portfolio.component';
 import { AppStatementScreenComponent } from './statement/statement.component';
 import { SearchComponent } from './seachComponent/filterSearch.component';
 import { PaymentComponent } from './payment/payment.component';
+import { AppInvoiceViewComponent, SafePipe } from './invoice/view-invoice.component';
+import { PdfPreviewComponent } from './invoice/pdf-preview/pdf-preview.component';
+import { ConfirmDownloadDialogComponent } from './confirm-download-dialog.component';
+import { CreditNoteComponent } from './credit-note/credit-note.component';
+import { CreditNoteTableComponent } from './credit-note/credit-note-table.component';
+import { CreditNoteViewComponent } from './credit-note/credit-note-view.component';
 
 
 
@@ -82,8 +88,15 @@ import { PaymentComponent } from './payment/payment.component';
     AppBuildingComponent,
     AppBuildingOwnerTableComponent,
     AppBuildingAccountTableComponent,
+    CreditNoteComponent,
+    CreditNoteTableComponent,
+    CreditNoteViewComponent,
     AppBuildingDialogContentComponent,
     AppInvoiceListComponent,
+    AppInvoiceViewComponent,
+    PdfPreviewComponent,
+    SafePipe,
+    ConfirmDownloadDialogComponent,
     AppAddInvoiceComponent,
     AppAddBuildingComponent,    
     LookupValueManagerComponent,

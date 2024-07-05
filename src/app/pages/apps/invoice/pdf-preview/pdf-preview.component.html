@@ -1,0 +1,26 @@
+<style>
+    .pdf-container {
+      width: 100%;
+      overflow: hidden; 
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    iframe {
+      width: 100%;
+      overflow: hidden;
+      height: 100%;
+    }
+  </style>
+  
+  <div class="pdf-container">
+    <iframe style="overflow: hidden;" id="pdfIframe" [src]="pdfDataUrl"></iframe>
+  </div>
+  
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button (click)="closePdfPreview()" color="primary">Close</button>
+  </mat-dialog-actions>
+  
+  

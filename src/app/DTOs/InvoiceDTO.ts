@@ -1,22 +1,28 @@
+import { LineItemDTO } from './LineItemDTO';
 import { BaseDTO } from './baseDTO';
 
 export class InvoiceDTO extends BaseDTO {
-  ref?: string;
+  referenceNumber?: string;
   action?: string;
-  status?: string;
-  orderDate?: Date;
-  billFrom?: string;
+  status?: PaymentStatus;
+  paymentMethod?: string;
+  invoiceDate?: Date;
+  dueDate?: Date;
+  buildingId?: number;
+  discount?: number = 0;
+  note?: string = "Note: *please contact us if no invoice received, non-receipt does not constitute grounds for non-payment!";
+  buildingOwnerId?: number;
   billTo?: string;
-  billFromAddress?: string;
-  billToAddress?: string;
-  items?: InvoiceItemDTO[];
+  items?: LineItemDTO[];
   totalCost?: number;
+  subTotal?: number;
+  grandTotal?: number;
+  vat?: number;
   completed?: boolean;
 }
 
-export class InvoiceItemDTO {
-  itemName?: string;
-  unitPrice?: number;
-  units?: number;
-  itemTotal?: number;
+export enum PaymentStatus {
+  Paid = 0,
+  Unpaid = 1,
+  PartiallyPaid = 2
 }

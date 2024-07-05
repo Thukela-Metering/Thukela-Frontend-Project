@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, OnInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -6,7 +6,10 @@ import { InvoiceService } from 'src/app/services/invoice.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { AppAddInvoiceComponent } from './add-invoice.component';
 import { MatDialog } from '@angular/material/dialog';
-import { InvoiceDTO } from 'src/app/DTOs/dtoIndex';
+import { BuildingDTO, BuildingOwnerDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { AppInvoiceViewComponent } from './view-invoice.component'; // Import the view component
+import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
+import { catchError, forkJoin, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-invoice',
@@ -15,7 +18,7 @@ import { InvoiceDTO } from 'src/app/DTOs/dtoIndex';
 export class AppInvoiceListComponent implements OnInit, AfterViewInit {
   allComplete: boolean = false;
   invoices: InvoiceDTO[] = [];
-  invoiceList: MatTableDataSource<InvoiceDTO>;
+  buildingOwnerNames: { [key: number]: string } = {}; // Mapping of buildingOwnerId to buildingOwnerName
   displayedColumns: string[] = [
     'chk',
     'ref',
@@ -27,13 +30,15 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
   ];
 
   dataSource = new MatTableDataSource<InvoiceDTO>(this.invoices);
-  @ViewChild(MatSort) sort: MatSort = Object.create(null);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
   constructor(
     public dialog: MatDialog,
     private _invoiceService: InvoiceService,
-    private snackbarService: SnackbarService
+    private _ownerService: BuildingOwnerService,
+    private snackbarService: SnackbarService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -43,113 +48,144 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+    // Customize sorting for specific columns
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'item':
+          return item.items![0]?.itemName?.toLowerCase() || '';
+        case 'billTo':
+          return this.buildingOwnerNames[item.buildingOwnerId ?? 0]?.toLowerCase() || '';
+        case 'totalCost':
+          return item.grandTotal;
+        case 'ref':
+          return item.referenceNumber;
+        case 'status':
+          return item.status;
+        default:
+          return (item as any)[property];
+      }
+    };
   }
 
   openDialog(action: string, obj: any): void {
     obj.action = action;
-    this.loadInvoicesListData();
     const dialogRef = this.dialog.open(AppAddInvoiceComponent, {
-      width: '500px',
+      width: '1600px',
       data: obj,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        if (result.event === 'Add') {
-          this.loadInvoicesListData();
-        } else if (result.event === 'Update') {
-          this.loadInvoicesListData();
-        } else if (result.event === 'Delete') {
-          this.loadInvoicesListData();
+        this.loadInvoicesListData();
+      }
+    });
+
+    const componentInstance = dialogRef.componentInstance;
+    componentInstance.saveClicked.subscribe(() => {
+      this.loadInvoicesListData();
+    });
+  }
+
+  openInvoiceDialog(invoiceId: number): void {
+    const invoice = this.invoices.find((inv) => inv.id === invoiceId);
+
+    if (invoice) {
+      this.dialog.open(AppInvoiceViewComponent, {
+        width: '1600px', // You can adjust the width as needed
+        data: invoice,
+      });
+    }
+  }
+
+  loadInvoicesListData(): void {
+    this._invoiceService.getAllInvoices(true).subscribe({
+      next: (response: OperationalResultDTO<TransactionDTO>) => {
+        if (response && response.data) {
+          console.log('data received from backend:', response.data.invoicesDTOs);
+          this.invoices = response.data.invoicesDTOs ?? [];
+  
+          // Fetch owners for each invoice
+          const ownerRequests = this.invoices.map((invoice) => 
+            this._ownerService.getBuildingOwnerAccountByBuildingId(invoice.buildingId || 0, true).pipe(
+              map((response: any) => {
+                const owner = response.data?.buildingOwnerAccountDTOs[0] || null;
+                if (owner) {
+                  this.buildingOwnerNames[invoice.buildingOwnerId ?? 0] = owner.name; // Populate the mapping
+                }
+                return invoice;
+              }),
+              catchError((error) => {
+                console.error('There was an error!', error);
+                return of(invoice);
+              })
+            )
+          );
+  
+          // Wait for all owner requests to complete
+          forkJoin(ownerRequests).subscribe((updatedInvoices) => {
+            this.dataSource.data = updatedInvoices;
+            this.dataSource.sort = this.sort; // Refresh the sort after data load
+          });
         }
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
       }
     });
   }
 
-  loadInvoicesListData(): void {
-    this.invoices = [
-      {
-        isActive: true,
-        guid: '',
-        id: 1,
-        ref: 'INV-001',
-        status: 'Paid',
-        orderDate: new Date('2023-01-01'),
-        billFrom: 'Company A',
-        billTo: 'Customer A',
-        billFromAddress: 'Address A',
-        billToAddress: 'Address B',
-        items: [
-          { itemName: 'Service A', unitPrice: 5000, units: 3, itemTotal: 15000 }
-        ],
-        totalCost: 15000,
-        completed: false
-      },
-      {
-        isActive: true,
-        guid: '',
-        id: 2,
-        ref: 'INV-002',
-        status: 'Pending',
-        orderDate: new Date('2023-02-01'),
-        billFrom: 'Company B',
-        billTo: 'Customer B',
-        billFromAddress: 'Address C',
-        billToAddress: 'Address D',
-        items: [
-          { itemName: 'Service B', unitPrice: 2000, units: 3, itemTotal: 6000 }
-        ],
-        totalCost: 6000,
-        completed: false
-      },
-      {
-        isActive: true,
-        guid: '',
-        id: 3,
-        ref: 'INV-003',
-        status: 'Overdue',
-        orderDate: new Date('2023-03-01'),
-        billFrom: 'Company C',
-        billTo: 'Customer C',
-        billFromAddress: 'Address E',
-        billToAddress: 'Address F',
-        items: [
-          { itemName: 'Service C', unitPrice: 3500, units: 1, itemTotal: 3500 }
-        ],
-        totalCost: 3500,
-        completed: false
-      }
-    ];
-    this.dataSource.data = this.invoices;
-    this.invoiceList = this.dataSource;
-  }
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data, filter) => {
+      const ownerName = this.buildingOwnerNames[data.buildingOwnerId ?? 0]?.toLowerCase() || '';
+      return ownerName.includes(filter) || (data.items![0]?.itemName?.toLowerCase() || '').includes(filter) || (data.referenceNumber?.toLowerCase() || '').includes(filter);
+    };
+    this.dataSource.filter = filterValue;
+  }  
 
   updateAllComplete(): void {
-    this.allComplete = this.invoiceList != null && this.invoiceList.data.every((t) => t.completed);
+    this.allComplete = this.dataSource.data != null && this.dataSource.data.every((t) => t.completed);
   }
 
   someComplete(): boolean {
-    if (this.invoiceList == null) {
+    if (this.dataSource.data == null) {
       return false;
     }
-    return this.invoiceList.data.filter((t) => t.completed).length > 0 && !this.allComplete;
+    return this.dataSource.data.filter((t) => t.completed).length > 0 && !this.allComplete;
   }
 
   setAll(completed: boolean): void {
     this.allComplete = completed;
-    if (this.invoiceList == null) {
+    if (this.dataSource.data == null) {
       return;
     }
-    this.invoiceList.data.forEach((t) => (t.completed = completed));
+    this.dataSource.data.forEach((t) => (t.completed = completed));
   }
 
-  filter(filterValue: string): void {
-    this.invoiceList.filter = filterValue.trim().toLowerCase();
+  mapStatusToString(status: number): string {
+    switch (status) {
+      case 0:
+        return 'Paid';
+      case 1:
+        return 'Unpaid';
+      case 2:
+        return 'Partially Paid';
+      default:
+        return '';
+    }
   }
 
-  deleteInvoice(row: number): void {
-    if (confirm('Are you sure you want to delete this record?')) {
-      this.invoiceList.data = this.invoiceList.data.filter((invoice) => invoice.id !== row);
+  getStatusColor(status: number): string {
+    switch (status) {
+      case 0:
+        return '#a3e4a1';
+      case 1:
+        return '#f5a2a2';
+      case 2:
+        return '#fff6a2';
+      default:
+        return '';
     }
   }
 }

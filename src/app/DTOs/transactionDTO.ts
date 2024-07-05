@@ -1,10 +1,10 @@
 import { AuthenticationResponseDTO } from "./AuthenticationResponseDTO";
 import { BuildingAccountDTO } from "./BuildingAccountDTO";
 import { StatementItemDTO } from "./StatementItemDTO";
+import { CreditNoteDTO } from "./CreditNoteDTO";
 import { BuildingDTO } from "./buildingDTO";
 import { BuildingOwnerDTO } from "./buildingOwnerDTO";
 import { BuildingRepresentativeLinkDTO } from "./buildingRepLinkDTO";
-import { PaymentInvoiceItemDTO } from "./dtoIndex";
 import { LookupGroupDTO } from "./lookupGroupDTO";
 import { LookupListDTO } from "./lookupListDTO";
 import { LookupValueDTO } from "./lookupValueDTO";
@@ -16,6 +16,8 @@ import { SetRoleRightsDTO } from "./setRoleRightDTO";
 import { SystemUserDTO } from "./systemUserDTO";
 import { UserDataDTO } from "./userDataDTO";
 import { userLoginDTO } from "./userLoginDTO";
+import { InvoiceDTO } from "./InvoiceDTO";
+import { PaymentInvoiceItemDTO } from "./paymentInvoiceItemDTO";
 
 export class TransactionDTO {
     authenticationResponseDTOs?: AuthenticationResponseDTO[];
@@ -36,6 +38,8 @@ export class TransactionDTO {
     userLoginDTOs?: userLoginDTO[];
     statementItemDTOs?:StatementItemDTO[];
     PaymentInvoiceItemDTOs?:PaymentInvoiceItemDTO[];
+    creditNoteDTOs?: CreditNoteDTO[];
+    invoicesDTOs?: InvoiceDTO[];
 
     stringResponseProperty?: string;
     intResponseProperty?: number;
