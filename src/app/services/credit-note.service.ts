@@ -17,7 +17,7 @@ export class CreditNoteService {
   }
 
   getCreditNoteByGuid(guid: string): Observable<OperationalResultDTO<TransactionDTO>> {
-    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/${guid}`);
+    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/CreditNote/${guid}`);
     return getResponse;
   }
 

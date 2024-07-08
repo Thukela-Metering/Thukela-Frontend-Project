@@ -11,7 +11,7 @@ export class CommunicationService {
 
   constructor(private http: HttpClient) { }
 
-  sendEmail(payload: FormData): Observable<OperationalResultDTO<any>> {
+  sendEmail(payload: FormData, templateNum  : number): Observable<OperationalResultDTO<any>> {
     const headers = new HttpHeaders({
       'Accept': 'application/json'
     });
@@ -21,6 +21,8 @@ export class CommunicationService {
     for (const pair of (payload as any).entries()) {
       console.log(`${pair[0]}:`, pair[1]);
     }
+
+    payload.append('templateNum', templateNum.toString());
 
     return this.http.post<OperationalResultDTO<any>>(`${this.apiUrl}/Communication/Email`, payload, { headers });
   }

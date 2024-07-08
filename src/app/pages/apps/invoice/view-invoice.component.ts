@@ -322,7 +322,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
     console.log('FormData:', formData);
 
     try {
-        await this._emailService.sendEmail(formData).toPromise();
+        await this._emailService.sendEmail(formData,1).toPromise();
         console.log('Email sent successfully');
         this.snackbarService.openSnackBar("Email has been sent to: " + selectedOwner?.email + " successfully", "dismiss", 8000);
         this.dialogRef.close();

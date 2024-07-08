@@ -32,7 +32,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   creditNoteDetail: CreditNoteDTO | null = null;
   retreivedCreditNotes: CreditNoteDTO[] = [];
   dataSource: MatTableDataSource<LineItemDTO>;
-  displayedColumns: string[] = ['itemName', 'Description', 'unitPrice', 'units', 'lineDiscount', 'itemTotal', 'creditTotal'];
+  displayedColumns: string[] = ['itemName', 'Description', 'unitPrice', 'units', 'creditTotal'];
   pdfDataUrl: string = '';
   foundOwnerAccount: BuildingOwnerDTO | undefined;
   showPdfPreview: boolean = false;
@@ -41,7 +41,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   @ViewChild('invoice') invoiceElement!: ElementRef;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: InvoiceDTO,
+    @Inject(MAT_DIALOG_DATA) public data:  { credit: CreditNoteDTO, invoice: InvoiceDTO },
     public dialogRef: MatDialogRef<AppInvoiceViewComponent>,
     private fb: FormBuilder,
     private dialog: MatDialog,
@@ -53,12 +53,12 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     private _CreditNoteService: CreditNoteService,
     private userPreferencesService: UserPreferencesService
   ) {
-    this.invoiceDetail = data;
-    this.dataSource = new MatTableDataSource<LineItemDTO>(this.invoiceDetail.items || []);
+    this.creditNoteDetail = data.credit;
+    this.invoiceDetail = data.invoice;
+    this.dataSource = new MatTableDataSource<LineItemDTO>(this.creditNoteDetail.items || []);
     this.invoiceForm = this.fb.group({
       items: this.fb.array([])
     });
-    this.initForm();
   }
 
   ngOnInit(): void {
@@ -92,7 +92,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   }
 
   loadBuildingOwnerListData(): void {
-    this._buildingOwnerService.getBuildingOwnerAccountByBuildingId(this.data.buildingId ?? 0, true).subscribe({
+    this._buildingOwnerService.getBuildingOwnerAccountByBuildingId(this.invoiceDetail.buildingId ?? 0, true).subscribe({
       next: (response: any) => {
         this.retrievedBuildings = response.data?.buildingOwnerAccountDTOs ?? [];
         this.foundOwnerAccount = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
@@ -104,7 +104,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   }
 
   loadBuildingAccount(): void {
-    this._buildingAccountService.getBuildingAccountByBuildingId(this.data.buildingId ?? 0).subscribe({
+    this._buildingAccountService.getBuildingAccountByBuildingId(this.invoiceDetail.buildingId ?? 0).subscribe({
       next: (response: any) => {
         this.retrievedAccounts = response.data?.buildingAccountDTOs ?? [];
       }
@@ -161,17 +161,18 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   }
 
   private insertData(template: string, data: any): string {
-    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === data.buildingId);
-    const selectedAccount = this.retrievedAccounts.find(account => account.id === data.buildingId);
+    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+    const selectedAccount = this.retrievedAccounts.find(account => account.id === this.invoiceDetail.buildingId);
     const vatNumber = selectedAccount?.buildingTaxNumber ? `Vat no: ${selectedAccount.buildingTaxNumber}` : '';
-    const itemsHtml = data.items.map((item: LineItemDTO) => `
+    const vat = (this.creditNoteDetail?.creditNoteTotal!) * 0.15;
+    const sub = (this.creditNoteDetail?.creditNoteTotal!);
+    const itemsHtml = this.creditNoteDetail!.items!.map((item: LineItemDTO) => `
       <tr>
         <td>${item.itemName}</td>
         <td>${item.description}</td>
         <td>${this.formatCurrency(item.unitPrice || 0)}</td>
         <td>${item.units}</td>
-        <td>${this.formatCurrency(item.lineDiscount || 0)}</td>
-        <td>${this.formatCurrency(item.itemTotal || 0)}</td>
+        <td>${this.formatCurrency(item.creditNoteLineValue || 0)}</td>
       </tr>
     `).join('');
 
@@ -179,22 +180,23 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
       .replace('{{companyAddress}}', 'PO Box 50247, Hercules, 0030')
       .replace('{{companyPhone}}', '(123) 456-7890')
       .replace('{{companyRegNo}}', '2015/055277/07')
-      .replace('{{invoiceNumber}}', data.referenceNumber || 'N/A')
+      .replace('{{invoiceNumber}}', this.creditNoteDetail?.invoiceReferenceNumber!)
+      .replace('{{creditNoteNumber}}', (this.creditNoteDetail!.id?.toString() || "N/A"))
       .replace('{{vatNumber}}', '4270238266')
       .replace('{{description}}', data.description || 'No Description')
-      .replace('{{invoiceDate}}', new Date(data.invoiceDate).toLocaleDateString() || 'N/A')
+      .replace('{{creditDate}}', new Date(this.creditNoteDetail!.creditNoteDate!).toLocaleDateString() || "N/A")
       .replace('{{dueDate}}', new Date(data.dueDate).toLocaleDateString() || 'N/A')
       .replace('{{customerName}}', selectedOwner?.name || 'N/A')
       .replace('{{customerAddress}}', selectedOwner?.address || 'N/A')
       .replace('{{customerPhone}}', selectedOwner?.contactNumber || 'N/A')
       .replace('{{customerEmail}}', selectedOwner?.email || 'N/A')
       .replace('{{taxNumber}}', vatNumber)
-      .replace('{{subtotal}}', this.formatCurrency(data.subTotal ?? 0))
-      .replace('{{vat}}', this.formatCurrency(data.vat ?? 0))
+      .replace('{{subtotal}}', this.formatCurrency((this.creditNoteDetail?.creditNoteTotal) ?? 0))
+      .replace('{{vat}}', this.formatCurrency(vat ?? 0))
       .replace('{{note}}', data.note || '')
       .replace('{{lineDiscount}}', this.formatCurrency(data.lineDiscount ?? 0))
       .replace('{{discount}}', this.formatCurrency(data.discount ?? 0))
-      .replace('{{grandTotal}}', this.formatCurrency(this.invoiceDetail.grandTotal ?? 0))
+      .replace('{{grandTotal}}', this.formatCurrency(sub + vat ?? 0))
       .replace('{{status}}', this.mapStatusToString(data.status))
       .replace('{{items}}', itemsHtml);
   }
@@ -231,11 +233,11 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
 
   async generatePDF(action: 'download' | 'preview' | 'email'): Promise<void> {
     console.log('Starting PDF generation');
-    const template = await this.loadTemplate('assets/Templates/invoice-template.html');
+    const template = await this.loadTemplate('assets/Templates/creditNote-template.html');
     console.log('Template loaded');
     const htmlContent = this.insertData(template, this.invoiceDetail);
     console.log('Data inserted into template');
-    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.data.buildingId);
+    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
 
     const iframe = document.createElement('iframe');
     document.body.appendChild(iframe);
@@ -321,14 +323,14 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     console.log('Sending PDF blob via email');
 
     const formData = new FormData();
-    formData.append('pdf', pdfBlob, `invoice_${this.invoiceDetail.referenceNumber}.pdf`);
-    formData.append('filename', `invoice_${this.invoiceDetail.referenceNumber}.pdf`);
+    formData.append('pdf', pdfBlob, `Credit Note_${this.creditNoteDetail?.id}.pdf`);
+    formData.append('filename', `Credit Note_${this.creditNoteDetail?.id}.pdf`);
     formData.append('clientEmail', selectedOwner?.email || "");
     formData.append('clientName', selectedOwner?.name || "");
     formData.append('isActive', 'true');
 
     const emailData = {
-        filename: `invoice_${this.invoiceDetail.referenceNumber}.pdf`,
+        filename: `Credit Note_${this.creditNoteDetail?.id}.pdf`,
         clientEmail: selectedOwner?.email || "",
         clientName: selectedOwner?.name || "",
         isActive: 'true'
@@ -339,7 +341,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     console.log('FormData:', formData);
 
     try {
-        await this._emailService.sendEmail(formData).toPromise();
+        await this._emailService.sendEmail(formData,2).toPromise();
         console.log('Email sent successfully');
         this.snackbarService.openSnackBar("Email has been sent to: " + selectedOwner?.email + " successfully", "dismiss", 8000);
         this.dialogRef.close();
