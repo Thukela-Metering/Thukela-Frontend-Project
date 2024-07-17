@@ -86,5 +86,20 @@ export const navItems: NavItem[] = [
       }
     ],
   },
+  {
+    navCap: 'Tools',
+  },
+  {
+    displayName: 'Tools',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
+      {
+        displayName: 'Hangfire Dashboard',
+        iconName: 'point',
+        route: 'apps/hangfire',     
+      },
+    ],
+  },
   
 ];

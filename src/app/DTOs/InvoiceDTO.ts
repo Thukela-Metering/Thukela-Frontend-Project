@@ -13,6 +13,7 @@ export class InvoiceDTO extends BaseDTO {
   note?: string = "Note: *please contact us if no invoice received, non-receipt does not constitute grounds for non-payment!";
   buildingOwnerId?: number;
   billTo?: string;
+  buildingAccountId: number;
   items?: LineItemDTO[];
   totalCost?: number;
   subTotal?: number;

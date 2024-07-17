@@ -2,8 +2,9 @@ export class PaymentInvoiceItemDTO {
     id: string;
     invoiceDate: string;
     invoiceAmount: number;
-    amountAlreadyPaid: number;
+    amountAlreadyPayed: number;
     invoiceNumber: string;
     invoiceReference: string;
-    paymentAmount?: number; // Add paymentAmount property
+    paymentAmount?: number;
+    outstandingAmount?: number;
   }
