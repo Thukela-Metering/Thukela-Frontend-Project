@@ -7,7 +7,8 @@ import { SearchResultDTO } from '../DTOs/dtoIndex';
   providedIn: 'root'
 })
 export class SearchService {
-  private baseUrl = 'http://localhost:80/api'; ///api/Filter/search
+  // private baseUrl = 'http://localhost:80/api'; ///api/Filter/search
+  private baseUrl = 'https://thukelanewbackendtesting.co.za/api';
 
   constructor(private http: HttpClient) {}
 
