@@ -7,8 +7,8 @@ import { OperationalResultDTO } from '../DTOs/operationalResultDTO';
   providedIn: 'root'
 })
 export class CommunicationService {
-  private apiUrl = 'http://localhost:80/api'; 
-
+  // private apiUrl = 'http://localhost:80/api'; 
+  private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
   constructor(private http: HttpClient) { }
 
   sendEmail(payload: FormData): Observable<OperationalResultDTO<any>> {

@@ -10,7 +10,8 @@ import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
   export class BuildingService {
     constructor(private http: HttpClient) { }
 
-    private apiUrl = 'http://localhost:80/api';
+    // private apiUrl = 'http://localhost:80/api';
+    private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
   
     getAllBuildings(active:boolean):Observable<OperationalResultDTO<TransactionDTO>> {
       {
