@@ -21,7 +21,7 @@ export class AppBoxedLoginComponent {
   constructor(private settings: CoreService, private router: Router, private authService: AuthService, private snackbarService: SnackbarService) { }
 
   form = new FormGroup({
-    uname: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    uname: new FormControl('', [Validators.required, Validators.minLength(3)]),
     password: new FormControl('', [Validators.required]),
   });
 
