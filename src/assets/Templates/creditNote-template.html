@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Invoice</title>
     <style>
-        body {
+              body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -227,93 +227,83 @@ tr:nth-child(even) {
 </head>
 <body>
     <div id="invoice">
-        <div>
-            <div class="invoice-title">
-                <h1>Thukela Metering (Pty) Ltd</h1>
+        <div class="invoice-title">
+            <h1>Thukela Metering (Pty) Ltd</h1>
+        </div>
+        <div class="header">
+            <div class="company-name">
+                <img src="/assets/images/logos/thukela-logo.png" alt="Logo" class="logo">
             </div>
-            <div class="header">
-                <div class="company-name">
-                    <img src="/assets/images/logos/thukela-logo.png" alt="Logo" class="logo">
-                </div>
-                <div class="company-details">
-                    <p>{{companyAddress}}</p>
-                    <p>{{companyPhone}}</p>
-                    <p>{{companyRegNo}}</p>
-                </div>
-                <div class="invoice-details">
-                    <div class="titles">
-                        <p>Ref #:</p>
-                        <p>VAT No:</p>
-                        <p>Invoice Date:</p>
-                        <p class="due-date">Due Date:</p>
-                    </div>
-                    <div class="values">
-                        <p>{{invoiceNumber}}</p>
-                        <p>{{vatNumber}}</p>
-                        <p>{{invoiceDate}}</p>
-                        <p class="due-date">{{dueDate}}</p>
-                    </div>
-                </div>
+            <div class="company-details">
+                <p>{{companyAddress}}</p>
+                <p>{{companyPhone}}</p>
+                <p>{{companyRegNo}}</p>
             </div>
-            <div class="bill-section">
-                <div class="bill-to">
-                    <h3>Bill To</h3>
-                    <div class="bill-to-content">
-                        <p>{{customerName}}</p>
-                        <p>{{customerAddress}}</p>
-                        <p>{{customerPhone}}</p>
-                        <p>{{customerEmail}}</p>
-                        <p>{{taxNumber}}</p>
-                    </div>
+            <div class="invoice-details">
+                <div class="titles">
+                    <p>Credit Note#:</p>
+                    <p>Linked Invoice:</p>
+                    <p>VAT No:</p>
+                    <p>Issue Date:</p>
                 </div>
-            </div>
-            <div>
-                <table>
-                    <thead>
-                        <tr class="itemsHeadings">
-                            <th>Item</th>
-                            <th>Description</th>
-                            <th>Unit Price</th>
-                            <th>Units</th>
-                            <th>Discount</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody class="items">
-                        {{items}}
-                        <br>
-                    </tbody>
-                </table>
-            </div>
-            <div class="summary">
-                <table class="summary-table">
-                    <tr>
-                        <th>Subtotal:</th>
-                        <td>{{subtotal}}</td>
-                    </tr>
-                    <tr>
-                        <th>Discount:</th>
-                        <td>{{discount}}</td>
-                    </tr>
-                    <tr>
-                        <th>VAT(15%):</th>
-                        <td>{{vat}}</td>
-                    </tr>
-                </table>
-                <div class="grand-total-wrapper">
-                    <span class="grand-total-label">Grand Total:</span>
-                    <span class="grand-total-value">{{grandTotal}}</span>
+                <div class="values">
+                    <p>{{creditNoteNumber}}</p>
+                    <p>{{invoiceNumber}}</p>
+                    <p>{{vatNumber}}</p>
+                    <p>{{creditDate}}</p>
                 </div>
-            </div>
-            <div class="note">
-                {{note}}
             </div>
         </div>
-        <div class="footer">
+        <div class="bill-section">
+            <div class="bill-to">
+                <h3>Bill To</h3>
+                <div class="bill-to-content">
+                    <p>{{customerName}}</p>
+                    <p>{{customerAddress}}</p>
+                    <p>{{customerPhone}}</p>
+                    <p>{{customerEmail}}</p>
+                    <p>{{taxNumber}}</p>
+                </div>
+            </div>
+        </div>
+        <div>
+            <table>
+                <thead>
+                    <tr class="itemsHeadings">
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Unit Price</th>
+                        <th>Units</th>
+                        <th>Credit Value</th>
+                    </tr>
+                </thead>
+                <tbody class="items">
+                    {{items}}
+                    <br>
+                </tbody>
+            </table>
+        </div>
+        <div class="summary">
+            <table class="summary-table">
+                <tr>
+                    <th>Subtotal:</th>
+                    <td>{{subtotal}}</td>
+                </tr>
+                <tr>
+                    <th>VAT(15%):</th>
+                    <td>{{vat}}</td>
+                </tr>
+            </table>
+            <div class="grand-total-wrapper">
+                <span class="grand-total-label">Grand Total:</span>
+                <span class="grand-total-value">{{grandTotal}}</span>
+            </div>
+        </div>
+        <footer class="footer">
             <p>Website: www.thukelametering.co.za</p>
             <p>Phone: (123) 456-7890</p>
             <p>Email: info@thukela.co.za</p>
-        </div>
-    </div>
+        </footer>
+    </div>      
 </body>
 </html>

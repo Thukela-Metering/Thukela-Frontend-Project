@@ -59,7 +59,7 @@
               </ng-container>
               <ng-container matColumnDef="itemTotal">
                 <th mat-header-cell *matHeaderCellDef class="f-s-15 f-w-600" style="color: white;">Total Cost</th>
-                <td mat-cell *matCellDef="let element" style="color: white; font-weight: bold;">{{ element.itemTotal | currency: 'R' }}</td>
+                <td mat-cell *matCellDef="let element" style="color: white; font-weight: bold;">{{ element.itemTotal + (element.itemTotal * 0.15) | currency: 'R' }}</td>
               </ng-container>
               <ng-container matColumnDef="creditNoteValue">
                 <th mat-header-cell *matHeaderCellDef>Credit Value</th>
@@ -72,7 +72,7 @@
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
-          </div>
+            </div>
           <div class="button-group d-flex justify-content-between m-t-30">
             <button mat-stroked-button (click)="closeDialog()" color="primary" class="m-r-10">Back</button>
             <button mat-flat-button color="primary" (click)="submitCreditNote()" [disabled]="invoiceForm.invalid">Submit Credit Note</button>

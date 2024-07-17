@@ -206,10 +206,6 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
       next: (response: any) => {
         this.retrievedOwner = response.data?.buildingOwnerAccountDTOs ?? [];
         const selectedOwner = this.retrievedOwner.find(owner => owner.buildingId === buildingId);
-        if (selectedOwner) {
-          const accountNumber = selectedOwner.accountNumber;
-          this.generateReferenceNumber(accountNumber || "");
-        }
       },
       error: (error) => {
         console.error('There was an error!', error);
@@ -217,10 +213,15 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     });
   }
 
-  getBuildingAccount(): void {
+  getBuildingAccount(buildingId: number): void {
     this._buildingAccountService.getBuildingAccountByBuildingId(this.selectedBuilding?.id || 0).subscribe({
       next: (response: any) => {
         this.retrievedAccount = response.data?.buildingAccountDTOs ?? [];
+        const selectedAccount = this.retrievedAccount.find(acc => acc.buildingId === buildingId);
+        if (selectedAccount) {
+          const accountNumber = selectedAccount.bookNumber;
+          this.generateReferenceNumber(accountNumber || "");
+        }
       },
       error: (error) => {
         console.error('There was an error!', error);
@@ -231,7 +232,7 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
   onBuildingSelectionChange(building: BuildingDTO): void {
     if (building) {
       this.selectedBuilding = building;
-      this.getBuildingOwner(building.id || 0);
+      this.getBuildingAccount(building.id || 0);
     } else {
       this.selectedBuilding = null;
       this.selectedBuildingNum = null;
@@ -319,8 +320,13 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
   async saveDetail(): Promise<void> {
     const formData = this.addForm.value;
     const selectedBuilding = formData.billTo;
+    const accountNumber = this.retrievedAccount.find(acc => acc.buildingId === selectedBuilding?.id)?.bookNumber;
+    const accoundId = this.retrievedAccount.find(x => x.id)
+    const ownerId = this.retrievedOwner.find(i => i.id)
     this.invoice.buildingId = selectedBuilding?.id;
+    this.invoice.buildingAccountId = accoundId?.id || 0;
     this.invoice.grandTotal = this.grandTotal;
+    this.invoice.buildingOwnerId = ownerId?.id;
     this.invoice.subTotal = this.subTotal;
     this.invoice.invoiceDate = formData.invoiceDate;
     this.invoice.items = this.rows.value;
@@ -328,8 +334,6 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     this.invoice.note = formData.note || "Note: *please contact us if no invoice received, non-receipt does not constitute grounds for non-payment!";
     this.invoice.paymentMethod = this.selectedPaymentMethod;
     this.invoice.vat = this.vat;
-
-    const accountNumber = this.retrievedOwner.find(owner => owner.buildingId === selectedBuilding?.id)?.accountNumber;
 
     if (accountNumber) {
       await this.generateReferenceNumber(accountNumber);

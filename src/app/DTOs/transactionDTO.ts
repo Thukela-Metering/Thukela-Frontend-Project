@@ -37,7 +37,7 @@ export class TransactionDTO {
     userDataDTOs?: UserDataDTO[];
     userLoginDTOs?: userLoginDTO[];
     statementItemDTOs?:StatementItemDTO[];
-    PaymentInvoiceItemDTOs?:PaymentInvoiceItemDTO[];
+    paymentInvoiceItemDTOs?:PaymentInvoiceItemDTO[];
     creditNoteDTOs?: CreditNoteDTO[];
     invoicesDTOs?: InvoiceDTO[];
 

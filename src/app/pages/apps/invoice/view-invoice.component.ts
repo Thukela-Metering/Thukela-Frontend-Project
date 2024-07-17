@@ -16,6 +16,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 import { PDFDocument } from 'pdf-lib';
 import { CreditNoteComponent } from '../credit-note/credit-note.component';
 import { LineItemDTO } from 'src/app/DTOs/LineItemDTO';
+import { PdfDTO } from 'src/app/DTOs/pdfDTO';
 
 @Component({
   selector: 'app-invoice-view',
@@ -125,7 +126,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
   }
 
   emailInvoice(): void {
-    this.generatePDF('email');
+    this.sendPDF();
   }
 
   previewInvoice(): void {
@@ -253,7 +254,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
                 windowHeight: canvasHeight,
             });
             const imgData = canvas.toDataURL('image/jpeg', 0.5); // Compress image to 50% quality
-            pdf.addImage(imgData, 'JPEG', margin, margin, pageWidth - 2 * margin, (canvas.height * (pageWidth - 2 * margin)) / canvas.width);
+            pdf.addImage(imgData, 'JPEG',  0, 0, 210, 297);
             position += canvasHeight;
             if (position < totalHeight) {
                 pdf.addPage();
@@ -288,8 +289,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
             this.openPdfPreview();
         } else if (action === 'email') {
             console.log('Sending PDF via email');
-            const pdfBlob = new Blob([compressedPdfBytes], { type: 'application/pdf' });
-            this.sendPDF(pdfBlob, selectedOwner);
+            this.sendPDF();
         }
     }
   }
@@ -300,37 +300,45 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
     return compressedPdfBytes;
   }
 
-  async sendPDF(pdfBlob: Blob, selectedOwner: BuildingOwnerDTO | undefined): Promise<void> {
-    console.log('Sending PDF blob via email');
-
-    const formData = new FormData();
-    formData.append('pdf', pdfBlob, `invoice_${this.invoiceDetail.referenceNumber}.pdf`);
-    formData.append('filename', `invoice_${this.invoiceDetail.referenceNumber}.pdf`);
-    formData.append('clientEmail', selectedOwner?.email || "");
-    formData.append('clientName', selectedOwner?.name || "");
-    formData.append('isActive', 'true');
-
+  async sendPDF(): Promise<void> {
+    console.log('Sending PDF data via email');
+  
+    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
     const emailData = {
-        filename: `invoice_${this.invoiceDetail.referenceNumber}.pdf`,
-        clientEmail: selectedOwner?.email || "",
-        clientName: selectedOwner?.name || "",
-        isActive: 'true'
+      filename: `invoice_${this.invoiceDetail.referenceNumber}.pdf`,
+      clientEmail: selectedOwner?.email || "",
+      clientName: selectedOwner?.name || "",
+      isActive: true
     };
-
-    formData.append('emailData', JSON.stringify(emailData));
-
-    console.log('FormData:', formData);
-
+  
+    const pdfDto: PdfDTO = {
+      referenceNumber: this.invoiceDetail.referenceNumber || "",
+      invoiceDate: this.invoiceDetail.invoiceDate ? new Date(this.invoiceDetail.invoiceDate) : new Date(),
+      dueDate: this.invoiceDetail.dueDate ? new Date(this.invoiceDetail.dueDate) : new Date(),
+      customerName: selectedOwner?.name || 'N/A',
+      customerAddress: selectedOwner?.address || 'N/A',
+      customerPhone: selectedOwner?.contactNumber || 'N/A',
+      customerEmail: selectedOwner?.email || 'N/A',
+      taxNumber: this.retrievedAccounts.find(account => account.id === this.invoiceDetail.buildingId)?.buildingTaxNumber || 'N/A',
+      subTotal: this.invoiceDetail.subTotal || 0,
+      discount: this.invoiceDetail.discount || 0,
+      vat: this.invoiceDetail.vat || 0,
+      grandTotal: this.invoiceDetail.grandTotal || 0,
+      items: this.invoiceDetail.items || [],
+      note: this.data.note || ""
+    };
+  
     try {
-        await this._emailService.sendEmail(formData).toPromise();
-        console.log('Email sent successfully');
-        this.snackbarService.openSnackBar("Email has been sent to: " + selectedOwner?.email + " successfully", "dismiss", 8000);
-        this.dialogRef.close();
+      await this._emailService.sendEmail(pdfDto, JSON.stringify(emailData), 1).toPromise();
+      console.log('Email sent successfully');
+      this.snackbarService.openSnackBar("Email has been sent to: " + selectedOwner?.email + " successfully", "dismiss", 8000);
+      this.dialogRef.close();
     } catch (error: any) {
-        console.error('Error sending email:', error);
-        this.snackbarService.openSnackBar("Error sending email", "dismiss");
+      console.error('Error sending email:', error);
+      this.snackbarService.openSnackBar("Error sending email", "dismiss");
     }
   }
+  
 
   openCreditNote(): void {
     this.dialogRef.close();

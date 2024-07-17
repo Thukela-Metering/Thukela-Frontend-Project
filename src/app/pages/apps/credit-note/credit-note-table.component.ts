@@ -2,15 +2,15 @@ import { Component, AfterViewInit, ViewChild, OnInit, ChangeDetectorRef } from '
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
-import { MatDialog } from '@angular/material/dialog';
-import { BuildingDTO, BuildingOwnerDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
-import { catchError, forkJoin, map, of } from 'rxjs';
-import { CreditNoteDTO } from 'src/app/DTOs/CreditNoteDTO';
 import { CreditNoteService } from 'src/app/services/credit-note.service';
+import { BuildingOwnerDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { CreditNoteDTO } from 'src/app/DTOs/CreditNoteDTO';
 import { CreditNoteViewComponent } from './credit-note-view.component';
+import { catchError, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-credit-note-table',
@@ -19,6 +19,7 @@ import { CreditNoteViewComponent } from './credit-note-view.component';
 export class CreditNoteTableComponent implements OnInit, AfterViewInit {
   allComplete: boolean = false;
   creditNote: CreditNoteDTO[] = [];
+  invoiceFind: InvoiceDTO[] = [];
   buildingOwnerNames: { [key: number]: string } = {};
   displayedColumns: string[] = [
     'chk',
@@ -37,13 +38,16 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog,
     private _creditService: CreditNoteService,
     private _ownerService: BuildingOwnerService,
+    private _invoiceService: InvoiceService,
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadCreditNoteListData();
+    this.loadInvoices(); // Load invoices data here
   }
+
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -64,14 +68,28 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
     };
   }
 
-  openCreditNoteDialog(creditNoteId: string): void {
-    const credit = this.creditNote.find((crd) => crd.guid === creditNoteId);
+  loadInvoices(): void {
+    this._invoiceService.getAllInvoices(true).subscribe({
+      next: (response: any) => {
+        this.invoiceFind = response.data.invoicesDTOs || [];
+      },
+      error: (error: any) => {
+        console.error('There was an error fetching invoices!', error);
+      }
+    });
+  }
 
-    if (credit) {
+  openCreditNoteDialog(creditNoteId: string, creditNoteRef: string): void {
+    const credit = this.creditNote.find((crd) => crd.guid === creditNoteId);
+    const invoice = this.invoiceFind.find((inv) =>  inv.referenceNumber === creditNoteRef);
+
+    if (credit && invoice) {
       this.dialog.open(CreditNoteViewComponent, {
-        width: '1600px', 
-        data: credit,
+        width: '1600px',
+        data: { credit, invoice }
       });
+    } else {
+      console.error('Credit note or invoice not found');
     }
   }
 
@@ -151,5 +169,4 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
       }
     });
   }  
-
 }

@@ -13,7 +13,11 @@ import { OperationalResultDTO, TransactionDTO } from '../DTOs/dtoIndex';
 })
 export class AuthService {
   isauthenticated: boolean = false;
+
+ // private apiUrl = 'http://localhost:80/api'; // Replace with your API URL
+
   private apiUrl = 'https://thukelanewbackendtesting.co.za/api'; // Replace with your API URL
+
 
   constructor(private http: HttpClient) { }
 
