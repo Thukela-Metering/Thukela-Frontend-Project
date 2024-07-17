@@ -237,7 +237,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     console.log('Template loaded');
     const htmlContent = this.insertData(template, this.invoiceDetail);
     console.log('Data inserted into template');
-    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.data.invoice.buildingId);
 
     const iframe = document.createElement('iframe');
     document.body.appendChild(iframe);
@@ -254,31 +254,25 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pageHeight = pdf.internal.pageSize.height || 297;
         const pageWidth = pdf.internal.pageSize.width || 210;
-        const margin = 10;
-        const canvasHeight = 1123; // Adjust as needed to fit the page
-        let position = 0;
 
-        const totalHeight = doc.body.scrollHeight;
-        while (position < totalHeight) {
-            const canvas = await html2canvas(doc.body, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                x: 0,
-                y: position,
-                width: doc.body.scrollWidth,
-                height: canvasHeight,
-                windowWidth: doc.body.scrollWidth,
-                windowHeight: canvasHeight,
-            });
-            const imgData = canvas.toDataURL('image/jpeg', 0.5); // Compress image to 50% quality
-            pdf.addImage(imgData, 'JPEG', margin, margin, pageWidth - 2 * margin, (canvas.height * (pageWidth - 2 * margin)) / canvas.width);
-            position += canvasHeight;
-            if (position < totalHeight) {
-                pdf.addPage();
-            }
-        }
+        const canvas = await html2canvas(doc.body, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            width: doc.body.scrollWidth,
+            height: doc.body.scrollHeight,
+            windowWidth: doc.body.scrollWidth,
+            windowHeight: doc.body.scrollHeight,
+        });
 
+        const imgData = canvas.toDataURL('image/jpeg', 0.5); // Compress image to 50% quality
+
+        const imgProps = pdf.getImageProperties(imgData);
+        const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+
+        pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, imgHeight);
+
+        // Remove iframe after capturing content
         document.body.removeChild(iframe);
         console.log('PDF generated');
 
@@ -311,7 +305,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
             this.sendPDF(pdfBlob, selectedOwner);
         }
     }
-  }
+}
 
   private async compressPdfWithPdfLib(arrayBuffer: ArrayBuffer): Promise<Uint8Array> {
     const pdfDoc = await PDFDocument.load(arrayBuffer);
@@ -341,7 +335,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     console.log('FormData:', formData);
 
     try {
-        await this._emailService.sendEmail(formData,2).toPromise();
+        await this._emailService.sendEmailWithBlob(formData,2).toPromise();
         console.log('Email sent successfully');
         this.snackbarService.openSnackBar("Email has been sent to: " + selectedOwner?.email + " successfully", "dismiss", 8000);
         this.dialogRef.close();

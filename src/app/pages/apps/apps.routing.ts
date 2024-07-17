@@ -16,6 +16,7 @@ import { AppStatementScreenComponent } from './statement/statement.component';
 import { SearchComponent } from './seachComponent/filterSearch.component';
 import { PaymentComponent } from './payment/payment.component';
 import { CreditNoteTableComponent } from './credit-note/credit-note-table.component';
+import { HangfireDashboardComponent } from './tools/hangfire-dashboard/hangfire-dashboard.component';
 
 
 export const AppsRoutes: Routes = [
@@ -151,6 +152,17 @@ export const AppsRoutes: Routes = [
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Building Portfolio' },
+          ],
+        },
+      },
+      {
+        path: 'hangfire',
+        component: HangfireDashboardComponent,
+        data: {
+          title: 'Hangfire Dashboard',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Hangfire Dashboard' },
           ],
         },
       },

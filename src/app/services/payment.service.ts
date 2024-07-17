@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { OperationalResultDTO, TransactionDTO } from '../DTOs/dtoIndex';
+import { OperationalResultDTO, PaymentInvoiceItemDTO, TransactionDTO } from '../DTOs/dtoIndex';
+import { PaymentDTO } from '../DTOs/paymentDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +18,14 @@ export class PaymentService {
       return getResponse;
     }
   }
-getPaymentInvoiceItems(accountId: string): Observable<OperationalResultDTO<TransactionDTO>> {
-  return this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment/getInvoiceItemsForPayment?accountId=${accountId}`);
-}
 
-  
+  getPaymentInvoiceItems(accountId: string): Observable<OperationalResultDTO<TransactionDTO>> {
+    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment/getInvoiceItemsForPayment?accountId=${accountId}`);
+    return getResponse;
+  }
+
+  createPayment(payment: PaymentDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment`, payment);
+    return getResponse;
+  }
 }

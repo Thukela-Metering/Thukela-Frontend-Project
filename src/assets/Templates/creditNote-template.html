@@ -4,192 +4,225 @@
     <meta charset="UTF-8">
     <title>Invoice</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            width: 210mm;
-            height: 297mm;
-            box-sizing: border-box;
-            position: relative;
-        }
-        #invoice {
-            width: 190mm;
-            padding: 10mm;
-            margin: auto;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            position: relative;
-            min-height: 100%;
-            padding-bottom: 50mm;
-            box-sizing: border-box;
-        }
-        .header, .footer {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            page-break-inside: avoid;
-        }
-        .header {
-            margin-bottom: 20px;
-        }
-        .logo {
-            width: 150px;
-            height: auto;
-            margin-right: 20px;
-        }
-        .company-details {
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-            font-size: small;
-            justify-content: flex-start;
-            margin-top: 20px;
-            page-break-inside: avoid;
-        }
-        .company-details p {
-            margin: 0 0 5px;
-        }
-        .invoice-title {
-            text-align: center;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        .invoice-details {
-            text-align: right;
-            border: 1px solid #000000;
-            padding: 10px;
-            font-size: 14px;
-            width: 30%;
-            display: flex;
-            page-break-inside: avoid;
-        }
-        .invoice-details .titles, .invoice-details .values {
-            width: 95%;
-            padding: 1px;
-        }
-        .invoice-details .titles {
-            background-color: #e0e0e0; /* Shading for titles */
-        }
-        .invoice-details p {
-            text-align: left;
-            margin: 3px 0;
-        }
-        .due-date {
-            font-weight: bold;
-            color: #7e0000;
-            font-size: 16px;
-        }
-        h1, h2, h3, p {
-            margin: 0 0 10px;
-        }
-        .bill-section {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            page-break-inside: avoid;
-        }
-        .bill-from {
-            width: 48%;
-        }
-        .bill-to {
-            width: 48%;
-            text-align: left;
-            margin-top: 20px;
-        }
-        .bill-to-content {
-            text-align: left; /* Ensure content is aligned to the left */
-        }
-        .bill-to-content p {
-            margin: 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            page-break-inside: auto;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            page-break-inside: avoid;
-        }
-        th {
-            background-color: #8aa8ff;
-        }
-        tr:nth-child(even) {
-            background-color: #e0e0e0;
-        }
-        .itemsHeadings {
-            font-size: 14px;
-        }
-        .items {
-            font-size: 12px;
-        }
-        .summary {
-            width: 100%;
-            margin-top: 20px;
-            display: flex;
-            justify-content: flex-end;
-            flex-direction: column;
-            align-items: flex-end;
-            page-break-inside: avoid;
-        }
-        .summary-table {
-            width: 40%;
-        }
-        .summary-table th, .summary-table td {
-            text-align: right;
-            padding: 5px;
-            border: none;
-        }
-        .summary-table th {
-            font-size: 12px;
-        }
-        .summary-table td {
-            font-size: 12px;
-        }
-        .grand-total-wrapper {
-            width: 40%;
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            page-break-inside: avoid;
-        }
-        .grand-total-label {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: left;
-            color: #000000;
-        }
-        .grand-total-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: #000000;
-            text-align: right;
-            margin-right: 2%;
-        }
-        .note {
-            padding-top: 10mm;
-            font-size: 12px;
-        }
-        .footer {
-            position: absolute;
-            bottom: 0;
-            width: calc(100% - 20mm);
-            padding: 10mm;
-            box-sizing: border-box;
-            page-break-inside: avoid;
-        }
-        .footer p {
-            text-align: center;
-            font-size: 12px;
-            margin: 5px 0;
-        }
+              body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 210mm;
+    height: 297mm;
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#invoice {
+    width: 190mm;
+    min-height: 297mm;  /* Ensure it takes the full height of the page */
+    padding: 10mm;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space between header, content, and footer */
+    box-sizing: border-box;
+}
+
+.header, .footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    page-break-inside: avoid;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 150px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.company-details {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    font-size: small;
+    justify-content: flex-start;
+    margin-top: 20px;
+    page-break-inside: avoid;
+}
+
+.company-details p {
+    margin: 0 0 5px;
+}
+
+.invoice-title {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.invoice-details {
+    text-align: right;
+    border: 1px solid #000000;
+    padding: 10px;
+    font-size: 14px;
+    width: 30%;
+    display: flex;
+    page-break-inside: avoid;
+}
+
+.invoice-details .titles, .invoice-details .values {
+    width: 95%;
+    padding: 1px;
+}
+
+.invoice-details .titles {
+    background-color: #e0e0e0; /* Shading for titles */
+}
+
+.invoice-details p {
+    text-align: left;
+    margin: 3px 0;
+}
+
+.due-date {
+    font-weight: bold;
+    color: #7e0000;
+    font-size: 16px;
+}
+
+h1, h2, h3, p {
+    margin: 0 0 10px;
+}
+
+.bill-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    page-break-inside: avoid;
+}
+
+.bill-from {
+    width: 48%;
+}
+
+.bill-to {
+    width: 48%;
+    text-align: left;
+    margin-top: 20px;
+}
+
+.bill-to-content {
+    text-align: left; /* Ensure content is aligned to the left */
+}
+
+.bill-to-content p {
+    margin: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    page-break-inside: auto;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    page-break-inside: avoid;
+}
+
+th {
+    background-color: #8aa8ff;
+}
+
+tr:nth-child(even) {
+    background-color: #e0e0e0;
+}
+
+.itemsHeadings {
+    font-size: 14px;
+}
+
+.items {
+    font-size: 12px;
+}
+
+.summary {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
+    page-break-inside: avoid;
+}
+
+.summary-table {
+    width: 40%;
+}
+
+.summary-table th, .summary-table td {
+    text-align: right;
+    padding: 5px;
+    border: none;
+}
+
+.summary-table th {
+    font-size: 12px;
+}
+
+.summary-table td {
+    font-size: 12px;
+}
+
+.grand-total-wrapper {
+    width: 40%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    page-break-inside: avoid;
+}
+
+.grand-total-label {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    color: #000000;
+}
+
+.grand-total-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #000000;
+    text-align: right;
+    margin-right: 2%;
+}
+
+.note {
+    padding-top: 10mm;
+    font-size: 12px;
+}
+
+.footer {
+    width: 100%;
+    padding: 10mm;
+    box-sizing: border-box;
+    page-break-inside: avoid;
+    text-align: center;
+    font-size: 12px;
+    margin-top: auto; /* Pushes the footer to the bottom */
+}
     </style>
 </head>
 <body>
