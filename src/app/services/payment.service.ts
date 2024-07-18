@@ -9,8 +9,8 @@ import { PaymentDTO } from '../DTOs/paymentDTO';
 })
 export class PaymentService {
   constructor(private http: HttpClient) { }
-  // private apiUrl = 'http://localhost:80/api';
-  private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
+  private apiUrl = 'http://localhost:80/api';
+  //private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
 
   getAllPayments(isActive:boolean):Observable<OperationalResultDTO<TransactionDTO>>{
     {
