@@ -150,7 +150,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
       if (this.accountForm.valid) {
         const buildingOwnerData = new BuildingOwnerDTO();
         Object.assign(buildingOwnerData, this.accountForm.value, {
-          preferredCommunication: this.accountForm.value.preferredCommunication === 'email'
+          preferredCommunication: this.accountForm.value.preferredCommunication
         });
         this._buildingOwnerService.addNewBuildingOwner(buildingOwnerData).subscribe(
           response => {
