@@ -10,8 +10,8 @@ import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
 export class PortfolioService {
     constructor(private http: HttpClient) { }
 
-    private apiUrl = 'http://localhost:80/api';
-    //private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
+    //private apiUrl = 'http://localhost:80/api';
+    private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
 
     updateBuildingData(buildingData: BuildingDTO): Observable<OperationalResultDTO<TransactionDTO>> {
         var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building/${buildingData.id}`, buildingData);

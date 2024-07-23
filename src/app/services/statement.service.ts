@@ -8,8 +8,8 @@ import { OperationalResultDTO, StatementFilterDTO, TransactionDTO } from '../DTO
 })
 export class StatementService {
   constructor(private http: HttpClient) { }
-   private apiUrl = 'http://localhost:80/api';
-  //private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
+  // private apiUrl = 'http://localhost:80/api';
+  private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
 
 
 // getByAccountId(filterDTO:StatementFilterDTO):Observable<OperationalResultDTO<TransactionDTO>>{
