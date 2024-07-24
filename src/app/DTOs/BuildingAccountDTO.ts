@@ -9,5 +9,7 @@ export class BuildingAccountDTO extends BaseDTO {
     readingSlip?: boolean; // Optional property
     creditControl?: boolean; // Optional property
     buildingTaxNumber?:string;
+    accountRunningBalance?:number;
+    isInCredit? : boolean
     bookNumber?: string;
 }
