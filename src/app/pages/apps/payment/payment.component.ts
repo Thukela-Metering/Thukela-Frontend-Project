@@ -5,7 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { PaymentService } from 'src/app/services/payment.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { PaymentDTO } from 'src/app/DTOs/paymentDTO';
-import { PaymentInvoiceItemDTO } from 'src/app/DTOs/dtoIndex';
+import { BuildingAccountDTO, PaymentInvoiceItemDTO } from 'src/app/DTOs/dtoIndex';
+import { BuildingAccountService } from 'src/app/services/building-account.service';
 
 @Component({
   selector: 'app-payment',
@@ -15,6 +16,8 @@ export class PaymentComponent implements OnInit {
   accountId: string;
   invoices: PaymentInvoiceItemDTO[] = [];
   payment: PaymentDTO = new PaymentDTO();
+  accountDTO: BuildingAccountDTO = new BuildingAccountDTO();
+  selectedPaymentDate: Date = new Date();
   dataSource = new MatTableDataSource<PaymentInvoiceItemDTO>();
   displayedColumns: string[] = ['id', 'invoiceReference', 'invoiceAmount', 'amountAlreadyPaid', 'invoiceNumber', 'invoiceDate', 'outstandingAmount', 'paymentAmount'];
   customAmount: number = 0;
@@ -23,13 +26,15 @@ export class PaymentComponent implements OnInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     private paymentService: PaymentService,
+    private buildingAccountService: BuildingAccountService,
     private snackbarService: SnackbarService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.accountId = params['id'];
       this.fetchInvoices(this.accountId);
+      this.fetchAccountDTO();
     });
   }
 
@@ -40,6 +45,20 @@ export class PaymentComponent implements OnInit {
       this.dataSource.data = this.invoices;
       console.log(this.invoices);
     });
+  }
+  fetchAccountDTO(): void {
+    this.buildingAccountService.getBuildingAccountById(Number(this.accountId)).subscribe({
+      next: (data) => {
+        this.accountDTO = data.data?.buildingAccountDTOs![0] ?? new BuildingAccountDTO();
+        !this.accountDTO.isInCredit ? this.accountDTO.accountRunningBalance = this.accountDTO.accountRunningBalance! * -1 : this.accountDTO.accountRunningBalance
+        console.log(data.data?.buildingAccountDTOs![0])
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+      }
+
+    }
+    )
   }
 
   calculateOutstandingAmounts(): void {
@@ -65,7 +84,7 @@ export class PaymentComponent implements OnInit {
         invoice.paymentAmount = 0;
       }
     });
-    this.dataSource.data = this.invoices; 
+    this.dataSource.data = this.invoices;
   }
 
   async savePayments(): Promise<void> {
@@ -75,7 +94,7 @@ export class PaymentComponent implements OnInit {
           const outstandingAmount = invoice.outstandingAmount! - (invoice.paymentAmount || 0);
           const paymentDTO: PaymentDTO = {
             amount: invoice.paymentAmount || 0,
-            paymentDate: new Date(),
+            paymentDate: this.selectedPaymentDate,
             paymentMethod: 1, // Assuming a default payment method, modify as needed
             invoiceReference: invoice.invoiceReference,
             invoiceId: parseInt(invoice.id),
@@ -92,7 +111,7 @@ export class PaymentComponent implements OnInit {
         }
       }
 
-      this.snackbarService.openSnackBar('Payments saved successfully', "dismiss",  3000);
+      this.snackbarService.openSnackBar('Payments saved successfully', "dismiss", 3000);
       this.fetchInvoices(this.accountId);
     } catch (error) {
       console.error('Error saving payments:', error);

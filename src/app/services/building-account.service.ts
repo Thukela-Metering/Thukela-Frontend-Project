@@ -20,9 +20,15 @@ export class BuildingAccountService {
       return getResponse;
     }
   }
-  getBuildingAccountById(buildingAccountId:string):Observable<OperationalResultDTO<TransactionDTO>>{
+  getBuildingAccountByGuid(buildingAccountId:string):Observable<OperationalResultDTO<TransactionDTO>>{
     {
       var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount/${buildingAccountId}`);
+      return getResponse;
+    }
+  }
+  getBuildingAccountById(buildingAccountId:number):Observable<OperationalResultDTO<TransactionDTO>>{
+    {
+      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount/id/${buildingAccountId}`);
       return getResponse;
     }
   }

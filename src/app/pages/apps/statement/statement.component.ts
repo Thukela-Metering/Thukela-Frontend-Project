@@ -12,6 +12,7 @@ import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { PortfolioService } from 'src/app/services/portfolio.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StatementService } from 'src/app/services/statement.service';
+import * as moment from 'moment-timezone';
 
 @Component({
   selector: 'statement',
@@ -78,173 +79,36 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
     });
   }
   loadData() {
-    // this.statementItems = [
-    //   // First dataset
-    //   {
-    //     isActive: true,
-    //     id: 1,
-    //     guid: 'guid-1',
-    //     dateCreated: new Date('2024-01-01'),
-    //     dateLastUpdated: new Date('2024-01-01'),
-    //     dateDeleted: undefined,
-    //     invoiceId: 1001,
-    //     creditNoteId: 0,
-    //     referenceNumber: 'INV-1001',
-    //     date: new Date('2024-01-01'),
-    //     account: 'Account A',
-    //     transaction: 'Invoice',
-    //     amount: '100.00',
-    //     closingBalance: '100.00'
-    //   },
-    //   {
-    //     isActive: true,
-    //     id: 2,
-    //     guid: 'guid-2',
-    //     dateCreated: new Date('2024-01-15'),
-    //     dateLastUpdated: new Date('2024-01-15'),
-    //     dateDeleted: undefined,
-    //     invoiceId: 0,
-    //     creditNoteId: 2001,
-    //     referenceNumber: 'CN-2001',
-    //     date: new Date('2024-01-15'),
-    //     account: 'Account A',
-    //     transaction: 'Credit Note',
-    //     amount: '-50.00',
-    //     closingBalance: '50.00'
-    //   },
-    //   {
-    //     isActive: true,
-    //     id: 3,
-    //     guid: 'guid-3',
-    //     dateCreated: new Date('2024-01-31'),
-    //     dateLastUpdated: new Date('2024-01-31'),
-    //     dateDeleted: undefined,
-    //     invoiceId: 0,
-    //     creditNoteId: 0,
-    //     referenceNumber: 'PAY-3001',
-    //     date: new Date('2024-01-31'),
-    //     account: 'Account A',
-    //     transaction: 'Payment',
-    //     amount: '-50.00',
-    //     closingBalance: '0.00'
-    //   },
-
-    //   // Second dataset
-    //   {
-    //     isActive: true,
-    //     id: 4,
-    //     guid: 'guid-4',
-    //     dateCreated: new Date('2024-02-01'),
-    //     dateLastUpdated: new Date('2024-02-01'),
-    //     dateDeleted: undefined,
-    //     invoiceId: 1002,
-    //     creditNoteId: 0,
-    //     referenceNumber: 'INV-1002',
-    //     date: new Date('2024-02-01'),
-    //     account: 'Account B',
-    //     transaction: 'Invoice',
-    //     amount: '2000.00',
-    //     closingBalance: '200.00'
-    //   },
-    //   {
-    //     isActive: true,
-    //     id: 5,
-    //     guid: 'guid-5',
-    //     dateCreated: new Date('2024-02-15'),
-    //     dateLastUpdated: new Date('2024-02-15'),
-    //     dateDeleted: undefined,
-    //     invoiceId: 0,
-    //     creditNoteId: 2002,
-    //     referenceNumber: 'CN-2002',
-    //     date: new Date('2024-02-15'),
-    //     account: 'Account B',
-    //     transaction: 'Credit Note',
-    //     amount: '-75.00',
-    //     closingBalance: '125.00'
-    //   },
-    //   {
-    //     isActive: true,
-    //     id: 6,
-    //     guid: 'guid-6',
-    //     dateCreated: new Date('2024-02-28'),
-    //     dateLastUpdated: new Date('2024-02-28'),
-    //     dateDeleted: undefined,
-    //     invoiceId: 0,
-    //     creditNoteId: 0,
-    //     referenceNumber: 'PAY-3002',
-    //     date: new Date('2024-02-28'),
-    //     account: 'Account B',
-    //     transaction: 'Payment',
-    //     amount: '-125.00',
-    //     closingBalance: '0.00'
-    //   },
-
-    //   // Third dataset
-    //   {
-    //     isActive: true,
-    //     id: 7,
-    //     guid: 'guid-7',
-    //     dateCreated: new Date('2024-03-01'),
-    //     dateLastUpdated: new Date('2024-03-01'),
-    //     dateDeleted: undefined,
-    //     invoiceId: 1003,
-    //     creditNoteId: 0,
-    //     referenceNumber: 'INV-1003',
-    //     date: new Date('2024-03-01'),
-    //     account: 'Account C',
-    //     transaction: 'Invoice',
-    //     amount: '300.00',
-    //     closingBalance: '300.00'
-    //   },
-    //   {
-    //     isActive: true,
-    //     id: 8,
-    //     guid: 'guid-8',
-    //     dateCreated: new Date('2024-03-15'),
-    //     dateLastUpdated: new Date('2024-03-15'),
-    //     dateDeleted: undefined,
-    //     invoiceId: 0,
-    //     creditNoteId: 2003,
-    //     referenceNumber: 'CN-2003',
-    //     date: new Date('2024-03-15'),
-    //     account: 'Account C',
-    //     transaction: 'Credit Note',
-    //     amount: '-100.00',
-    //     closingBalance: '200.00'
-    //   },
-    //   {
-    //     isActive: true,
-    //     id: 9,
-    //     guid: 'guid-9',
-    //     dateCreated: new Date('2024-07-08'),
-    //     dateLastUpdated: new Date('2024-07-08'),
-    //     dateDeleted: undefined,
-    //     invoiceId: 0,
-    //     creditNoteId: 0,
-    //     referenceNumber: 'PAY-3003',
-    //     date: new Date('2024-07-08'),
-    //     account: 'Account C',
-    //     transaction: 'Payment',
-    //     amount: '-200.00',
-    //     closingBalance: '0.00'
-    //   }
-    // ];
-
-    this._statementService.getByAccountId(this.filterDTO).subscribe({
+    console.log("The filter DTO :", this.filterDTO);
+  
+    // Convert dates to strings in the Africa/Johannesburg timezone
+    const filterDTOWithStringDates: StatementFilterDTO = {
+      ...this.filterDTO,
+      fromDate: this.filterDTO.fromDate ? this.convertToTimeZoneString(new Date(this.filterDTO.fromDate), 'Africa/Johannesburg') : "",
+      toDate: this.filterDTO.toDate ? this.convertToTimeZoneString(new Date(this.filterDTO.toDate), 'Africa/Johannesburg') : ""
+    };
+  
+    console.log("Formatted DTO with String Dates: ", filterDTOWithStringDates);
+  
+    // Use the DTO with formatted dates for the API call
+    this._statementService.getByAccountId(filterDTOWithStringDates).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         this.statementItems = response.data?.statementItemDTOs!;
-        console.log("The statementItemList: ");
-        console.log(this.StatementItemList);
+        console.log("The statementItemList: ", this.statementItems);
         this.populateStatementItemsWithOtherData();
       },
       error: (error) => {
-        this.transactionData = new TransactionDTO()
+        this.transactionData = new TransactionDTO();
         this.snackBar.open('Error loading statement data', 'Close', { duration: 3000 });
         console.error('Error loading statement data:', error);
       }
-    })
-
-
+    });
+  }
+  
+  
+  private convertToTimeZoneString(date: Date, timeZone: string): string {
+    // Use moment-timezone to convert the date to the specified timezone and format to ISO string
+    return moment(date).tz(timeZone).format();
   }
   onBuildingOwnerSelectionChange(event: any): void {
     this.selectedBuilding = event.value;
