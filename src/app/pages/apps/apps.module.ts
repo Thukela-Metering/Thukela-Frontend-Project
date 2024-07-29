@@ -52,6 +52,7 @@ import { CreditNoteTableComponent } from './credit-note/credit-note-table.compon
 import { CreditNoteViewComponent, SafePipe } from './credit-note/credit-note-view.component';
 import { AppInvoiceViewComponent } from './invoice/view-invoice.component';
 import { HangfireDashboardComponent } from './tools/hangfire-dashboard/hangfire-dashboard.component';
+import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoice.component';
 
 
 
@@ -102,6 +103,7 @@ import { HangfireDashboardComponent } from './tools/hangfire-dashboard/hangfire-
     AppAddInvoiceComponent,
     AppAddBuildingComponent,    
     LookupValueManagerComponent,
+    ProcessInvoiceComponent,
     AppBuildingRepresentativeLinkComponent,
     PortfolioComponent,
     AppStatementScreenComponent,
