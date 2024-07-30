@@ -76,7 +76,7 @@ export const navItems: NavItem[] = [
         route: 'apps/statement',     
       },
       {
-        displayName: 'Search Screen',
+        displayName: 'Load Payment',
         iconName: 'point',
         route: 'apps/statementSearch',              
       },

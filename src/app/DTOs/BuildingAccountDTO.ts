@@ -10,4 +10,6 @@ export class BuildingAccountDTO extends BaseDTO {
     creditControl?: boolean; // Optional property
     buildingTaxNumber?:string;
     bookNumber?: string;
+    accountRunningBalance?:number;
+    isInCredit?:boolean;
 }

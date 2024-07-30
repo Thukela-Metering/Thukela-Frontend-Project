@@ -17,6 +17,7 @@ import { SearchComponent } from './seachComponent/filterSearch.component';
 import { PaymentComponent } from './payment/payment.component';
 import { CreditNoteTableComponent } from './credit-note/credit-note-table.component';
 import { HangfireDashboardComponent } from './tools/hangfire-dashboard/hangfire-dashboard.component';
+import { LottieLoaderComponent } from './loaders/lottie-loader.component';
 
 
 export const AppsRoutes: Routes = [
@@ -113,7 +114,7 @@ export const AppsRoutes: Routes = [
       },
       {
         path: 'statementSearch',
-        component: SearchComponent,
+        component: LottieLoaderComponent,
         data: {
           title: 'search',
           urls: [

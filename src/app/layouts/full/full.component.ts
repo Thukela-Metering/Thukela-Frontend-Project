@@ -244,7 +244,7 @@ export class FullComponent implements OnInit {
       this._userService.getUserById(getLoggedInUserId).subscribe((userDetail) => {
         var result = userDetail as OperationalResultDTO<TransactionDTO>;
         this.LoggedInPersonName = result.data!.personDTOs![0].name.concat(' ', result.data!.personDTOs![0].surname);
-        console.log(userDetail);
+        // console.log(userDetail);
       });
     }
   }
@@ -261,7 +261,7 @@ export class FullComponent implements OnInit {
   signout(){
     this.authService.logout().subscribe(
       response => {
-        console.log(response);
+        // console.log(response);
         localStorage.clear();
         this.router.navigate(['/authentication/boxed-login']);
       },

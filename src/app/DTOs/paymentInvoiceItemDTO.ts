@@ -7,4 +7,5 @@ export class PaymentInvoiceItemDTO {
     invoiceReference: string;
     paymentAmount?: number;
     outstandingAmount?: number;
+    isSelected?: boolean = false; // Add this property
   }

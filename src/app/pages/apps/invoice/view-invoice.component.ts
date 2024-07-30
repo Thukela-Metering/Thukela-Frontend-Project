@@ -47,7 +47,8 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
     private _emailService: CommunicationService,
     private snackbarService: SnackbarService,
     private _buildingAccountService: BuildingAccountService,
-    private userPreferencesService: UserPreferencesService
+    private userPreferencesService: UserPreferencesService,    
+
   ) {
     this.invoiceDetail = data;
     this.dataSource = new MatTableDataSource<LineItemDTO>(this.invoiceDetail.items || []);

@@ -1,3 +1,7 @@
+
+import { ApplicationConfig } from '@angular/core';
+import { provideLottieOptions } from 'ngx-lottie';
+
 export interface AppSettings {
   dir: 'ltr' | 'rtl';
   theme: string;
@@ -22,4 +26,12 @@ export const defaults: AppSettings = {
   activeTheme: 'blue_theme',
   language: 'en-us',
   navPos: 'side',
+};
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideLottieOptions({
+      player: () => import('lottie-web'),
+    }),
+  ],
 };
