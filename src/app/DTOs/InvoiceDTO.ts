@@ -20,6 +20,8 @@ export class InvoiceDTO extends BaseDTO {
   grandTotal?: number;
   vat?: number;
   completed?: boolean;
+  isRecurring?: boolean;
+  sendDate?: Date;
 }
 
 export enum PaymentStatus {

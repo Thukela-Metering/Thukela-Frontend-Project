@@ -1,6 +1,7 @@
 import { BaseDTO } from './baseDTO';
 
 export class LineItemDTO {
+    id: number;
     itemName?: string;
     description?:string;
     lineDiscount?: number;
