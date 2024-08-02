@@ -58,6 +58,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     this.creditNoteForm = this.fb.group({
       items: this.fb.array([])
     });
+    this.initForm();
   }
 
   ngOnInit(): void {
@@ -86,6 +87,17 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     });
   }
 
+  loadCreditNoteDetail(id: string): void {
+    this._CreditNoteService.getCreditNoteByGuid(id).subscribe({
+      next: (response: any) => {
+        this.retreivedCreditNotes = response;
+      },
+      error: (error) => {
+        console.error('There was an error fetching credit note details!', error);
+      }
+    });
+  }
+
   closeDialog(): void {
     this.dialogRef.close();
   }
@@ -107,45 +119,34 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
       next: (response: any) => {
         this.retrievedAccounts = response.data?.buildingAccountDTOs ?? [];
       }
-    })
-  }
-
-  loadCreditNoteDetail(id: string): void {
-    this._CreditNoteService.getCreditNoteByGuid(id).subscribe({
-      next: (response: any) => {
-        this.retreivedCreditNotes = response;
-      },
-      error: (error) => {
-        console.error('There was an error fetching credit note details!', error);
-      }
     });
   }
 
-  downloadCreditNote(): void {
+  async downloadCreditNote(): Promise<void> {
     if (this.userPreferencesService.getDontAskAgainDownload()) {
-      this.generateCreditNotePDF('download');
+      await this.generateCreditNotePDF('download');
     } else {
       const dialogRef = this.dialog.open(ConfirmDownloadDialogComponent, {
         width: '300px'
       });
 
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe(async result => {
         if (result && result.confirmed) {
           if (result.dontAskAgain) {
             this.userPreferencesService.setDontAskAgainDownload(true);
           }
-          this.generateCreditNotePDF('download');
+          await this.generateCreditNotePDF('download');
         }
       });
     }
   }
 
-  emailCreditNote(): void {
-    this.generateCreditNotePDF('email');
+  async emailCreditNote(): Promise<void> {
+    await this.sendCreditNotePDF();
   }
 
-  previewCreditNote(): void {
-    this.generateCreditNotePDF('preview');
+  async previewCreditNote(): Promise<void> {
+    await this.generateCreditNotePDF('preview');
     this.showPdfPreview = true; 
     this.cdr.detectChanges(); 
   }  
@@ -154,46 +155,17 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     this.showPdfPreview = false;
   }
 
-  async generateCreditNotePDF(action: 'download' | 'preview' | 'email'): Promise<void> {
-    console.log('Starting PDF generation');
-    const pdfDto: PdfDTO = this.createCreditNotePdfDto();
-
-    try {
-      const pdfBlob = await this.pdfService.generateCreditNotePdf(pdfDto).toPromise();
-      if (action === 'download') {
-        console.log('Downloading PDF');
-        const blob = new Blob([pdfBlob || ""], { type: 'application/pdf' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `credit_note_${this.creditNoteDetail?.id}.pdf`;
-        link.click();
-      } else if (action === 'preview') {
-        console.log('Preparing PDF preview');
-        const blobUrl = URL.createObjectURL(new Blob([pdfBlob || ""], { type: 'application/pdf' }));
-        this.pdfDataUrl = blobUrl;
-        console.log('Blob URL:', blobUrl);
-        this.showPdfPreview = true;
-        this.openPdfPreview();
-      } else if (action === 'email') {
-        console.log('Sending PDF via email');
-        this.sendCreditNotePDF(pdfBlob!);
-      }
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      this.snackbarService.openSnackBar("Error generating PDF", "dismiss");
-    }
-  }
-
-  private createCreditNotePdfDto(): PdfDTO {
+  private getCreditNotePdfDto(): PdfDTO {
+    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
     return {
       referenceNumber: this.creditNoteDetail?.id?.toString() || "",
       originalRef: this.creditNoteDetail?.invoiceReferenceNumber || "",
       invoiceDate: this.creditNoteDetail?.creditNoteDate ? new Date(this.creditNoteDetail.creditNoteDate) : new Date(),
       dueDate: new Date(),
-      customerName: this.foundOwnerAccount?.name || 'N/A',
-      customerAddress: this.foundOwnerAccount?.address || 'N/A',
-      customerPhone: this.foundOwnerAccount?.contactNumber || 'N/A',
-      customerEmail: this.foundOwnerAccount?.email || 'N/A',
+      customerName: selectedOwner?.name || 'N/A',
+      customerAddress: selectedOwner?.address || 'N/A',
+      customerPhone: selectedOwner?.contactNumber || 'N/A',
+      customerEmail: selectedOwner?.email || 'N/A',
       taxNumber: this.retrievedAccounts.find(account => account.id === this.invoiceDetail.buildingId)?.buildingTaxNumber || 'N/A',
       subTotal: this.creditNoteDetail?.creditNoteTotal || 0,
       discount: 0,
@@ -204,35 +176,48 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     };
   }
 
-  async sendCreditNotePDF(pdfBlob: Blob): Promise<void> {
-    console.log('Sending PDF blob via email');
-
-    const formData = new FormData();
-    formData.append('pdf', pdfBlob, `Credit_Note_${this.creditNoteDetail?.id}.pdf`);
-    formData.append('filename', `Credit_Note_${this.creditNoteDetail?.id}.pdf`);
-    formData.append('clientEmail', this.foundOwnerAccount?.email || "");
-    formData.append('clientName', this.foundOwnerAccount?.name || "");
-    formData.append('isActive', 'true');
-
-    const emailData = {
-        filename: `Credit_Note_${this.creditNoteDetail?.id}.pdf`,
-        clientEmail: this.foundOwnerAccount?.email || "",
-        clientName: this.foundOwnerAccount?.name || "",
-        isActive: 'true'
-    };
-
-    formData.append('emailData', JSON.stringify(emailData));
-
-    console.log('FormData:', formData);
+  private async generateCreditNotePDF(action: 'download' | 'preview' | 'email'): Promise<void> {
+    const pdfDto = this.getCreditNotePdfDto();
 
     try {
-        await this._emailService.sendEmailWithBlob(formData, 2).toPromise();
-        console.log('Email sent successfully');
-        this.snackbarService.openSnackBar("Email has been sent to: " + this.foundOwnerAccount?.email + " successfully", "dismiss", 8000);
-        this.dialogRef.close();
+      const response = await this.pdfService.generateCreditNotePdf(pdfDto).toPromise();
+      const pdfBlob = new Blob([response || ""], { type: 'application/pdf' });
+
+      if (action === 'download') {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(pdfBlob);
+        link.download = `credit_note_${this.creditNoteDetail?.id}.pdf`;
+        link.click();
+      } else if (action === 'preview') {
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        this.pdfDataUrl = pdfUrl;
+        this.openPdfPreview();
+      } else if (action === 'email') {
+        await this.sendCreditNotePDF();
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      this.snackbarService.openSnackBar("Error generating PDF", "dismiss");
+    }
+  }
+
+  private async sendCreditNotePDF(): Promise<void> {
+    const pdfDto = this.getCreditNotePdfDto();
+    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+    const emailData = {
+      filename: `credit_note_${this.creditNoteDetail?.id}.pdf`,
+      clientEmail: selectedOwner?.email || "",
+      clientName: selectedOwner?.name || "",
+      isActive: true
+    };
+
+    try {
+      await this._emailService.sendEmail(pdfDto, JSON.stringify(emailData), 2).toPromise();
+      this.snackbarService.openSnackBar("Email has been sent to: " + selectedOwner?.email + " successfully", "dismiss", 8000);
+      this.dialogRef.close();
     } catch (error: any) {
-        console.error('Error sending email:', error);
-        this.snackbarService.openSnackBar("Error sending email", "dismiss");
+      console.error('Error sending email:', error);
+      this.snackbarService.openSnackBar("Error sending email", "dismiss");
     }
   }
 
@@ -253,7 +238,6 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   }
 
   openPdfPreview(): void {
-    console.log('Opening PDF preview dialog');
     const dialogRef = this.dialog.open(PdfPreviewComponent, {
       width: '80vw',
       height: '80vh',
@@ -262,7 +246,6 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(() => {
       this.showPdfPreview = false;
-      console.log('PDF preview dialog closed');
     });
   }
 }
