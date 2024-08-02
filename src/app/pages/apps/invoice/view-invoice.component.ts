@@ -44,8 +44,6 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
     private _emailService: CommunicationService,
     private snackbarService: SnackbarService,
     private _buildingAccountService: BuildingAccountService,
-    Feature/PaymentCreditControl
-    private userPreferencesService: UserPreferencesService,    
     private userPreferencesService: UserPreferencesService,
     private pdfService: PdfService
   ) {

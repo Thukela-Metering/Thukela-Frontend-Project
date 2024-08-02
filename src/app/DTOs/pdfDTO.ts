@@ -1,7 +1,8 @@
 import { LineItemDTO } from "./LineItemDTO";
+import { StatementItemDTO } from "./StatementItemDTO";
 
 export interface PdfDTO {
-    referenceNumber: string;
+    referenceNumber?: string;
     originalRef?: string;
     invoiceDate: Date;
     dueDate: Date;
@@ -10,10 +11,11 @@ export interface PdfDTO {
     customerPhone: string;
     customerEmail: string;
     taxNumber: string;
-    subTotal: number;
-    discount: number;
-    vat: number;
-    grandTotal: number;
-    items: LineItemDTO[];
-    note: string;
+    subTotal?: number;
+    discount?: number;
+    vat?: number;
+    grandTotal?: number;
+    items?: LineItemDTO[];
+    statmentItems?: StatementItemDTO[];
+    note?: string;
   }

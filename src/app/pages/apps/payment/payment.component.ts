@@ -53,20 +53,6 @@ export class PaymentComponent implements OnInit {
       console.log(this.invoices);
     });
   }
-  fetchAccountDTO(): void {
-    this.buildingAccountService.getBuildingAccountById(Number(this.accountId)).subscribe({
-      next: (data) => {
-        this.accountDTO = data.data?.buildingAccountDTOs![0] ?? new BuildingAccountDTO();
-        !this.accountDTO.isInCredit ? this.accountDTO.accountRunningBalance = this.accountDTO.accountRunningBalance! * -1 : this.accountDTO.accountRunningBalance
-        console.log(data.data?.buildingAccountDTOs![0])
-      },
-      error: (error) => {
-        console.error('There was an error!', error);
-      }
-
-    }
-    )
-  }
 
   fetchAccountDTO(): void {
     this.buildingAccountService.getBuildingAccountById(Number(this.accountId)).subscribe({
