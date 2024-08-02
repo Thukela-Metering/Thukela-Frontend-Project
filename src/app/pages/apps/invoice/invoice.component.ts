@@ -10,6 +10,7 @@ import { BuildingDTO, BuildingOwnerDTO, InvoiceDTO, OperationalResultDTO, Transa
 import { AppInvoiceViewComponent } from './view-invoice.component'; // Import the view component
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { catchError, forkJoin, map, of } from 'rxjs';
+import { LoaderService } from 'src/app/services/lottieLoader.service';
 
 @Component({
   selector: 'app-invoice',
@@ -37,11 +38,14 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
     private _invoiceService: InvoiceService,
     private _ownerService: BuildingOwnerService,
     private snackbarService: SnackbarService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private loaderService: LoaderService
   ) {}
 
   ngOnInit(): void {
+  //  this.loaderService.show();
     this.loadInvoicesListData();
+   
   }
 
   ngAfterViewInit(): void {
@@ -112,6 +116,7 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
                 if (owner) {
                   this.buildingOwnerNames[invoice.buildingOwnerId ?? 0] = owner.name; // Populate the mapping
                 }
+        //        this.loaderService.hide();
                 return invoice;
               }),
               catchError((error) => {

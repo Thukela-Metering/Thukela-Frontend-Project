@@ -52,8 +52,10 @@ import { CreditNoteTableComponent } from './credit-note/credit-note-table.compon
 import { CreditNoteViewComponent, SafePipe } from './credit-note/credit-note-view.component';
 import { AppInvoiceViewComponent } from './invoice/view-invoice.component';
 import { HangfireDashboardComponent } from './tools/hangfire-dashboard/hangfire-dashboard.component';
+import { BorderColorDirective } from 'src/app/directives/borderColorDirective';
+import { LottieComponent } from 'ngx-lottie';
+import { LottieLoaderComponent } from './loaders/lottie-loader.component';
 import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoice.component';
-
 
 
 
@@ -80,8 +82,9 @@ import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoi
     NgScrollbarModule,
     MatRadioModule,
     NgxMatSelectSearchModule,
+    LottieComponent
   ],
-  exports: [TablerIconsModule],
+  exports: [TablerIconsModule,BorderColorDirective],
   declarations: [
     BuildingAccountsComponent,
     AppBuildingOwnerComponent,
@@ -109,7 +112,9 @@ import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoi
     AppStatementScreenComponent,
     SearchComponent,
     PaymentComponent,
-    HangfireDashboardComponent
+    HangfireDashboardComponent,
+    BorderColorDirective,
+    LottieLoaderComponent
   ],
   providers: [DatePipe],
 })

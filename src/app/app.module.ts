@@ -24,6 +24,7 @@ import { FilterPipe } from './pipe/filter.pipe';
 
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideLottieOptions } from 'ngx-lottie';
 
 import { AuthInterceptor } from './interceptors/httpInterceptors';
 
@@ -52,7 +53,11 @@ export function HttpLoaderFactory(http: HttpClient): any {
     NgScrollbarModule,
     FullComponent,
   ],
-  providers: [ { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+  providers: [ { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    provideLottieOptions({
+      player: () => import('lottie-web'),
+    })
+  ],
   exports: [TablerIconsModule],
   bootstrap: [AppComponent],
 })

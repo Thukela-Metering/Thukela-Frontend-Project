@@ -12,4 +12,6 @@ export class BuildingAccountDTO extends BaseDTO {
     accountRunningBalance?:number;
     isInCredit? : boolean
     bookNumber?: string;
+    accountRunningBalance?:number;
+    isInCredit?:boolean;
 }
