@@ -1,31 +1,35 @@
-import { Component, AfterViewInit, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { map, catchError, of, forkJoin } from 'rxjs';
+import { InvoiceDTO } from 'src/app/DTOs/InvoiceDTO';
+import { OperationalResultDTO } from 'src/app/DTOs/operationalResultDTO';
+
+import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
-import { AppAddInvoiceComponent } from './add-invoice.component';
-import { MatDialog } from '@angular/material/dialog';
-import { BuildingDTO, BuildingOwnerDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
-import { AppInvoiceViewComponent } from './view-invoice.component'; // Import the view component
-import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
-import { catchError, forkJoin, map, of } from 'rxjs';
-import { LoaderService } from 'src/app/services/lottieLoader.service';
+import { AppAddInvoiceComponent } from '../add-invoice.component';
+import { AppInvoiceViewComponent } from '../view-invoice.component';
+import { TransactionDTO } from 'src/app/DTOs/transactionDTO';
+import { CommunicationService } from 'src/app/services/communication.service';
 
 @Component({
-  selector: 'app-invoice',
-  templateUrl: './invoice.component.html'
+  selector: 'app-process-invoice',
+  templateUrl: './process-invoice.component.html',
 })
-export class AppInvoiceListComponent implements OnInit, AfterViewInit {
+export class ProcessInvoiceComponent implements OnInit, AfterViewInit {
   allComplete: boolean = false;
   invoices: InvoiceDTO[] = [];
   buildingOwnerNames: { [key: number]: string } = {}; // Mapping of buildingOwnerId to buildingOwnerName
   displayedColumns: string[] = [
+    'chk',
     'ref',
-    'item', 
+    'item',
     'billTo',
-    'totalCost', 
-    'status', 
+    'totalCost',
+    'status',
     'action'
   ];
 
@@ -37,15 +41,13 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog,
     private _invoiceService: InvoiceService,
     private _ownerService: BuildingOwnerService,
+    private _emailService: CommunicationService,
     private snackbarService: SnackbarService,
-    private cdr: ChangeDetectorRef,
-    private loaderService: LoaderService
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-  //  this.loaderService.show();
     this.loadInvoicesListData();
-   
   }
 
   ngAfterViewInit(): void {
@@ -71,23 +73,52 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
     };
   }
 
-  openDialog(action: string, obj: any): void {
-    obj.action = action;
-    const dialogRef = this.dialog.open(AppAddInvoiceComponent, {
-      width: '1600px',
-      data: obj,
-    });
+  openDialog(action: string, invoiceGuid?: string): void {
+    if (invoiceGuid) {
+      // Fetch the invoice by GUID and open the dialog with the fetched data
+      this._invoiceService.getInvoiceByGuid(invoiceGuid).subscribe({
+        next: (response: OperationalResultDTO<TransactionDTO>) => {
+          if (response && response.data) {
+            const obj = { action, invoice: response.data.invoicesDTOs?.find(inv => inv.guid === invoiceGuid) };
+            const dialogRef = this.dialog.open(AppAddInvoiceComponent, {
+              width: '1600px',
+              data: obj,
+            });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+            dialogRef.afterClosed().subscribe((result) => {
+              if (result) {
+                this.loadInvoicesListData();
+              }
+            });
+
+            const componentInstance = dialogRef.componentInstance;
+            componentInstance.saveClicked.subscribe(() => {
+              this.loadInvoicesListData();
+            });
+          }
+        },
+        error: (error) => {
+          console.error('There was an error fetching the invoice!', error);
+        },
+      });
+    } else {
+      const obj = { action };
+      const dialogRef = this.dialog.open(AppAddInvoiceComponent, {
+        width: '1600px',
+        data: obj,
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.loadInvoicesListData();
+        }
+      });
+
+      const componentInstance = dialogRef.componentInstance;
+      componentInstance.saveClicked.subscribe(() => {
         this.loadInvoicesListData();
-      }
-    });
-
-    const componentInstance = dialogRef.componentInstance;
-    componentInstance.saveClicked.subscribe(() => {
-      this.loadInvoicesListData();
-    });
+      });
+    }
   }
 
   openInvoiceDialog(invoiceId: number): void {
@@ -102,7 +133,7 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
   }
 
   loadInvoicesListData(): void {
-    this._invoiceService.getAllInvoices(true).subscribe({
+    this._invoiceService.getRecurringInvoices(new Date(Date.now())).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response && response.data) {
           console.log('data received from backend:', response.data.invoicesDTOs);
@@ -116,7 +147,13 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
                 if (owner) {
                   this.buildingOwnerNames[invoice.buildingOwnerId ?? 0] = owner.name; // Populate the mapping
                 }
-        //        this.loaderService.hide();
+                // Ensure PaymentMethod and ReferenceNumber are populated
+                if (!invoice.paymentMethod) {
+                  invoice.paymentMethod = 'DefaultPaymentMethod'; // Replace with actual default or retrieved value
+                }
+                if (!invoice.referenceNumber) {
+                  invoice.referenceNumber = 'DefaultReferenceNumber'; // Replace with actual default or retrieved value
+                }
                 return invoice;
               }),
               catchError((error) => {
@@ -137,7 +174,7 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
         console.error('There was an error!', error);
       }
     });
-  }
+  }  
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
@@ -146,6 +183,28 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
       return ownerName.includes(filter) || (data.items![0]?.itemName?.toLowerCase() || '').includes(filter) || (data.referenceNumber?.toLowerCase() || '').includes(filter);
     };
     this.dataSource.filter = filterValue;
+  }
+
+  processSelectedInvoices(): void {
+    const selectedInvoices = this.invoices.filter(invoice => invoice.completed);
+    if (selectedInvoices.length > 0) {
+      this._emailService.processInvoices(selectedInvoices).subscribe({
+        next: (response: OperationalResultDTO<TransactionDTO>) => {
+          if (response && response.success) {
+            this.snackbarService.openSnackBar('Selected invoices processed successfully', 'Close');
+            this.loadInvoicesListData();
+          } else {
+            this.snackbarService.openSnackBar('Failed to process selected invoices', 'Close');
+          }
+        },
+        error: (error) => {
+          console.error('There was an error processing the selected invoices!', error);
+          this.snackbarService.openSnackBar('Failed to process selected invoices', 'Close');
+        }
+      });
+    } else {
+      this.snackbarService.openSnackBar('No invoices selected for processing', 'Close');
+    }
   }  
 
   updateAllComplete(): void {

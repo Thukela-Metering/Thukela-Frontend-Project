@@ -83,6 +83,10 @@ export const navItems: NavItem[] = [
       { displayName: 'Credit Note',
         iconName: 'point',
         route: 'apps/creditNote',   
+      },
+      { displayName: 'Recurring Invoices',
+        iconName: 'point',
+        route: 'apps/recurring',   
       }
     ],
   },

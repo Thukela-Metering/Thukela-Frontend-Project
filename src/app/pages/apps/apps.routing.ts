@@ -18,6 +18,7 @@ import { PaymentComponent } from './payment/payment.component';
 import { CreditNoteTableComponent } from './credit-note/credit-note-table.component';
 import { HangfireDashboardComponent } from './tools/hangfire-dashboard/hangfire-dashboard.component';
 import { LottieLoaderComponent } from './loaders/lottie-loader.component';
+import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoice.component';
 
 
 export const AppsRoutes: Routes = [
@@ -164,6 +165,17 @@ export const AppsRoutes: Routes = [
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Hangfire Dashboard' },
+          ],
+        },
+      },
+      {
+        path: 'recurring',
+        component: ProcessInvoiceComponent,
+        data: {
+          title: 'Recurring Invoices',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Recurring Invoices' },
           ],
         },
       },

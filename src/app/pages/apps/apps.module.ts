@@ -55,6 +55,7 @@ import { HangfireDashboardComponent } from './tools/hangfire-dashboard/hangfire-
 import { BorderColorDirective } from 'src/app/directives/borderColorDirective';
 import { LottieComponent } from 'ngx-lottie';
 import { LottieLoaderComponent } from './loaders/lottie-loader.component';
+import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoice.component';
 
 
 
@@ -105,6 +106,7 @@ import { LottieLoaderComponent } from './loaders/lottie-loader.component';
     AppAddInvoiceComponent,
     AppAddBuildingComponent,    
     LookupValueManagerComponent,
+    ProcessInvoiceComponent,
     AppBuildingRepresentativeLinkComponent,
     PortfolioComponent,
     AppStatementScreenComponent,

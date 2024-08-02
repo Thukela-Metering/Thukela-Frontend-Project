@@ -2,6 +2,7 @@ import { LineItemDTO } from "./LineItemDTO";
 
 export interface PdfDTO {
     referenceNumber: string;
+    originalRef?: string;
     invoiceDate: Date;
     dueDate: Date;
     customerName: string;

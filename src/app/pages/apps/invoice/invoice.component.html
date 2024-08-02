@@ -19,15 +19,6 @@
 <mat-card class="cardWithShadow">
   <div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort class="w-100">
-      <ng-container matColumnDef="chk">
-        <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()" (change)="setAll($event.checked)" color="primary"></mat-checkbox>
-        </th>
-        <td mat-cell *matCellDef="let element">
-          <mat-checkbox [(ngModel)]="element.completed" (ngModelChange)="updateAllComplete()" color="primary"></mat-checkbox>
-        </td>
-      </ng-container>
-
       <ng-container matColumnDef="ref">
         <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">Ref</th>
         <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white; font-weight: bold;">
