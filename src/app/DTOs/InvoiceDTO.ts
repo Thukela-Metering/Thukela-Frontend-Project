@@ -22,6 +22,8 @@ export class InvoiceDTO extends BaseDTO {
   completed?: boolean;
   isRecurring?: boolean;
   sendDate?: Date;
+  outstandingAmount?: number;
+  invoiceBalance?: number;
 }
 
 export enum PaymentStatus {

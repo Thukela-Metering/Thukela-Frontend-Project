@@ -386,7 +386,7 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
       this.invoice.isActive = true;
       this.invoice.isRecurring = true;
       const currentDate = new Date();
-      const firstOfNextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+      const firstOfNextMonth = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth() + 1, 1));
       this.invoice.sendDate = firstOfNextMonth;
     }
 
