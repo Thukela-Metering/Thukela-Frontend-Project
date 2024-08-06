@@ -1,3 +1,5 @@
+import { PaymentStatus } from "./InvoiceDTO";
+
 export class PaymentInvoiceItemDTO {
     id: string;
     invoiceDate: string;
@@ -6,5 +8,7 @@ export class PaymentInvoiceItemDTO {
     invoiceNumber: string;
     invoiceReference: string;
     paymentAmount?: number;
+    status?: PaymentStatus;
     outstandingAmount?: number;
+    isSelected?: boolean = false; // Add this property
   }

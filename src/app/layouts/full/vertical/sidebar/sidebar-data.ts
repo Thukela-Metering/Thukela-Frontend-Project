@@ -76,13 +76,17 @@ export const navItems: NavItem[] = [
         route: 'apps/statement',     
       },
       {
-        displayName: 'Search Screen',
+        displayName: 'Load Payment',
         iconName: 'point',
         route: 'apps/statementSearch',              
       },
       { displayName: 'Credit Note',
         iconName: 'point',
         route: 'apps/creditNote',   
+      },
+      { displayName: 'Recurring Invoices',
+        iconName: 'point',
+        route: 'apps/recurring',   
       }
     ],
   },

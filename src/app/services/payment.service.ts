@@ -12,10 +12,10 @@ export class PaymentService {
   //private apiUrl = 'http://localhost:80/api';
   private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
 
-  getAllPayments(isActive:boolean):Observable<OperationalResultDTO<TransactionDTO>>{
+  getAllPayments(isActive: boolean): Observable<OperationalResultDTO<TransactionDTO>> {
     {
       const params = new HttpParams().set('isactive', isActive.toString());
-      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount`, {params});
+      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount`, { params });
       return getResponse;
     }
   }

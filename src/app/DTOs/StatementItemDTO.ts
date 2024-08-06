@@ -5,7 +5,7 @@ export class StatementItemDTO extends BaseDTO {
     creditNoteId: number;
     referenceNumber: string;
     date: Date;
-    account: string;
+    accountNumber: string;
     transaction: string;
     amount: string;
     closingBalance: string;

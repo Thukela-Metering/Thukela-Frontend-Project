@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OperationalResultDTO } from '../DTOs/operationalResultDTO';
 import { PdfDTO } from '../DTOs/pdfDTO';
+import { InvoiceDTO } from '../DTOs/InvoiceDTO';
+import { TransactionDTO } from '../DTOs/transactionDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +25,11 @@ export class CommunicationService {
 
     return this.http.post<OperationalResultDTO<any>>(url, pdfDto, { headers });
   }
+
+  processInvoices(invoices: InvoiceDTO[]): Observable<OperationalResultDTO<TransactionDTO>> {
+    var response = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Communication/ProcessInvoice`, invoices);
+    return response;
+  }  
 
   sendEmailWithBlob(formData: FormData, templateNum: number): Observable<OperationalResultDTO<any>> {
     const headers = new HttpHeaders({

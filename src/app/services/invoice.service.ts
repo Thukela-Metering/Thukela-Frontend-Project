@@ -23,8 +23,28 @@ export class InvoiceService {
       }
     }
 
+    getRecurringInvoices(sendDate: Date):Observable<OperationalResultDTO<TransactionDTO>> {
+      {
+        const params = new HttpParams().set('sendDate', sendDate.toDateString());
+        var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Invoice/Recurring`, { params });      
+        return getResponse;
+      }
+    }
+
+    getInvoiceByGuid(guid:string):Observable<OperationalResultDTO<TransactionDTO>> {
+      {
+        var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Invoice/${ guid }`);      
+        return getResponse;
+      }
+    }
+
     createInvoice(invoiceData: TransactionDTO): Observable<OperationalResultDTO<TransactionDTO>> {
       var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Invoice`, invoiceData);
+      return getResponse;
+    }
+    
+    updateInvoice(invoiceData: TransactionDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+      var getResponse = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Invoice`, invoiceData);
       return getResponse;
     }
 
@@ -32,6 +52,5 @@ export class InvoiceService {
       const params = new HttpParams().set('accountNum', accountNumber)
       var getResponse = this.http.get<OperationalResultDTO<string>>(`${this.apiUrl}/Invoice/Reference/`, {params});
       return getResponse;
-
     }
   }

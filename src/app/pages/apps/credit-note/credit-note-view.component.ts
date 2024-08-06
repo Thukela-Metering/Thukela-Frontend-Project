@@ -3,8 +3,6 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dial
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { BuildingOwnerDTO, BuildingAccountDTO, InvoiceDTO, PaymentStatus } from 'src/app/DTOs/dtoIndex';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 import { UserPreferencesService } from 'src/app/services/user-preferences.service';
 import { ConfirmDownloadDialogComponent } from '../confirm-download-dialog.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -12,13 +10,13 @@ import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { BuildingAccountService } from 'src/app/services/building-account.service';
 import { CommunicationService } from 'src/app/services/communication.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
-import { PDFDocument } from 'pdf-lib';
 import { CreditNoteComponent } from '../credit-note/credit-note.component';
 import { LineItemDTO } from 'src/app/DTOs/LineItemDTO';
 import { CreditNoteDTO } from 'src/app/DTOs/CreditNoteDTO';
 import { PdfPreviewComponent } from '../invoice/pdf-preview/pdf-preview.component';
-import { AppInvoiceViewComponent } from '../invoice/view-invoice.component';
 import { CreditNoteService } from 'src/app/services/credit-note.service';
+import { PdfService } from 'src/app/services/pdf.service';
+import { PdfDTO } from 'src/app/DTOs/pdfDTO';
 
 @Component({
   selector: 'app-credit-note-view',
@@ -36,13 +34,13 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   pdfDataUrl: string = '';
   foundOwnerAccount: BuildingOwnerDTO | undefined;
   showPdfPreview: boolean = false;
-  invoiceForm: FormGroup;
+  creditNoteForm: FormGroup;
 
-  @ViewChild('invoice') invoiceElement!: ElementRef;
+  @ViewChild('creditNote') creditNoteElement!: ElementRef;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data:  { credit: CreditNoteDTO, invoice: InvoiceDTO },
-    public dialogRef: MatDialogRef<AppInvoiceViewComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { credit: CreditNoteDTO, invoice: InvoiceDTO },
+    public dialogRef: MatDialogRef<CreditNoteViewComponent>,
     private fb: FormBuilder,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -51,14 +49,16 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     private snackbarService: SnackbarService,
     private _buildingAccountService: BuildingAccountService,
     private _CreditNoteService: CreditNoteService,
+    private pdfService: PdfService,
     private userPreferencesService: UserPreferencesService
   ) {
     this.creditNoteDetail = data.credit;
     this.invoiceDetail = data.invoice;
     this.dataSource = new MatTableDataSource<LineItemDTO>(this.creditNoteDetail.items || []);
-    this.invoiceForm = this.fb.group({
+    this.creditNoteForm = this.fb.group({
       items: this.fb.array([])
     });
+    this.initForm();
   }
 
   ngOnInit(): void {
@@ -70,7 +70,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {}
 
   initForm(): void {
-    const itemsArray = this.invoiceForm.get('items') as FormArray;
+    const itemsArray = this.creditNoteForm.get('items') as FormArray;
     this.invoiceDetail.items!.forEach(item => {
       itemsArray.push(this.createItemGroup(item));
     });
@@ -84,6 +84,17 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
       units: [item.units],
       lineDiscount: [item.lineDiscount],
       itemTotal: [item.itemTotal],
+    });
+  }
+
+  loadCreditNoteDetail(id: string): void {
+    this._CreditNoteService.getCreditNoteByGuid(id).subscribe({
+      next: (response: any) => {
+        this.retreivedCreditNotes = response;
+      },
+      error: (error) => {
+        console.error('There was an error fetching credit note details!', error);
+      }
     });
   }
 
@@ -108,45 +119,34 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
       next: (response: any) => {
         this.retrievedAccounts = response.data?.buildingAccountDTOs ?? [];
       }
-    })
-  }
-
-  loadCreditNoteDetail(id: string): void {
-    this._CreditNoteService.getCreditNoteByGuid(id).subscribe({
-      next: (response: any) => {
-        this.retreivedCreditNotes = response;
-      },
-      error: (error) => {
-        console.error('There was an error fetching credit note details!', error);
-      }
     });
   }
 
-  downloadInvoice(): void {
+  async downloadCreditNote(): Promise<void> {
     if (this.userPreferencesService.getDontAskAgainDownload()) {
-      this.generatePDF('download');
+      await this.generateCreditNotePDF('download');
     } else {
       const dialogRef = this.dialog.open(ConfirmDownloadDialogComponent, {
         width: '300px'
       });
 
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe(async result => {
         if (result && result.confirmed) {
           if (result.dontAskAgain) {
             this.userPreferencesService.setDontAskAgainDownload(true);
           }
-          this.generatePDF('download');
+          await this.generateCreditNotePDF('download');
         }
       });
     }
   }
 
-  emailInvoice(): void {
-    this.generatePDF('email');
+  async emailCreditNote(): Promise<void> {
+    await this.sendCreditNotePDF();
   }
 
-  previewInvoice(): void {
-    this.generatePDF('preview');
+  async previewCreditNote(): Promise<void> {
+    await this.generateCreditNotePDF('preview');
     this.showPdfPreview = true; 
     this.cdr.detectChanges(); 
   }  
@@ -155,193 +155,69 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
     this.showPdfPreview = false;
   }
 
-  private async loadTemplate(url: string): Promise<string> {
-    const response = await fetch(url);
-    return await response.text();
-  }
-
-  private insertData(template: string, data: any): string {
+  private getCreditNotePdfDto(): PdfDTO {
     const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
-    const selectedAccount = this.retrievedAccounts.find(account => account.id === this.invoiceDetail.buildingId);
-    const vatNumber = selectedAccount?.buildingTaxNumber ? `Vat no: ${selectedAccount.buildingTaxNumber}` : '';
-    const vat = (this.creditNoteDetail?.creditNoteTotal!) * 0.15;
-    const sub = (this.creditNoteDetail?.creditNoteTotal!);
-    const itemsHtml = this.creditNoteDetail!.items!.map((item: LineItemDTO) => `
-      <tr>
-        <td>${item.itemName}</td>
-        <td>${item.description}</td>
-        <td>${this.formatCurrency(item.unitPrice || 0)}</td>
-        <td>${item.units}</td>
-        <td>${this.formatCurrency(item.creditNoteLineValue || 0)}</td>
-      </tr>
-    `).join('');
-
-    return template
-      .replace('{{companyAddress}}', 'PO Box 50247, Hercules, 0030')
-      .replace('{{companyPhone}}', '(123) 456-7890')
-      .replace('{{companyRegNo}}', '2015/055277/07')
-      .replace('{{invoiceNumber}}', this.creditNoteDetail?.invoiceReferenceNumber!)
-      .replace('{{creditNoteNumber}}', (this.creditNoteDetail!.id?.toString() || "N/A"))
-      .replace('{{vatNumber}}', '4270238266')
-      .replace('{{description}}', data.description || 'No Description')
-      .replace('{{creditDate}}', new Date(this.creditNoteDetail!.creditNoteDate!).toLocaleDateString() || "N/A")
-      .replace('{{dueDate}}', new Date(data.dueDate).toLocaleDateString() || 'N/A')
-      .replace('{{customerName}}', selectedOwner?.name || 'N/A')
-      .replace('{{customerAddress}}', selectedOwner?.address || 'N/A')
-      .replace('{{customerPhone}}', selectedOwner?.contactNumber || 'N/A')
-      .replace('{{customerEmail}}', selectedOwner?.email || 'N/A')
-      .replace('{{taxNumber}}', vatNumber)
-      .replace('{{subtotal}}', this.formatCurrency((this.creditNoteDetail?.creditNoteTotal) ?? 0))
-      .replace('{{vat}}', this.formatCurrency(vat ?? 0))
-      .replace('{{note}}', data.note || '')
-      .replace('{{lineDiscount}}', this.formatCurrency(data.lineDiscount ?? 0))
-      .replace('{{discount}}', this.formatCurrency(data.discount ?? 0))
-      .replace('{{grandTotal}}', this.formatCurrency(sub + vat ?? 0))
-      .replace('{{status}}', this.mapStatusToString(data.status))
-      .replace('{{items}}', itemsHtml);
-  }
-
-  private formatCurrency(value: number): string {
-    return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(value);
-  }
-
-  mapStatusToString(status: PaymentStatus | undefined): string {
-    switch (status) {
-      case PaymentStatus.Paid:
-        return 'Paid';
-      case PaymentStatus.Unpaid:
-        return 'Unpaid';
-      case PaymentStatus.PartiallyPaid:
-        return 'Partially Paid';
-      default:
-        return 'Unknown';
-    }
-  }
-
-  getStatusColor(status: PaymentStatus | undefined): string {
-    switch (status) {
-      case PaymentStatus.Paid:
-        return '#a3e4a1';
-      case PaymentStatus.Unpaid:
-        return '#f5a2a2';
-      case PaymentStatus.PartiallyPaid:
-        return '#fff6a2';
-      default:
-        return 'transparent';
-    }
-  }
-
-  async generatePDF(action: 'download' | 'preview' | 'email'): Promise<void> {
-    console.log('Starting PDF generation');
-    const template = await this.loadTemplate('assets/Templates/creditNote-template.html');
-    console.log('Template loaded');
-    const htmlContent = this.insertData(template, this.invoiceDetail);
-    console.log('Data inserted into template');
-    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.data.invoice.buildingId);
-
-    const iframe = document.createElement('iframe');
-    document.body.appendChild(iframe);
-    iframe.style.position = 'absolute';
-    iframe.style.width = '0px';
-    iframe.style.height = '0px';
-    const doc = iframe.contentWindow?.document;
-    if (doc) {
-        doc.open();
-        doc.write(`<div style="padding: 20px;">${htmlContent}</div>`);
-        doc.close();
-        console.log('Content written to iframe');
-
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pageHeight = pdf.internal.pageSize.height || 297;
-        const pageWidth = pdf.internal.pageSize.width || 210;
-
-        const canvas = await html2canvas(doc.body, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            width: doc.body.scrollWidth,
-            height: doc.body.scrollHeight,
-            windowWidth: doc.body.scrollWidth,
-            windowHeight: doc.body.scrollHeight,
-        });
-
-        const imgData = canvas.toDataURL('image/jpeg', 0.5); // Compress image to 50% quality
-
-        const imgProps = pdf.getImageProperties(imgData);
-        const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
-
-        pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, imgHeight);
-
-        // Remove iframe after capturing content
-        document.body.removeChild(iframe);
-        console.log('PDF generated');
-
-        // Use pdf-lib to compress the PDF further
-        const compressedPdfBytes = await this.compressPdfWithPdfLib(pdf.output('arraybuffer'));
-
-        if (compressedPdfBytes.byteLength === 0) {
-            console.error('Generated PDF has no pages');
-            this.snackbarService.openSnackBar("Error: Generated PDF has no pages", "dismiss");
-            return;
-        }
-
-        if (action === 'download') {
-            console.log('Downloading PDF');
-            const blob = new Blob([compressedPdfBytes], { type: 'application/pdf' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `invoice_${this.invoiceDetail.id}.pdf`;
-            link.click();
-        } else if (action === 'preview') {
-            console.log('Preparing PDF preview');
-            const blobUrl = URL.createObjectURL(new Blob([compressedPdfBytes], { type: 'application/pdf' }));
-            this.pdfDataUrl = blobUrl;
-            console.log('Blob URL:', blobUrl);
-            this.showPdfPreview = true;
-            this.openPdfPreview();
-        } else if (action === 'email') {
-            console.log('Sending PDF via email');
-            const pdfBlob = new Blob([compressedPdfBytes], { type: 'application/pdf' });
-            this.sendPDF(pdfBlob, selectedOwner);
-        }
-    }
-}
-
-  private async compressPdfWithPdfLib(arrayBuffer: ArrayBuffer): Promise<Uint8Array> {
-    const pdfDoc = await PDFDocument.load(arrayBuffer);
-    const compressedPdfBytes = await pdfDoc.save({ useObjectStreams: false, updateFieldAppearances: false });
-    return compressedPdfBytes;
-  }
-
-  async sendPDF(pdfBlob: Blob, selectedOwner: BuildingOwnerDTO | undefined): Promise<void> {
-    console.log('Sending PDF blob via email');
-
-    const formData = new FormData();
-    formData.append('pdf', pdfBlob, `Credit Note_${this.creditNoteDetail?.id}.pdf`);
-    formData.append('filename', `Credit Note_${this.creditNoteDetail?.id}.pdf`);
-    formData.append('clientEmail', selectedOwner?.email || "");
-    formData.append('clientName', selectedOwner?.name || "");
-    formData.append('isActive', 'true');
-
-    const emailData = {
-        filename: `Credit Note_${this.creditNoteDetail?.id}.pdf`,
-        clientEmail: selectedOwner?.email || "",
-        clientName: selectedOwner?.name || "",
-        isActive: 'true'
+    return {
+      referenceNumber: this.creditNoteDetail?.id?.toString() || "",
+      originalRef: this.creditNoteDetail?.invoiceReferenceNumber || "",
+      invoiceDate: this.creditNoteDetail?.creditNoteDate ? new Date(this.creditNoteDetail.creditNoteDate) : new Date(),
+      dueDate: new Date(),
+      customerName: selectedOwner?.name || 'N/A',
+      customerAddress: selectedOwner?.address || 'N/A',
+      customerPhone: selectedOwner?.contactNumber || 'N/A',
+      customerEmail: selectedOwner?.email || 'N/A',
+      taxNumber: this.retrievedAccounts.find(account => account.id === this.invoiceDetail.buildingId)?.buildingTaxNumber || 'N/A',
+      subTotal: this.creditNoteDetail?.creditNoteTotal || 0,
+      discount: 0,
+      vat: this.creditNoteDetail?.creditNoteTotal ? this.creditNoteDetail.creditNoteTotal * 0.15 : 0,
+      grandTotal: this.creditNoteDetail?.creditNoteTotal ? this.creditNoteDetail.creditNoteTotal * 1.15 : 0,
+      items: this.creditNoteDetail?.items || [],
+      note: ""
     };
+  }
 
-    formData.append('emailData', JSON.stringify(emailData));
-
-    console.log('FormData:', formData);
+  private async generateCreditNotePDF(action: 'download' | 'preview' | 'email'): Promise<void> {
+    const pdfDto = this.getCreditNotePdfDto();
 
     try {
-        await this._emailService.sendEmailWithBlob(formData,2).toPromise();
-        console.log('Email sent successfully');
-        this.snackbarService.openSnackBar("Email has been sent to: " + selectedOwner?.email + " successfully", "dismiss", 8000);
-        this.dialogRef.close();
+      const response = await this.pdfService.generateCreditNotePdf(pdfDto).toPromise();
+      const pdfBlob = new Blob([response || ""], { type: 'application/pdf' });
+
+      if (action === 'download') {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(pdfBlob);
+        link.download = `credit_note_${this.creditNoteDetail?.id}.pdf`;
+        link.click();
+      } else if (action === 'preview') {
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        this.pdfDataUrl = pdfUrl;
+        this.openPdfPreview();
+      } else if (action === 'email') {
+        await this.sendCreditNotePDF();
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      this.snackbarService.openSnackBar("Error generating PDF", "dismiss");
+    }
+  }
+
+  private async sendCreditNotePDF(): Promise<void> {
+    const pdfDto = this.getCreditNotePdfDto();
+    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+    const emailData = {
+      filename: `credit_note_${this.creditNoteDetail?.id}.pdf`,
+      clientEmail: selectedOwner?.email || "",
+      clientName: selectedOwner?.name || "",
+      isActive: true
+    };
+
+    try {
+      await this._emailService.sendEmail(pdfDto, JSON.stringify(emailData), 2).toPromise();
+      this.snackbarService.openSnackBar("Email has been sent to: " + selectedOwner?.email + " successfully", "dismiss", 8000);
+      this.dialogRef.close();
     } catch (error: any) {
-        console.error('Error sending email:', error);
-        this.snackbarService.openSnackBar("Error sending email", "dismiss");
+      console.error('Error sending email:', error);
+      this.snackbarService.openSnackBar("Error sending email", "dismiss");
     }
   }
 
@@ -352,16 +228,16 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
       data: this.invoiceDetail
     });
   }
+
   getControlName(index: number, controlName: string): string {
     return `items.${index}.${controlName}`;
   }
 
   itemsChanged(): void {
-    console.log('Items changed', this.invoiceForm.value);
+    console.log('Items changed', this.creditNoteForm.value);
   }
 
   openPdfPreview(): void {
-    console.log('Opening PDF preview dialog');
     const dialogRef = this.dialog.open(PdfPreviewComponent, {
       width: '80vw',
       height: '80vh',
@@ -370,7 +246,6 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(() => {
       this.showPdfPreview = false;
-      console.log('PDF preview dialog closed');
     });
   }
 }

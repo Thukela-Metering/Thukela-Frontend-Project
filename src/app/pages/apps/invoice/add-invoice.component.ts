@@ -20,11 +20,13 @@ import { LineItemDTO } from 'src/app/DTOs/LineItemDTO';
   templateUrl: './add-invoice.component.html'
 })
 export class AppAddInvoiceComponent implements OnInit, OnChanges {
+[x: string]: any;
   @Input() localDataFromComponent: InvoiceDTO;
   @Output() saveClicked: EventEmitter<void> = new EventEmitter<void>();
   action: string;
   addForm: UntypedFormGroup | any;
   local_data: InvoiceDTO;
+  isUpdateMode: boolean = false;
   retrievedBuildings: BuildingDTO[] = [];
   filteredBuildings: ReplaySubject<BuildingDTO[]> = new ReplaySubject<BuildingDTO[]>(1);
   buildingFilterCtrl: FormControl = new FormControl();
@@ -80,6 +82,7 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
       dueDate: ['', Validators.required],
       billTo: ['', Validators.required],
       note: ['Note: *please contact us if no invoice received, non-receipt does not constitute grounds for non-payment!'],
+      isRecurring: [false],
       rows: this.fb.array([this.createItemFormGroup()])
     });
     this.rows = this.addForm.get('rows') as FormArray;
@@ -90,6 +93,13 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     this.loadBuildingData();
     this.generatePaymentMethod();
     this.generateDueDateOptions(this.minDate);
+
+    if (this.data && this.data.invoice) {
+      this.isUpdateMode = true;
+      this.populateFormWithInvoiceData(this.data.invoice);
+    } else {
+      this.isUpdateMode = false;
+    }
 
     // Listen for changes in the invoiceDate form control and update dueDateOptions
     this.addForm.get('invoiceDate').valueChanges.subscribe((invoiceDate: Date) => {
@@ -120,6 +130,37 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
   ngOnDestroy(): void {
     this._onDestroy.next();
     this._onDestroy.complete();
+  }
+
+  private async populateFormWithInvoiceData(invoice: InvoiceDTO): Promise<void> {
+    this.selectedBuildingNum = invoice.referenceNumber!;
+    this.selectedDueDate = invoice.dueDate!;
+    await this.getBuildingOwner(invoice.buildingId!);
+
+    this.addForm.patchValue({
+      paymentMethod: invoice.paymentMethod,
+      invoiceDate: invoice.invoiceDate,
+      dueDate: invoice.dueDate,
+      billTo: this.retrievedOwner[0]?.name,
+      note: invoice.note,
+    });
+
+    const rowsArray = this.addForm.get('rows') as FormArray;
+    rowsArray.clear();
+    invoice.items?.forEach(item => {
+      rowsArray.push(this.fb.group({
+        itemId: [item.id],
+        itemName: [item.itemName, Validators.required],
+        description: [item.description, Validators.required],
+        units: [item.units, [Validators.required, Validators.min(1)]],
+        unitPrice: [item.unitPrice, [Validators.required, Validators.min(0.01)]],
+        lineDiscount: [item.lineDiscount, [Validators.min(0)]],
+        itemTotal: [item.itemTotal,{disabled: true }]
+      }));
+    });
+
+    this.itemsChanged();
+    console.log("Form after patching:", this.addForm.value);  // Check the form values
   }
 
   private filterBuildings(): void {
@@ -171,7 +212,8 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
   }
 
   endOfMonth(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    var response = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    return response;
   }
 
   onAddRow(): void {
@@ -201,17 +243,20 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     });
   }
 
-  getBuildingOwner(buildingId: number): void {
-    this._buildingOwnerService.getBuildingOwnerAccountByBuildingId(buildingId, true).subscribe({
-      next: (response: any) => {
-        this.retrievedOwner = response.data?.buildingOwnerAccountDTOs ?? [];
-        const selectedOwner = this.retrievedOwner.find(owner => owner.buildingId === buildingId);
-      },
-      error: (error) => {
-        console.error('There was an error!', error);
-      }
+  private async getBuildingOwner(buildingId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+        this._buildingOwnerService.getBuildingOwnerAccountByBuildingId(buildingId, true).subscribe({
+            next: (response: any) => {
+                this.retrievedOwner = response.data?.buildingOwnerAccountDTOs ?? [];
+                resolve();
+            },
+            error: (error) => {
+                console.error('There was an error!', error);
+                reject(error);
+            }
+        });
     });
-  }
+}
 
   getBuildingAccount(buildingId: number): void {
     this._buildingAccountService.getBuildingAccountByBuildingId(this.selectedBuilding?.id || 0).subscribe({
@@ -233,6 +278,7 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     if (building) {
       this.selectedBuilding = building;
       this.getBuildingAccount(building.id || 0);
+      this.getBuildingOwner(building.id || 0);
     } else {
       this.selectedBuilding = null;
       this.selectedBuildingNum = null;
@@ -320,9 +366,10 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
   async saveDetail(): Promise<void> {
     const formData = this.addForm.value;
     const selectedBuilding = formData.billTo;
-    const accountNumber = this.retrievedAccount.find(acc => acc.buildingId === selectedBuilding?.id)?.bookNumber;
-    const accoundId = this.retrievedAccount.find(x => x.id)
-    const ownerId = this.retrievedOwner.find(i => i.id)
+    const accoundId = this.retrievedAccount.find(x => x.id);
+    const ownerId = this.retrievedOwner.find(i => i.id);
+    const recurringChecked = formData.isRecurring;
+
     this.invoice.buildingId = selectedBuilding?.id;
     this.invoice.buildingAccountId = accoundId?.id || 0;
     this.invoice.grandTotal = this.grandTotal;
@@ -332,19 +379,36 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     this.invoice.items = this.rows.value;
     this.invoice.dueDate = formData.dueDate;
     this.invoice.note = formData.note || "Note: *please contact us if no invoice received, non-receipt does not constitute grounds for non-payment!";
-    this.invoice.paymentMethod = this.selectedPaymentMethod;
+    this.invoice.paymentMethod = formData.paymentMethod; // Ensure payment method is assigned
     this.invoice.vat = this.vat;
 
-    if (accountNumber) {
-      await this.generateReferenceNumber(accountNumber);
-      this.invoice.referenceNumber = this.selectedBuildingNum || '';
-      this.invoice.items!.forEach(element => {
-        element.invoiceRef = this.selectedBuildingNum!;
-      });
+    if (recurringChecked == true) {
+      this.invoice.isActive = true;
+      this.invoice.isRecurring = true;
+      const currentDate = new Date();
+      const firstOfNextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+      this.invoice.sendDate = firstOfNextMonth;
+    }
 
-      this.saveInvoice();
+    if (this.isUpdateMode) {
+      this.invoice.referenceNumber = this.selectedBuildingNum || '';
+      this.invoice.items!.forEach((element, index) => {
+        element.invoiceRef = this.selectedBuildingNum!;
+        element.id = this.data.invoice.items[index].id; // Assign the existing ID to the item
+      });
+      this.updateInvoice();
     } else {
-      this.snackbarService.openSnackBar('Error generating reference number', "dismiss");
+      const accountNumber = this.retrievedAccount.find(acc => acc.buildingId === this.selectedBuilding?.id)?.bookNumber;
+      if (accountNumber) {
+        await this.generateReferenceNumber(accountNumber);
+        this.invoice.referenceNumber = this.selectedBuildingNum || '';
+        this.invoice.items!.forEach(element => {
+          element.invoiceRef = this.selectedBuildingNum!;
+        });
+        this.saveInvoice();
+      } else {
+        this.snackbarService.openSnackBar('Error generating reference number', "dismiss");
+      }
     }
   }
 
@@ -362,6 +426,25 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
       },
       error => {
         console.error('Error adding invoice:', error);
+        this.snackbarService.openSnackBar(error.message, "dismiss");
+      }
+    );
+  }
+  
+  updateInvoice(): void {
+    this.transaction.invoicesDTOs = [];
+    this.transaction.invoicesDTOs.push(this.invoice);
+  
+    this._invoiceService.updateInvoice(this.transaction).subscribe(
+      response => {
+        if (response.success) {
+          this.snackbarService.openSnackBar(response.message, "dismiss");
+          this.saveClicked.emit();
+          this.dialogRef.close();
+        }
+      },
+      error => {
+        console.error('Error updating invoice:', error);
         this.snackbarService.openSnackBar(error.message, "dismiss");
       }
     );
