@@ -19,8 +19,8 @@ export class LoaderService {
     if (!this.dialogRef) {
       this.dialogRef = this.dialog.open(LottieLoaderComponent, {
         disableClose: true,
-        panelClass: 'transparent-dialog'
-      });
+        panelClass: 'transparent-dialog',
+      }); 
     }
     this._loading.next(true);
   }

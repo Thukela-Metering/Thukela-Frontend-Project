@@ -115,7 +115,7 @@ export const AppsRoutes: Routes = [
       },
       {
         path: 'statementSearch',
-        component: LottieLoaderComponent,
+        component: SearchComponent,
         data: {
           title: 'search',
           urls: [

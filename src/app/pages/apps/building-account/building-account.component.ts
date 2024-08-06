@@ -96,7 +96,7 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
     this.filteredBuildings = this.buildings.filter(option => option.name?.toLowerCase().includes(filterValue));
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.action == "Add") {
       var some = new BuildingAccountDTO();
       some.buildingId = this.accountsForm.get("buildingId")?.value;
@@ -130,7 +130,7 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       if (this.dialogRef) {
         this.dialogRef.close({ event: this.action, data: this.local_data });
       } else {
-        this.updateRowData(this.local_data);
+        await this.updateRowData(this.local_data);
       }
     }
   }
