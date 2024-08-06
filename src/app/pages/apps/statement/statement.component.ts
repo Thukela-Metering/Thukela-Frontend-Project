@@ -162,7 +162,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
+ 
   loadBuildingOwnerListData(): void {
     this._buildingOwnerService.getAllBuildingOwners().subscribe({
       next: (response) => {
@@ -196,7 +196,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
 
   populateStatementItemsWithOtherData() {
     this.statementItems.forEach(ax => {
-      ax.account = this.selectedBuildingAccount.bookNumber!;
+      ax.accountNumber = this.selectedBuildingAccount.bookNumber!;
       if (ax.transaction === "Invoice") {
         ax.transaction = ax.transaction.concat(" ", ax.id!.toString());
       } else if (ax.transaction === "CreditNote") {
@@ -223,7 +223,8 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
       customerPhone: selectedOwner?.contactNumber || 'N/A',
       customerEmail: selectedOwner?.email || 'N/A',
       taxNumber: this.selectedBuildingAccount?.buildingTaxNumber || 'N/A',
-      statmentItems: this.statementItems || []
+      statementItems: this.statementItems || [],
+      grandTotal: this.balanceDue,
     };
   }
 
@@ -260,7 +261,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
     const pdfDto = this.getPdfDto();
 
     try {
-      const response = await this.pdfService.generateInvoicePdf(pdfDto).toPromise();
+      const response = await this.pdfService.generateStatementPdf(pdfDto).toPromise();
       const pdfBlob = new Blob([response || ""], { type: 'application/pdf' });
 
       if (action === 'download') {
@@ -291,7 +292,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
     const pdfDto = this.getPdfDto();
 
     try {
-      await this._emailService.sendEmail(pdfDto, JSON.stringify(emailData), 1).toPromise();
+      await this._emailService.sendEmail(pdfDto, JSON.stringify(emailData), 3).toPromise();
       this.snackBar.openSnackBar("Email has been sent to: " + selectedOwner?.email + " successfully", "dismiss", 8000);
     } catch (error: any) {
       console.error('Error sending email:', error);
@@ -307,7 +308,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      this.dataLoaded = false; // Reset the PDF preview flag when the preview dialog is closed
+      this.dataLoaded = true; // Reset the PDF preview flag when the preview dialog is closed
     });
   }
 }

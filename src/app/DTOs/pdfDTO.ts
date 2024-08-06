@@ -16,6 +16,6 @@ export interface PdfDTO {
     vat?: number;
     grandTotal?: number;
     items?: LineItemDTO[];
-    statmentItems?: StatementItemDTO[];
+    statementItems?: StatementItemDTO[];
     note?: string;
   }

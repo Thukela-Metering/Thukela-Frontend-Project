@@ -85,10 +85,8 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe((result) => {
       if(result){
         if (result.event === 'Add') {
-          // this.addRowData(result.data);
           this.loadBuildingOwnerListData();
         } else if (result.event === 'Update') {
-          //this.updateRowData(result.data);
           this.loadBuildingOwnerListData();
         } else if (result.event === 'Delete') {
           this.deleteRowData(result.data);
@@ -96,10 +94,6 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
         }
       }
     });
-  }
-
-  addRowData(row_obj: BuildingOwnerDTO): void {
-    // Implementation for adding row
   }
 
   deleteRowData(row_obj: BuildingOwnerDTO): boolean | any {

@@ -146,12 +146,11 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onSubmit() {
-    if (this.action == "Add") {
-      if (this.accountForm.valid) {
-        const buildingOwnerData = new BuildingOwnerDTO();
-        Object.assign(buildingOwnerData, this.accountForm.value, {
-          preferredCommunication: this.accountForm.value.preferredCommunication
-        });
+    if (this.accountForm.valid) {
+      this.mapFormValuesToLocalData();
+  
+      if (this.action === "Add") {
+        const buildingOwnerData = { ...this.local_data };
         this._buildingOwnerService.addNewBuildingOwner(buildingOwnerData).subscribe(
           response => {
             if (response.success) {
@@ -166,17 +165,14 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
             console.error('Error adding building owner:', error);
           }
         );
-      }
-    } else {
-      this.mapFormValuesToLocalData();
-      if (this.dialogRef) {
-        this.dialogRef.close({ event: this.action, data: this.local_data });
-      }else
-      {
+      } else {
         this.updateRowData(this.local_data);
+        if (this.dialogRef) {
+          this.dialogRef.close({ event: this.action, data: this.local_data });
+        }
       }
     }
-  }
+  }  
 
   private mapFormValuesToLocalData(): void {
     this.local_data.name = this.accountForm.get('name')?.value;
@@ -191,23 +187,26 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
     this.local_data.isActive = this.accountForm.get('isActive')?.value;
     this.local_data.preferredCommunication = this.accountForm.get('preferredCommunication')?.value;
     this.local_data.additionalInformation = this.accountForm.get('additionalInformation')?.value;
-  }
-  updateRowData(row_obj: BuildingOwnerDTO): boolean | any {
-      this._buildingOwnerService.updateBuildingOwnerData(row_obj).subscribe({
-        next: (response) => {
-          if (response) {
-            console.log(response);
-            this.loadBuildingOwnerListData();
-            this.snackbarService.openSnackBar(response.message, "dismiss");
-          }
-        },
-        error: (error) => {
-          console.error('There was an error!', error);
-          this.snackbarService.openSnackBar(error.message, "dismiss");
+  }  
+  
+  updateRowData(row_obj: BuildingOwnerDTO): void {
+    this._buildingOwnerService.updateBuildingOwnerData(row_obj).subscribe({
+      next: (response) => {
+        if (response.success) {
+          console.log(response);
+          this.loadBuildingOwnerListData();
+          this.snackbarService.openSnackBar(response.message, "dismiss");
+        } else {
+          this.snackbarService.openSnackBar(response.message, "dismiss");
         }
-      });
-      return true;
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+        this.snackbarService.openSnackBar(error.message, "dismiss");
+      }
+    });
   }
+  
 
   onCancel() {
     this.accountForm.reset();

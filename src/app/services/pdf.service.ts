@@ -12,12 +12,17 @@ export class PdfService {
   constructor(private http: HttpClient) { }
 
   generateInvoicePdf(pdfDto: PdfDTO): Observable<Blob> {
-    var resposne = this.http.post(`${this.apiUrl}/pdf/invoice`, pdfDto, { responseType: 'blob' });
-    return resposne;
+    var response = this.http.post(`${this.apiUrl}/pdf/invoice`, pdfDto, { responseType: 'blob' });
+    return response;
   }
 
   generateCreditNotePdf(pdfDto: PdfDTO): Observable<Blob> {
-    var resposne = this.http.post(`${this.apiUrl}/pdf/CreditNote`, pdfDto, { responseType: 'blob' });
-    return resposne;
+    var response = this.http.post(`${this.apiUrl}/pdf/CreditNote`, pdfDto, { responseType: 'blob' });
+    return response;
+  }
+
+  generateStatementPdf(pdfDto: PdfDTO): Observable<Blob> {
+    var response = this.http.post(`${this.apiUrl}/pdf/Statement`, pdfDto, { responseType: 'blob' });
+    return response;
   }
 }

@@ -6,7 +6,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { PaymentService } from 'src/app/services/payment.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { PaymentDTO } from 'src/app/DTOs/paymentDTO';
-import { BuildingAccountDTO, PaymentInvoiceItemDTO } from 'src/app/DTOs/dtoIndex';
+import { BuildingAccountDTO, PaymentInvoiceItemDTO, PaymentStatus } from 'src/app/DTOs/dtoIndex';
 import { BuildingAccountService } from 'src/app/services/building-account.service';
 
 @Component({
