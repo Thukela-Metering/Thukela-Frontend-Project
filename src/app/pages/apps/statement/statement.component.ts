@@ -198,9 +198,9 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
     this.statementItems.forEach(ax => {
       ax.accountNumber = this.selectedBuildingAccount.bookNumber!;
       if (ax.transaction === "Invoice") {
-        ax.transaction = ax.transaction.concat(" ", ax.id!.toString());
+        ax.transaction = ax.transaction.concat(" ", ax.referenceNumber!.toString());
       } else if (ax.transaction === "CreditNote") {
-        ax.transaction = ax.transaction.concat(" ", ax.id!.toString());
+        ax.transaction = ax.transaction.concat(" ", ax.referenceNumber!.toString());
       }
     });
     this.dataSource.data = this.statementItems;
@@ -267,7 +267,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
       if (action === 'download') {
         const link = document.createElement('a');
         link.href = URL.createObjectURL(pdfBlob);
-        link.download = `statement_${this.filterDTO.fromDate}.pdf`;
+        link.download = `statement_${this.filterDTO}.pdf`;
         link.click();
       } else if (action === 'preview') {
         const pdfUrl = URL.createObjectURL(pdfBlob);
@@ -283,7 +283,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
   private async sendPDF(): Promise<void> {
     const selectedOwner = this.buildingOwners.find(owner => owner.id === this.selectedBuilding?.id);
     const emailData = {
-      filename: `statement_${this.filterDTO.fromDate}.pdf`,
+      filename: `statement_${this.selectedBuildingAccount.bookNumber}.pdf`,
       clientEmail: selectedOwner?.email || "",
       clientName: selectedOwner?.name || "",
       isActive: true

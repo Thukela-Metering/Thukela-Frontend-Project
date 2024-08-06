@@ -21,7 +21,7 @@ export class PaymentComponent implements OnInit {
   accountDTO: BuildingAccountDTO = new BuildingAccountDTO();
   selectedPaymentDate: Date = new Date();
   dataSource = new MatTableDataSource<PaymentInvoiceItemDTO>();
-  displayedColumns: string[] = ['id', 'invoiceReference', 'invoiceAmount', 'amountAlreadyPaid', 'invoiceNumber', 'invoiceDate', 'outstandingAmount', 'paymentAmount'];
+  displayedColumns: string[] = ['id', 'invoiceReference', 'invoiceAmount', 'amountAlreadyPaid', 'invoiceDate', 'outstandingAmount', 'paymentAmount'];
   customAmount: number = 0;
   appliedCredits: Map<string, number> = new Map(); // Track applied credits
 
@@ -99,6 +99,19 @@ export class PaymentComponent implements OnInit {
       }
     });
     this.dataSource.data = this.invoices;
+    this.updateCustomAmount();
+  }
+
+  updateCustomAmount(): void {
+    let totalAmount = 0;
+    this.invoices.forEach(invoice => {
+      totalAmount += invoice.paymentAmount || 0;
+    });
+    this.customAmount = totalAmount;
+  }
+
+  onInvoicePaymentAmountChange(): void {
+    this.updateCustomAmount();
   }
 
   distributeCredit(invoice: PaymentInvoiceItemDTO): void {
@@ -151,6 +164,7 @@ export class PaymentComponent implements OnInit {
       console.log(paymentRemainder);
       this.snackbarService.openSnackBar('Payments saved successfully', "dismiss", 3000);
       this.fetchInvoices(this.accountId);
+      this.fetchAccountDTO();
     } catch (error) {
       console.error('Error saving payments:', error);
       this.snackbarService.openSnackBar('Error saving payments', "dismiss", 3000);
