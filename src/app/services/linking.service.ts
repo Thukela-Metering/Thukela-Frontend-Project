@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { BuildingDTO } from "../DTOs/buildingDTO";
 import { BuildingRepresentativeLinkDTO } from "../DTOs/buildingRepLinkDTO";
 import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
 
@@ -18,4 +17,16 @@ import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
         return getResponse;
     }
   }
+getAllBuildingRepresentativeLinks(activeLinks:boolean):Observable<OperationalResultDTO<TransactionDTO>>{{
+  const params = new HttpParams().set('isactive', activeLinks.toString());
+  var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Linking`,{params});
+  return getResponse;
+}}
+checkIfBuildingHasRepresentative(buildingId: number): Observable<OperationalResultDTO<TransactionDTO>> {
+  return this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Linking/BuildingLink/${buildingId}`);
+}
+updateBuildingRepresentativeLink(linkDTO: BuildingRepresentativeLinkDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+  return this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Linking`, linkDTO);
+}
+
 }

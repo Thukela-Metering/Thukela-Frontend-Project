@@ -82,6 +82,7 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       next: (response: any) => {
         if (response) {
           this.buildings = response.data?.buildingDTOs ?? [];
+          this.buildings.sort((a, b) => this.customSort(a.name!, b.name!));
           this.filteredBuildings = this.buildings;
         }
       },
@@ -90,11 +91,29 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       }
     });
   }
+  
+  customSort(nameA: string, nameB: string): number {
+    const trimmedNameA = nameA.trim();
+    const trimmedNameB = nameB.trim();
+  
+    const isNumberA = /^\d/.test(trimmedNameA);
+    const isNumberB = /^\d/.test(trimmedNameB);
+  
+    if (isNumberA && isNumberB) {
+      return trimmedNameA.localeCompare(trimmedNameB, undefined, { numeric: true });
+    } else if (isNumberA) {
+      return -1; 
+    } else if (isNumberB) {
+      return 1; 
+    } else {
+      return trimmedNameA.localeCompare(trimmedNameB); // Alphabetical order
+    }
+  }  
 
   filterBuildings(filter: string): void {
     const filterValue = filter ? filter.toLowerCase() : '';
     this.filteredBuildings = this.buildings.filter(option => option.name?.toLowerCase().includes(filterValue));
-  }
+  }  
 
   async onSubmit(): Promise<void> {
     if (this.action == "Add") {

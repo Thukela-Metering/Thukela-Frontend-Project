@@ -24,6 +24,7 @@ export class InvoiceDTO extends BaseDTO {
   sendDate?: Date;
   outstandingAmount?: number;
   invoiceBalance?: number;
+  runningBalance?: number;
 }
 
 export enum PaymentStatus {

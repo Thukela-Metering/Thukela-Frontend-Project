@@ -125,7 +125,7 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator> -->
       </div>
       <div class="text-right m-t-30">
         <mat-divider></mat-divider>
@@ -133,6 +133,7 @@
           <strong>Balance Due: </strong>{{ balanceDue | currency:'R' }}
         </h3>
       </div>
+      <br>
       <mat-divider></mat-divider>
     </div>
   </mat-card-content>
