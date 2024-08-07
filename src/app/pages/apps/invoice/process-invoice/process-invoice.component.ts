@@ -133,7 +133,9 @@ export class ProcessInvoiceComponent implements OnInit, AfterViewInit {
   }
 
   loadInvoicesListData(): void {
-    this._invoiceService.getRecurringInvoices(new Date(Date.now())).subscribe({
+    const currentDate = new Date();
+    const sendDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+    this._invoiceService.getRecurringInvoices(sendDate).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response && response.data) {
           console.log('data received from backend:', response.data.invoicesDTOs);
