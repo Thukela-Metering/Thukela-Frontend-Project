@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserDataDTO } from 'src/app/DTOs/userDataDTO';
@@ -12,6 +12,8 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-buildingRepresentativeLink',
@@ -30,6 +32,30 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
 
   representativeFilterCtrl: FormControl = new FormControl();
   buildingFilterCtrl: FormControl = new FormControl();
+
+  hide = true;
+  hide2 = true;
+  conhide = true;
+  alignhide = true;
+  users: UserDataDTO[] = [];
+  buildings: BuildingDTO[] = [];
+  selectedRepresentative: number = 0;
+  selectedBuilding: number = 0;
+  buildingHasLink: boolean = false;
+  filteredBuildings: BuildingDTO[] = [];
+  filteredRepresentatives: UserDataDTO[] = [];
+  tableDataLoaded: boolean = false;
+  tableData: BuildingRepresentativeLinkDTO[] = [];
+  step = 0;
+  displayedColumns: string[] = [
+    'BuildingName',
+    'RepresentativeName',
+    'RepresentativeEmail',
+    'RepresentativeMobile',
+    // 'action',
+  ];
+  dataSource = new MatTableDataSource(this.tableData);
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
   ngAfterViewInit(): void {
     // No implementation needed here for this issue
@@ -52,21 +78,9 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
 
     this.loadUserListData();
     this.loadBuildingListData();
+    this.LoadTableData();
   }
 
-  hide = true;
-  hide2 = true;
-  conhide = true;
-  alignhide = true;
-  users: UserDataDTO[] = [];
-  buildings: BuildingDTO[] = [];
-  selectedRepresentative: number = 0;
-  selectedBuilding: number = 0;
-
-  filteredBuildings: BuildingDTO[] = [];
-  filteredRepresentatives: UserDataDTO[] = [];
-  
-  step = 0;
 
   setStep(index: number) {
     this.step = index;
@@ -79,7 +93,25 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
   prevStep() {
     this.step--;
   }
-
+  LoadTableData() {
+    this.linkingService.getAllBuildingRepresentativeLinks(true).subscribe({
+      next: (response: OperationalResultDTO<TransactionDTO>) => {
+        if (response.success) {
+          this.tableData = response.data?.buildingRepresentativeLinkDTOs ?? []
+          this.dataSource.data = response.data?.buildingRepresentativeLinkDTOs ?? [];
+          this.tableDataLoaded = true;
+        } else {
+          this.tableDataLoaded = false;
+          this.snackbarService.openSnackBar("Something went wrong. Please contact Support", "dismiss");
+        }
+      },
+      error: (error) => {
+        this.tableDataLoaded = false;
+        this.snackbarService.openSnackBar("Something went wrong. Please contact Support", "dismiss");
+        console.error('There was an error!', error);
+      }
+    });
+  }
   loadUserListData(): void {
     this._personService.getUserDataList(true).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
@@ -92,6 +124,25 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
       }
     });
   }
+   checkIfBuildingHasALink() {
+    this.linkingService.checkIfBuildingHasRepresentative(this.selectedBuilding).subscribe({
+      next: (ax => {
+        if (ax.success) {
+          if (ax.data) {
+            this.buildingHasLink = true;
+            this.snackbarService.openSnackBar("Building has a representative. Updating Link once save is clicked", "dismiss");
+          } else {
+            this.snackbarService.openSnackBar("No link found. Creating new link on save.", "dismiss");
+          }
+        }
+      }),
+      error: (error => {
+        this.snackbarService.openSnackBar("Something went wrong. Please contact Support", "dismiss");
+        console.error('There was an error!', error);
+      })
+    });
+  }
+
 
   loadBuildingListData(): void {
     this._buildingService.getAllBuildings(true).subscribe({
@@ -114,20 +165,35 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
     dataToSave.representativeId = this.selectedRepresentative;
     dataToSave.isActive = true;
     dataToSave.dateCreated = new Date(Date.now());
-    
-    this.linkingService.addNewBuildingLinkToRepresentative(dataToSave).subscribe({
-      next: (response) => {
-        if (response) {
-          this.snackbarService.openSnackBar("Successfully created new link Between Building And Representative", "dismiss");
-          this.selectedBuilding = 0;
-          this.selectedRepresentative = 0;
+    if (this.buildingHasLink == false) {
+      this.linkingService.addNewBuildingLinkToRepresentative(dataToSave).subscribe({
+        next: (response) => {
+          if (response) {
+            this.snackbarService.openSnackBar("Successfully created new link Between Building And Representative", "dismiss");
+            this.selectedBuilding = 0;
+            this.selectedRepresentative = 0;
+          }
+        },
+        error: (error) => {
+          this.snackbarService.openSnackBar("Something went wrong. Please contact Support", "dismiss");
+          console.error('There was an error!', error);
         }
-      },
-      error: (error) => {
-        this.snackbarService.openSnackBar("Something went wrong. Please contact Support", "dismiss");
-        console.error('There was an error!', error);
-      }
-    });
+      });
+    } else {
+      this.linkingService.updateBuildingRepresentativeLink(dataToSave).subscribe({
+        next: (response) => {
+          if (response) {
+            this.snackbarService.openSnackBar("Successfully Updated link Between Building And Representative", "dismiss");
+            this.selectedBuilding = 0;
+            this.selectedRepresentative = 0;
+          }
+        },
+        error: (error) => {
+          this.snackbarService.openSnackBar("Something went wrong. Please contact Support", "dismiss");
+          console.error('There was an error!', error);
+        }
+      });
+    }
   }
 
   filterRepresentatives(filter: string): void {

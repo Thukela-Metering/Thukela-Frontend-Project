@@ -21,4 +21,5 @@ export * from './InvoiceDTO';
 export * from './StatementItemDTO';
 export * from './StatementFIlterDTO';
 export * from './searchResult.DTO';
-export * from './paymentInvoiceItemDTO'
+export * from './paymentInvoiceItemDTO';
+export * from './buildingRepesentativeTableItemDTO';
