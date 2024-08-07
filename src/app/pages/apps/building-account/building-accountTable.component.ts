@@ -10,6 +10,7 @@ import { TransactionDTO } from 'src/app/DTOs/transactionDTO';
 import { BuildingAccountDTO } from 'src/app/DTOs/BuildingAccountDTO';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { BuildingAccountsComponent } from './building-account.component';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-building-account',
@@ -32,7 +33,7 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
 
   dataSource = new MatTableDataSource<BuildingAccountDTO>(this.buildingAccounts);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-
+  @ViewChild(MatSort) sort!: MatSort;
   constructor(
     public dialog: MatDialog,
     public datePipe: DatePipe,
@@ -48,6 +49,25 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  
+    // Customize sorting for specific columns
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'buildingId':
+          return item.buildingId;
+        case 'municipalityOne':
+          return item.municipalityOne?.trim().toLowerCase() || '';
+        case 'municipalityTwo':
+          return item.municipalityTwo?.trim().toLowerCase() || '';
+        case 'readingSlip':
+          return item.readingSlip;
+        case 'creditControl':
+          return item.creditControl;
+        default:
+          return (item as any)[property];
+      }
+    };
   }
 
   applyFilter(filterValue: string): void {

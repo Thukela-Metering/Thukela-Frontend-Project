@@ -6,6 +6,7 @@ import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { BuildingOwnerDTO } from 'src/app/DTOs/buildingOwnerDTO';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { AppBuildingOwnerComponent } from './buildingOwner.component';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-building-owner',
@@ -32,6 +33,7 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
 
   dataSource = new MatTableDataSource<BuildingOwnerDTO>(this.buildingOwners);
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     public dialog: MatDialog,
@@ -46,6 +48,37 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  
+    // Customize sorting for specific columns
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'buildingId':
+          return item.buildingId;
+        case 'name':
+          return item.name?.trim().toLowerCase() || '';
+        case 'email':
+          return item.email?.trim().toLowerCase() || '';
+        case 'fax':
+          return item.fax;
+        case 'contactNumber':
+          return item.contactNumber;
+        case 'accountNumber':
+          return item.accountNumber;
+        case 'bank':
+          return item.bank;
+        case 'taxable':
+          return item.taxable;
+        case 'address':
+          return item.address?.trim().toLowerCase() || '';
+        case 'preferredCommunication':
+          return item.preferredCommunication;
+        case 'additionalInformation':
+          return item.additionalInformation?.trim().toLowerCase() || '';
+        default:
+          return (item as any)[property];
+      }
+    };
   }
 
   applyFilter(filterValue: string): void {

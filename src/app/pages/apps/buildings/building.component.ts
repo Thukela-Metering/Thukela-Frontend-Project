@@ -14,6 +14,7 @@ import { BuildingService } from 'src/app/services/building.service';
 import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   templateUrl: './building.component.html',
@@ -21,6 +22,9 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 })
 export class AppBuildingComponent implements OnInit, AfterViewInit {
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+
   searchText: any;
   manageActiveBuildings: boolean = true;
   buildings: BuildingDTO[] = [];
@@ -34,7 +38,6 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
     'action',
   ];
   dataSource = new MatTableDataSource(this.buildings);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
   constructor(public dialog: MatDialog, public datePipe: DatePipe, private _buildingService: BuildingService, private authService: AuthService) { }
   ngOnInit(): void {
@@ -43,6 +46,25 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+    // Customize sorting for specific columns
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'name':
+          return item.name?.trim().toLowerCase() || '';
+        case 'nSquareMetersame':
+          return item.nSquareMetersame;
+        case 'sdgMeterZone':
+          return item.sdgMeterZone;
+        case 'address':
+          return item.address?.trim().toLowerCase() || '';
+        case 'notes':
+          return item.notes?.trim().toLowerCase() || '';
+        default:
+          return (item as any)[property];
+      }
+    };
   }
 
   applyFilter(filterValue: string): void {

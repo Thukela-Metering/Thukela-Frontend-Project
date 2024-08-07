@@ -14,6 +14,7 @@ import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   templateUrl: './employee.component.html',
@@ -21,6 +22,9 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 })
 export class AppEmployeeComponent implements OnInit, AfterViewInit {
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+
   searchText: any;
   persons: UserDataDTO[] = [];
   manageActiveUsers: boolean = true;
@@ -35,7 +39,6 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
     'action',
   ];
   dataSource = new MatTableDataSource(this.persons);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
   constructor(public dialog: MatDialog, public datePipe: DatePipe, private _personService: PersonService, private authService: AuthService) { }
   
@@ -45,6 +48,27 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  
+    // Customize sorting for specific columns
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'name':
+          return item.name?.trim().toLowerCase() || '';
+        case 'surname':
+          return item.surname?.trim().toLowerCase() || '';
+        case 'username':
+          return item.username?.trim().toLowerCase() || '';
+        case 'email':
+          return item.email?.trim().toLowerCase() || '';
+        case 'mobile':
+          return item.mobile;
+        case 'address':
+          return item.address?.trim().toLowerCase() || '';
+        default:
+          return (item as any)[property];
+      }
+    };
   }
 
   applyFilter(filterValue: string): void {
@@ -177,10 +201,8 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
   selector: 'app-dialog-content',
   templateUrl: 'employee-dialog-content.html',
 })
-
-// tslint:disable-next-line: component-class-suffix
 export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
- @Input() localDataFromComponent: UserDataDTO;
+  @Input() localDataFromComponent: UserDataDTO;
   action: string;
   userRegistrationDTO: UserDataDTO = new UserDataDTO();
   local_data: UserDataDTO;
@@ -194,6 +216,7 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
   DropDownValues: LookupValueDTO[] = [];
   filteredRoles: LookupValueDTO[] = [...this.DropDownValues];
   roleFilterCtrl: FormControl = new FormControl();
+
   constructor(
     public datePipe: DatePipe,
     @Optional() public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
@@ -205,6 +228,7 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
     this.local_data = { ...data };
     this.action = this.local_data.action ? this.local_data.action : "Update";
   }
+
   ngOnInit(): void {
     this.roleFilterCtrl.valueChanges.pipe(
       distinctUntilChanged()
@@ -218,12 +242,13 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
       this.local_data = this.localDataFromComponent;
     }
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
       this.local_data = this.localDataFromComponent;
     }
-
   }
+
   filterRole(filter: string): void {
     const filterValue = filter ? filter.toLowerCase() : '';
     this.filteredRoles = this.DropDownValues.filter(option => option.name.toLowerCase().includes(filterValue));
@@ -312,7 +337,6 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
         this.snackbarService.openSnackBar(error.message, "dismiss");
       }
     );
-   
   }
 
   updateRowData(row_obj: UserDataDTO): boolean | any {    
