@@ -167,8 +167,11 @@ export class ProcessInvoiceComponent implements OnInit, AfterViewInit {
   
           // Wait for all owner requests to complete
           forkJoin(ownerRequests).subscribe((updatedInvoices) => {
-            this.dataSource.data = updatedInvoices;
-            this.dataSource.sort = this.sort; // Refresh the sort after data load
+            this.dataSource.data = updatedInvoices.map(invoice => {
+              invoice.runningBalance = this.calculateRunningBalance(invoice);
+              return invoice;
+            });
+            this.dataSource.sort = this.sort;
           });
         }
       },
@@ -178,6 +181,16 @@ export class ProcessInvoiceComponent implements OnInit, AfterViewInit {
     });
   }  
 
+  calculateRunningBalance(invoice: InvoiceDTO): number {
+    let runningBalance = invoice.grandTotal;
+    invoice.items?.forEach(item => {
+      if (item.isCreditNote) {
+        runningBalance! -= (item.creditNoteLineValue) * 1.15;
+      }
+    });
+    return runningBalance!;
+  }
+  
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filterPredicate = (data, filter) => {

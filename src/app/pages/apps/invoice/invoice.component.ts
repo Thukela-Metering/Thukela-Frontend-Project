@@ -101,6 +101,16 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
     }
   }
 
+  calculateRunningBalance(invoice: InvoiceDTO): number {
+    let runningBalance = invoice.grandTotal;
+    invoice.items?.forEach(item => {
+      if (item.isCreditNote) {
+        runningBalance! -= (item.creditNoteLineValue) * 1.15;
+      }
+    });
+    return runningBalance!;
+  }
+
   loadInvoicesListData(): void {
     this._invoiceService.getAllInvoices(true).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
@@ -116,7 +126,6 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
                 if (owner) {
                   this.buildingOwnerNames[invoice.buildingOwnerId ?? 0] = owner.name; // Populate the mapping
                 }
-        //        this.loaderService.hide();
                 return invoice;
               }),
               catchError((error) => {
@@ -126,10 +135,12 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
             )
           );
   
-          // Wait for all owner requests to complete
           forkJoin(ownerRequests).subscribe((updatedInvoices) => {
-            this.dataSource.data = updatedInvoices;
-            this.dataSource.sort = this.sort; // Refresh the sort after data load
+            this.dataSource.data = updatedInvoices.map(invoice => {
+              invoice.runningBalance = this.calculateRunningBalance(invoice);
+              return invoice;
+            });
+            this.dataSource.sort = this.sort;
           });
         }
       },
@@ -137,7 +148,7 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
         console.error('There was an error!', error);
       }
     });
-  }
+  }  
 
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();

@@ -23,6 +23,7 @@ import { LineItemDTO } from 'src/app/DTOs/LineItemDTO';
 export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
   itemDetail: InvoiceDTO;
   invoiceDetail: InvoiceDTO;
+  runningBalance: number = 0; 
   retrievedBuildings: BuildingOwnerDTO[] = [];
   retrievedAccounts: BuildingAccountDTO[] = [];
   dataSource: MatTableDataSource<LineItemDTO>;
@@ -58,6 +59,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.loadBuildingOwnerListData();
     this.loadBuildingAccount();
+    this.runningBalance = this.calculateRunningBalance(this.invoiceDetail);
   }
 
   ngAfterViewInit(): void {}
@@ -67,6 +69,16 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
     this.invoiceDetail.items!.forEach(item => {
       itemsArray.push(this.createItemGroup(item));
     });
+  }
+
+  calculateRunningBalance(invoice: InvoiceDTO): number {
+    let runningBalance = invoice.grandTotal;
+    invoice.items?.forEach(item => {
+      if (item.isCreditNote) {
+        runningBalance! -= (item.creditNoteLineValue) * 1.15;
+      }
+    });
+    return runningBalance!;
   }
 
   createItemGroup(item: LineItemDTO): FormGroup {
@@ -151,7 +163,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
       subTotal: this.invoiceDetail.subTotal || 0,
       discount: this.invoiceDetail.discount || 0,
       vat: this.invoiceDetail.vat || 0,
-      grandTotal: this.invoiceDetail.grandTotal || 0,
+      grandTotal: this.invoiceDetail.runningBalance || 0,
       items: this.invoiceDetail.items || [],
       note: this.data.note || ""
     };
