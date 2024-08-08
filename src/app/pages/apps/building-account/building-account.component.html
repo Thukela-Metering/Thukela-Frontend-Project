@@ -1,6 +1,7 @@
 <mat-dialog-content style="max-width: 600px">
-  <div [formGroup]="accountsForm" style="max-width: 600px">
+  <div [formGroup]="accountsForm">
     <mat-form-field appearance="outline" class="w-100">
+
       <mat-label>Building</mat-label>
       <mat-select formControlName="buildingId">
         <mat-option *ngFor="let building of filteredBuildings" [value]="building.id">
