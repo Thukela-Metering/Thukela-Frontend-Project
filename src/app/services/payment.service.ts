@@ -20,6 +20,11 @@ export class PaymentService {
     }
   }
 
+  getPayments(): Observable<OperationalResultDTO<TransactionDTO>> {
+    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment`);
+    return getResponse;
+  }
+
   getPaymentInvoiceItems(accountId: string): Observable<OperationalResultDTO<TransactionDTO>> {
     var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment/getInvoiceItemsForPayment?accountId=${accountId}`);
     return getResponse;

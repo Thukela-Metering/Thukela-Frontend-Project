@@ -80,6 +80,11 @@ export const navItems: NavItem[] = [
         iconName: 'point',
         route: 'apps/statementSearch',              
       },
+      {
+        displayName: 'Payment List',
+        iconName: 'point',
+        route: 'apps/payment',              
+      },
       { displayName: 'Credit Note',
         iconName: 'point',
         route: 'apps/creditNote',   

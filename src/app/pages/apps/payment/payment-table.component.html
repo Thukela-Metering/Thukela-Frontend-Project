@@ -1,0 +1,35 @@
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort>
+
+    <!-- Payment Date Column -->
+    <ng-container matColumnDef="paymentDate" >
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment Date</th>
+      <td mat-cell *matCellDef="let payment" style="color: white;">{{ payment.paymentDate | date:'dd/MM/yyyy' }}</td>
+    </ng-container>
+
+    <!-- Book Number Column -->
+    <ng-container matColumnDef="bookNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Book Number</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.bookNumber }}</td>
+    </ng-container>
+
+    <!-- Owner Name Column -->
+    <ng-container matColumnDef="accountName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header >Owner Name</th>
+      <td mat-cell *matCellDef="let payment" style="color: white;">{{ payment.accountName }}</td>
+    </ng-container>
+
+    <!-- Payment Amount Column -->
+    <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment Amount</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.amount | currency:'R' }}</td>
+    </ng-container>
+
+    <!-- Table Header and Row Definitions -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>
