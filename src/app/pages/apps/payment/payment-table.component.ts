@@ -36,7 +36,7 @@ export class PaymentTableComponent implements OnInit {
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
         case 'paymentDate':
-          return new Date(item.paymentDate);
+          return new Date(item.paymentDate).getTime(); // Sorting by date timestamp
         case 'bookNumber':
           return item.bookNumber.toLowerCase();
         case 'accountName':
