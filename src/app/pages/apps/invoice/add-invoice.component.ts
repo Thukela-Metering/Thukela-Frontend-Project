@@ -381,6 +381,7 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     this.invoice.note = formData.note || "Note: *please contact us if no invoice received, non-receipt does not constitute grounds for non-payment!";
     this.invoice.paymentMethod = formData.paymentMethod; // Ensure payment method is assigned
     this.invoice.vat = this.vat;
+    this.invoice.outstandingAmount = this.grandTotal;
 
     if (recurringChecked == true) {
       this.invoice.isActive = true;
