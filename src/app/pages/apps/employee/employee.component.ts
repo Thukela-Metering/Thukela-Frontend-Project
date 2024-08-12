@@ -311,7 +311,13 @@ export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
       this.userRegistrationDTO.dateDeleted = this.local_data.dateDeleted;
       this.dialogRef.close({ event: this.action, data: this.userRegistrationDTO });
     } else {
-      this.dialogRef.close({ event: this.action, data: this.local_data });
+    if(this.dialogRef != null)
+      {
+        this.dialogRef.close({ event: this.action, data: this.local_data });
+      }else
+      {
+        this.updateRowData(this.local_data);
+      }
     }
   }
 

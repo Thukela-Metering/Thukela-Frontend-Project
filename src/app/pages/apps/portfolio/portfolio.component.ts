@@ -49,8 +49,8 @@ export class PortfolioComponent implements OnInit {
     });
   }
 
-  onBuildingChange(buildingId: number): void {
-    this.portfolioService.getPortfolioBuildingById(buildingId).subscribe({
+  async onBuildingChange(buildingId: number): Promise<void> {
+   await this.portfolioService.getPortfolioBuildingById(buildingId).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response.success) {
           console.log(response);

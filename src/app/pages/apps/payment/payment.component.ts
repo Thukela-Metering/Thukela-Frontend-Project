@@ -143,7 +143,7 @@ export class PaymentComponent implements OnInit {
       var newPaymentDTOToSave = new PaymentDTO();
       for (const invoice of this.invoices) {
         if (invoice.paymentAmount! > 0) {
-          const outstandingAmount = invoice.outstandingAmount! - (invoice.paymentAmount || 0);
+          const outstandingAmount = parseFloat((invoice.outstandingAmount! - (invoice.paymentAmount || 0)).toFixed(2));
           paymentRemainder -= invoice.paymentAmount!;
           invoice.outstandingAmount = outstandingAmount;
           newPaymentDTOToSave.InvoicesPayed?.push(invoice)

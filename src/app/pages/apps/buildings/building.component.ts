@@ -153,6 +153,7 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
+      this.local_data.isActive = this.localDataFromComponent.isActive;
       this.local_data = this.localDataFromComponent;
     }
   }
