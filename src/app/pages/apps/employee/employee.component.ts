@@ -44,6 +44,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
   
   ngOnInit(): void {
     this.loadUserListData();
+    this.manageActiveUsers = true;
   }
 
   ngAfterViewInit(): void {
@@ -105,6 +106,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
       } else if (result.event === 'Delete') {
         this.deleteRowData(result.data);
       }
+      this.manageActiveUsers = true
     });
   }
 
