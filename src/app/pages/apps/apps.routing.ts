@@ -19,6 +19,7 @@ import { CreditNoteTableComponent } from './credit-note/credit-note-table.compon
 import { HangfireDashboardComponent } from './tools/hangfire-dashboard/hangfire-dashboard.component';
 import { LottieLoaderComponent } from './loaders/lottie-loader.component';
 import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoice.component';
+import { PaymentTableComponent } from './payment/payment-table.component';
 
 
 export const AppsRoutes: Routes = [
@@ -132,6 +133,17 @@ export const AppsRoutes: Routes = [
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Payment' },
+          ],
+        },
+      },
+      {
+        path: 'payment',
+        component: PaymentTableComponent,
+        data: {
+          title: 'Payment',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Payment List' },
           ],
         },
       },

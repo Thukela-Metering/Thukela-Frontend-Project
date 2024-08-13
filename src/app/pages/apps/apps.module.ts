@@ -56,6 +56,7 @@ import { BorderColorDirective } from 'src/app/directives/borderColorDirective';
 import { LottieComponent } from 'ngx-lottie';
 import { LottieLoaderComponent } from './loaders/lottie-loader.component';
 import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoice.component';
+import { PaymentTableComponent } from './payment/payment-table.component';
 
 
 
@@ -109,6 +110,7 @@ import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoi
     ProcessInvoiceComponent,
     AppBuildingRepresentativeLinkComponent,
     PortfolioComponent,
+    PaymentTableComponent,
     AppStatementScreenComponent,
     SearchComponent,
     PaymentComponent,

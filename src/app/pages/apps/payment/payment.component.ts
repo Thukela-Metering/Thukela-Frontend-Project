@@ -18,8 +18,8 @@ export class PaymentComponent implements OnInit {
   accountId: string;
   invoices: PaymentInvoiceItemDTO[] = [];
   payment: PaymentDTO = new PaymentDTO();
+  selectedPaymentDate = new Date();
   accountDTO: BuildingAccountDTO = new BuildingAccountDTO();
-  selectedPaymentDate: Date = new Date();
   dataSource = new MatTableDataSource<PaymentInvoiceItemDTO>();
   displayedColumns: string[] = ['id', 'invoiceReference', 'invoiceAmount', 'amountAlreadyPaid', 'invoiceDate', 'outstandingAmount', 'paymentAmount'];
   customAmount: number = 0;
@@ -150,6 +150,7 @@ export class PaymentComponent implements OnInit {
         }
       }
      // newPaymentDTOToSave.outstandingAmount = paymentRemainder;
+      this.selectedPaymentDate.setHours(this.selectedPaymentDate.getUTCHours() + 2);
       newPaymentDTOToSave.paymentDate = this.selectedPaymentDate;
       newPaymentDTOToSave.amount = this.customAmount || 0;
       newPaymentDTOToSave.buildingAccountId = parseInt(this.accountId);

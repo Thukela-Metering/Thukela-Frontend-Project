@@ -215,9 +215,10 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
 
   private getPdfDto(): PdfDTO {
     const selectedOwner = this.buildingOwners.find(owner => owner.id === this.selectedBuilding?.id);
+    
     return {
-      invoiceDate: this.filterDTO.fromDate ? new Date(this.filterDTO.fromDate) : new Date(),
-      dueDate: this.filterDTO.toDate ? new Date(this.filterDTO.toDate) : new Date(),
+      invoiceDate: this.filterDTO.fromDate ? this.convertToSAST(new Date(this.filterDTO.fromDate)) : this.convertToSAST(new Date()),
+      dueDate: this.filterDTO.toDate ? this.convertToSAST(new Date(this.filterDTO.toDate)) : this.convertToSAST(new Date()),
       customerName: selectedOwner?.name || 'N/A',
       customerAddress: selectedOwner?.address || 'N/A',
       customerPhone: selectedOwner?.contactNumber || 'N/A',
@@ -226,7 +227,15 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
       statementItems: this.statementItems || [],
       grandTotal: this.balanceDue,
     };
-  }
+}
+
+private convertToSAST(date: Date): Date {
+  // Adjust the UTC time to SAST (GMT+2)
+  const offset = 2 * 60; // SAST is GMT+2 in minutes
+  const localTime = date.getTime();
+  const adjustedTime = localTime + (offset * 60 * 1000); // Adjusting to GMT+2
+  return new Date(adjustedTime);
+}
 
   async downloadInvoice(): Promise<void> {
     if (this.userPreferencesService.getDontAskAgainDownload()) {

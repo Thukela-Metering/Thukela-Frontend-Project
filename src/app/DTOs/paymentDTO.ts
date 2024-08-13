@@ -10,4 +10,7 @@ export class PaymentDTO extends BaseDTO {
   outstandingAmount: number;
   InvoicesPayed?: PaymentInvoiceItemDTO[] = [];
   amountOfRemainingCredit?: number = 0
+  bookNumber: string;
+  accountName: string;
+  paymentAmount: number;
 }
