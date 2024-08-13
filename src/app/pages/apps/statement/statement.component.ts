@@ -196,6 +196,8 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
 
   populateStatementItemsWithOtherData() {
     this.statementItems.forEach(ax => {
+      ax.amount = parseFloat(ax.amount).toFixed(2);
+      ax.closingBalance = parseFloat(ax.closingBalance).toFixed(2);
       ax.accountNumber = this.selectedBuildingAccount.bookNumber!;
       if (ax.transaction === "Invoice") {
         ax.transaction = ax.transaction.concat(" ", ax.referenceNumber!.toString());
