@@ -151,10 +151,11 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
 
   private getPdfDto(): PdfDTO {
     const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+    
     return {
       referenceNumber: this.invoiceDetail.referenceNumber || "",
-      invoiceDate: this.invoiceDetail.invoiceDate ? new Date(this.invoiceDetail.invoiceDate) : new Date(),
-      dueDate: this.invoiceDetail.dueDate ? new Date(this.invoiceDetail.dueDate) : new Date(),
+      invoiceDate: this.convertToSAST(new Date(this.invoiceDetail.invoiceDate!)),
+      dueDate: this.convertToSAST(new Date(this.invoiceDetail.dueDate!)),
       customerName: selectedOwner?.name || 'N/A',
       customerAddress: selectedOwner?.address || 'N/A',
       customerPhone: selectedOwner?.contactNumber || 'N/A',
@@ -168,7 +169,15 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
       note: this.data.note || ""
     };
   }
-
+  
+  private convertToSAST(date: Date): Date {
+    // Adjust the UTC time to SAST (GMT+2)
+    const offset = 2 * 60; // SAST is GMT+2 in minutes
+    const localTime = date.getTime();
+    const adjustedTime = localTime + (offset * 60 * 1000); // Adjusting to GMT+2
+    return new Date(adjustedTime);
+  }
+  
   private async generatePDF(action: 'download' | 'preview'): Promise<void> {
     const pdfDto = this.getPdfDto();
 

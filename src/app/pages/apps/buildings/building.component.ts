@@ -42,6 +42,7 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
   constructor(public dialog: MatDialog, public datePipe: DatePipe, private _buildingService: BuildingService, private authService: AuthService) { }
   ngOnInit(): void {
     this.loadBuildingListData();
+    this.manageActiveBuildings = true;
   }
 
   ngAfterViewInit(): void {
@@ -65,6 +66,7 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
           return (item as any)[property];
       }
     };
+    this.manageActiveBuildings = true;
   }
 
   applyFilter(filterValue: string): void {
@@ -96,11 +98,14 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
       if (result.event === 'Add') {
         //  this.addRowData(result.data);
         this.loadBuildingListData();
+        this.manageActiveBuildings = true;
       } else if (result.event === 'Update') {
         this.loadBuildingListData();
+        this.manageActiveBuildings = true;
         //  this.updateRowData(result.data);
       } else if (result.event === 'Delete') {
         this.deleteRowData(result.data);
+        this.manageActiveBuildings = true;
       }
     });
   }
@@ -159,6 +164,7 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
   }
   ngOnInit(): void {
     this.getDropdownValues();
+    
   }
 
   getDropdownValues() {
