@@ -84,12 +84,14 @@ export class PaymentComponent implements OnInit {
 
   distributeAmount(): void {
     let remainingAmount = this.customAmount;
+  
     this.invoices.forEach(invoice => {
-      const outstandingAmount = invoice.outstandingAmount;
+      const outstandingAmount = invoice.outstandingAmount || 0;
+  
       if (remainingAmount > 0) {
-        if (remainingAmount >= outstandingAmount!) {
+        if (remainingAmount >= outstandingAmount) {
           invoice.paymentAmount = outstandingAmount;
-          remainingAmount -= outstandingAmount!;
+          remainingAmount -= outstandingAmount;
         } else {
           invoice.paymentAmount = remainingAmount;
           remainingAmount = 0;
@@ -98,10 +100,11 @@ export class PaymentComponent implements OnInit {
         invoice.paymentAmount = 0;
       }
     });
+  
+    // Ensure that the customAmount is not reset
     this.dataSource.data = this.invoices;
-    this.updateCustomAmount();
   }
-
+  
   updateCustomAmount(): void {
     let totalAmount = 0;
     this.invoices.forEach(invoice => {
@@ -143,9 +146,9 @@ export class PaymentComponent implements OnInit {
       var newPaymentDTOToSave = new PaymentDTO();
       for (const invoice of this.invoices) {
         if (invoice.paymentAmount! > 0) {
-          const outstandingAmount = parseFloat((invoice.outstandingAmount! - (invoice.paymentAmount || 0)).toFixed(2));
+          const outstandingAmount = ((invoice.outstandingAmount! - (invoice.paymentAmount || 0))).toFixed(2);
           paymentRemainder -= invoice.paymentAmount!;
-          invoice.outstandingAmount = outstandingAmount;
+          invoice.outstandingAmount = parseFloat(outstandingAmount);
           newPaymentDTOToSave.InvoicesPayed?.push(invoice)
         }
       }
