@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
@@ -13,6 +13,7 @@ import { MatSort } from '@angular/material/sort';
   templateUrl: './buildingOwnerTable.component.html',
 })
 export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
   searchText: any;
   manageActiveBuildingOwners: boolean = true;
   buildingOwners: BuildingOwnerDTO[] = [];
@@ -85,12 +86,19 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  loadBuildingOwnerListData(): void {
+   loadBuildingOwnerListData(): void {
+    this.buildingOwners = [];
+    this.dataSource.data = [];
     this._buildingOwnerService.getAllBuildingOwners().subscribe({
       next: (response) => {
         if (response && response.data) {
+          if(response.success){
+            console.log("Here is the response for all building owners:",response)
           this.buildingOwners = response.data.buildingOwnerAccountDTOs ?? [];
+          this.dataSource.data = response.data.buildingOwnerAccountDTOs ?? [];
           this.filterBuildingOwners();
+        }
+          // this.table.renderRows()
         }
       },
       error: (error) => {
@@ -107,27 +115,31 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openDialog(action: string, obj: any): void {
-    obj.action = action;
-    this.loadBuildingOwnerListData();
-    const dialogRef = this.dialog.open(AppBuildingOwnerComponent, {
-      width: '500px',
-      data: obj,
-    });
+openDialog(action: string, obj: any): void {
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if(result){
-        if (result.event === 'Add') {
+  obj.action = action;
+  const dialogRef = this.dialog.open(AppBuildingOwnerComponent, {
+    width: '500px',
+    data: obj,
+  });
+  dialogRef.afterClosed().subscribe((result) => {
+
+    if(result){
+      if (result.event === 'Add' || result.event === 'Update' ) {
+        setTimeout(() => {
+        this.loadBuildingOwnerListData();
+        },1000);
+      }else if(result.event === 'Delete')
+        {
+          setTimeout(() => {
           this.loadBuildingOwnerListData();
-        } else if (result.event === 'Update') {
-          this.loadBuildingOwnerListData();
-        } else if (result.event === 'Delete') {
-          this.deleteRowData(result.data);
-          this.loadBuildingOwnerListData();
+          },1000);
+          this.deleteRowData(result);        
         }
-      }
-    });
-  }
+    }      
+  });
+     
+}
 
   deleteRowData(row_obj: BuildingOwnerDTO): boolean | any {
     row_obj.isActive = false;
@@ -137,12 +149,12 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
       next: (response) => {
         if (response) {
           console.log(response);
-          this.loadBuildingOwnerListData();
+
         }
       },
       error: (error) => {
         console.error('There was an error!', error);
-        this.loadBuildingOwnerListData();
+
       }
     });
 
