@@ -51,31 +51,31 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.accountsForm = this.fb.group({
-      buildingId: ['', Validators.required],
+      buildingId: [{ value: '', disabled: this.action !== 'Add' }, Validators.required],
       municipalityOne: ['', Validators.required],
       municipalityTwo: [''],
-      readingSlip: [false, Validators.required], // Initialize as boolean
-      creditControl: [false], // Initialize as boolean
+      readingSlip: [false, Validators.required],
+      creditControl: [false],
       isActive: [false],
       buildingTaxNumber: [''],
-      bookNumber: ['',Validators.required],
+      bookNumber: ['', Validators.required],
     });
-
+  
     this.loadBuildingListData();
     this.buildingFilterCtrl.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(value => {
-      this.filterBuildings(value || ''); // Use an empty string if value is falsy
+      this.filterBuildings(value || '');
     });
-
+  
     if (this.data != null) {
       this.accountsForm.patchValue(this.data);
     }
     if (this.localDataFromComponent) {
       this.accountsForm.patchValue(this.localDataFromComponent);
     }
-  }
+  }  
 
   loadBuildingListData(): void {
     this._buildingService.getAllBuildings(true).subscribe({
