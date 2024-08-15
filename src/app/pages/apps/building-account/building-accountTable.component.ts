@@ -110,6 +110,7 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
           this.loadBuildingAccountListData();
         }
       }
+      this.loadBuildingAccountListData();
     });
   }
   
