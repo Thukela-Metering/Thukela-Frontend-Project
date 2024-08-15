@@ -128,7 +128,7 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
     this.linkingService.checkIfBuildingHasRepresentative(this.selectedBuilding).subscribe({
       next: (ax => {
         if (ax.success) {
-          if (ax.data) {
+          if (ax.data?.boolResponseProperty) {
             this.buildingHasLink = true;
             this.snackbarService.openSnackBar("Building has a representative. Updating Link once save is clicked", "dismiss");
           } else {
