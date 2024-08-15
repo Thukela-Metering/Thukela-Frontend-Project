@@ -54,7 +54,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
       email: ['', [Validators.required, Validators.email]],
       fax: [''],
       contactNumber: [''],
-      buildingId: ['', Validators.required],
+      buildingId: [{ value: '', disabled: this.action !== 'Add' }, Validators.required],
       accountNumber: [''],
       bank: ['', Validators.required],
       taxable: [false, Validators.required],
@@ -145,6 +145,8 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
     );
   }
 
+  
+  
   onSubmit() {
     if (this.accountForm.valid) {
       this.mapFormValuesToLocalData();
@@ -156,8 +158,8 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
             if (response.success) {
               this.snackbarService.openSnackBar(response.message, "dismiss");
               this.accountForm.reset();
-              this.dialogRef.close({ event: 'Add', data: buildingOwnerData });
               this.loadBuildingOwnerListData();
+              this.finalizeDialogClose('Add', buildingOwnerData);
             }
           },
           error => {
@@ -167,12 +169,20 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
         );
       } else {
         this.updateRowData(this.local_data);
-        if (this.dialogRef) {
-          this.dialogRef.close({ event: this.action, data: this.local_data });
-        }
+        this.finalizeDialogClose(this.action, this.local_data);
       }
     }
-  }  
+  }
+  
+  finalizeDialogClose(action: string, data: any) {
+    setTimeout(() => {
+      if (this.dialogRef) {
+        this.dialogRef.close({ event: action, data: data });
+      }
+    }, 300);
+  }
+  
+   
 
   private mapFormValuesToLocalData(): void {
     this.local_data.name = this.accountForm.get('name')?.value;
@@ -194,10 +204,14 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
       next: (response) => {
         if (response.success) {
           console.log(response);
-          this.loadBuildingOwnerListData();
           this.snackbarService.openSnackBar(response.message, "dismiss");
+          this.dialogRef.close({ event: 'Update', data: response });
+          // this.loadBuildingOwnerListData();
+      
         } else {
           this.snackbarService.openSnackBar(response.message, "dismiss");
+          this.dialogRef.close({ event: 'Update', data: response });
+          // this.loadBuildingOwnerListData();              
         }
       },
       error: (error) => {
@@ -205,6 +219,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
         this.snackbarService.openSnackBar(error.message, "dismiss");
       }
     });
+    // this.loadBuildingOwnerListData();
   }
   
 
