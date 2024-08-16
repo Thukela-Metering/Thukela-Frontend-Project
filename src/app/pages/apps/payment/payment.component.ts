@@ -177,6 +177,9 @@ export class PaymentComponent implements OnInit {
   }
 
   submit() {
+    if (!this.accountDTO.isInCredit) {
+      this.accountDTO.accountRunningBalance = this.accountDTO.accountRunningBalance! * -1;
+    }
     this.buildingAccountService.updateBuildingAccount(this.accountDTO).subscribe({
       next: (data) => {
         if (!data.success) {
