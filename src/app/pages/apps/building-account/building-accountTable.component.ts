@@ -11,6 +11,9 @@ import { BuildingAccountDTO } from 'src/app/DTOs/BuildingAccountDTO';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { BuildingAccountsComponent } from './building-account.component';
 import { MatSort } from '@angular/material/sort';
+import { BuildingService } from 'src/app/services/building.service';
+import { map, catchError, of, forkJoin } from 'rxjs';
+import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 
 @Component({
   selector: 'app-building-account',
@@ -23,7 +26,7 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
   buildingAccounts: BuildingAccountDTO[] = [];
 
   displayedColumns: string[] = [
-    'buildingId',
+    'buildingName',
     'municipalityOne',
     'municipalityTwo',
     'readingSlip',
@@ -38,6 +41,7 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog,
     public datePipe: DatePipe,
     private buildingAccountService: BuildingAccountService,
+    private buildingService: BuildingService,
     private authService: AuthService,
     private snackbarService: SnackbarService
   ) {}
@@ -54,8 +58,9 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
     // Customize sorting for specific columns
     this.dataSource.sortingDataAccessor = (item, property) => {
       switch (property) {
-        case 'buildingId':
-          return item.buildingId;
+        case 'buildingName':
+          // This assumes that `buildingName` has been added to each item in `loadBuildingAccountListData`
+          return (item as any).buildingName?.trim().toLowerCase() || ''; // Sort by building name
         case 'municipalityOne':
           return item.municipalityOne?.trim().toLowerCase() || '';
         case 'municipalityTwo':
@@ -68,25 +73,64 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
           return (item as any)[property];
       }
     };
-  }
+  }  
 
   applyFilter(filterValue: string): void {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   loadBuildingAccountListData(): void {
-    this.buildingAccountService.getAllBuildingAccounts(this.manageActiveBuildingAccounts).subscribe({
-      next: (response: OperationalResultDTO<TransactionDTO>) => {
-        if (response && response.data) {
-          this.dataSource.data = response.data.buildingAccountDTOs ?? [];
-        }
+    console.log('Fetching all buildings...');
+  
+    // Fetch all buildings first
+    this.buildingService.getAllBuildings(this.manageActiveBuildingAccounts).subscribe({
+      next: (response: OperationalResultDTO<any>) => {
+        const buildingsMap = new Map<string, BuildingDTO>(); // Map to store building ID and BuildingDTO
+        const buildings = response.data?.buildingDTOs ?? []; // Assuming the data structure
+  
+        console.log('Buildings received:', buildings);
+  
+        // Store buildings in a Map for easy lookup by ID
+        buildings.forEach((building: BuildingDTO) => {
+          console.log(`Mapping building ID ${building.id} to name ${building.name}`);
+          buildingsMap.set((building.id!).toString(), building);
+        });
+  
+        // Fetch all building accounts
+        this.buildingAccountService.getAllBuildingAccounts(this.manageActiveBuildingAccounts).subscribe({
+          next: (response: OperationalResultDTO<TransactionDTO>) => {
+            if (response && response.data) {
+              this.buildingAccounts = response.data.buildingAccountDTOs ?? [];
+              console.log('Building accounts received:', this.buildingAccounts);
+  
+              // Match building accounts with building names
+              this.buildingAccounts = this.buildingAccounts.map(account => {
+                const building = buildingsMap.get(account.buildingId?.toString() || '');
+                const buildingName = building ? building.name : 'Unknown Building';
+                console.log(`Account ID ${account.id}: matched building ID ${account.buildingId} to name ${buildingName}`);
+                return {
+                  ...account,
+                  buildingName
+                };
+              });
+  
+              // Update the data source
+              this.dataSource.data = this.buildingAccounts;
+              this.dataSource.sort = this.sort; // Ensure sorting is applied
+              console.log('Data source updated with building names:', this.dataSource.data);
+            }
+          },
+          error: (error) => {
+            console.error('There was an error fetching building accounts!', error);
+          }
+        });
       },
       error: (error) => {
-        console.error('There was an error!', error);
-      },
+        console.error('There was an error fetching buildings!', error);
+      }
     });
-  }
-
+  }  
+  
   openDialog(action: string, obj: any): void {
     obj.action = action;
     const dialogRef = this.dialog.open(BuildingAccountsComponent, {
