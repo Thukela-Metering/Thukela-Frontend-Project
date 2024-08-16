@@ -171,12 +171,16 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
   }
   
   private convertToSAST(date: Date): Date {
-    // Adjust the UTC time to SAST (GMT+2)
-    const offset = 2 * 60; // SAST is GMT+2 in minutes
-    const localTime = date.getTime();
-    const adjustedTime = localTime + (offset * 60 * 1000); // Adjusting to GMT+2
-    return new Date(adjustedTime);
-  }
+    // Get the UTC time from the date
+    const utcTime = date.getTime() + (date.getTimezoneOffset() * 60000);
+  
+    // Calculate the SAST time (UTC + 2 hours)
+    const sastOffset = 2 * 60 * 60000; // 2 hours in milliseconds
+    const sastTime = utcTime + sastOffset;
+  
+    // Return the new Date object with the adjusted SAST time
+    return new Date(sastTime);
+  }  
   
   private async generatePDF(action: 'download' | 'preview'): Promise<void> {
     const pdfDto = this.getPdfDto();

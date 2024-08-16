@@ -363,26 +363,39 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     }
   }
 
+  private convertToSAST(date: Date): Date {
+    const utcTime = date.getTime() + (date.getTimezoneOffset() * 60000);
+    const sastOffset = 2 * 60 * 60000; // 2 hours in milliseconds
+    const sastTime = utcTime + sastOffset;
+    return new Date(sastTime);
+  }
+  
   async saveDetail(): Promise<void> {
     const formData = this.addForm.value;
     const selectedBuilding = formData.billTo;
     const accoundId = this.retrievedAccount.find(x => x.id);
     const ownerId = this.retrievedOwner.find(i => i.id);
     const recurringChecked = formData.isRecurring;
-
+  
+    // Get the selected due date and append the current time to it
+    const dueDate = new Date(formData.dueDate);
+    const currentTime = new Date();
+    
+    dueDate.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
+  
     this.invoice.buildingId = selectedBuilding?.id;
     this.invoice.buildingAccountId = accoundId?.id || 0;
     this.invoice.grandTotal = this.grandTotal;
     this.invoice.buildingOwnerId = ownerId?.id;
     this.invoice.subTotal = this.subTotal;
-    this.invoice.invoiceDate = formData.invoiceDate;
+    this.invoice.invoiceDate = this.convertToSAST(new Date(formData.invoiceDate)); // Convert invoiceDate to SAST
     this.invoice.items = this.rows.value;
-    this.invoice.dueDate = formData.dueDate;
+    this.invoice.dueDate = this.convertToSAST(dueDate); // Convert dueDate with current time to SAST
     this.invoice.note = formData.note || "Note: *please contact us if no invoice received, non-receipt does not constitute grounds for non-payment!";
     this.invoice.paymentMethod = formData.paymentMethod; // Ensure payment method is assigned
     this.invoice.vat = this.vat;
     this.invoice.outstandingAmount = this.grandTotal;
-
+  
     if (recurringChecked == true) {
       this.invoice.isActive = true;
       this.invoice.isRecurring = true;
@@ -390,7 +403,7 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
       const firstOfNextMonth = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth() + 1, 1));
       this.invoice.sendDate = firstOfNextMonth;
     }
-
+  
     if (this.isUpdateMode) {
       this.invoice.referenceNumber = this.selectedBuildingNum || '';
       this.invoice.items!.forEach((element, index) => {
@@ -412,7 +425,7 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
       }
     }
   }
-
+  
   saveInvoice(): void {
     this.transaction.invoicesDTOs = [];
     this.transaction.invoicesDTOs.push(this.invoice);
