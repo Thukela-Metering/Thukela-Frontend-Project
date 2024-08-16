@@ -130,7 +130,9 @@
       <div class="text-right m-t-30">
         <mat-divider></mat-divider>
         <h3 class="m-b-0 p-t-20 f-s-18" style="color: white;">
-          <strong>Balance Due: </strong>{{ balanceDue | currency:'R' }}
+          <strong>Balance Due: </strong>
+          {{ selectedBuildingAccount.isInCredit ? '-' : '' }}{{ balanceDue | currency:'R' }}
+          <!-- <strong>Balance Due: </strong>{{ balanceDue | currency:'R' }} -->
         </h3>
       </div>
       <br>

@@ -61,6 +61,7 @@ export class PaymentComponent implements OnInit {
         if (!this.accountDTO.isInCredit) {
           this.accountDTO.accountRunningBalance = this.accountDTO.accountRunningBalance! * -1;
         }
+        this.accountDTO.accountRunningBalance?.toFixed(2)
         console.log(data.data?.buildingAccountDTOs![0]);
 
         if (this.accountDTO.isInCredit) {
