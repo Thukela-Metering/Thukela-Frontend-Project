@@ -18,4 +18,5 @@ export interface PdfDTO {
     items?: LineItemDTO[];
     statementItems?: StatementItemDTO[];
     note?: string;
+    accountIsInCredit? :boolean
   }

@@ -92,16 +92,16 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
 
   loadData() {
     console.log("The filter DTO :", this.filterDTO);
-  
+
     // Convert dates to strings in the Africa/Johannesburg timezone
     const filterDTOWithStringDates: StatementFilterDTO = {
       ...this.filterDTO,
       fromDate: this.filterDTO.fromDate ? this.convertToTimeZoneString(new Date(this.filterDTO.fromDate), 'Africa/Johannesburg') : "",
       toDate: this.filterDTO.toDate ? this.convertToTimeZoneString(new Date(this.filterDTO.toDate), 'Africa/Johannesburg') : ""
     };
-  
+
     console.log("Formatted DTO with String Dates: ", filterDTOWithStringDates);
-  
+
     // Use the DTO with formatted dates for the API call
     this._statementService.getByAccountId(filterDTOWithStringDates).subscribe({
       next: (response: any) => {
@@ -116,7 +116,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   private convertToTimeZoneString(date: Date, timeZone: string): string {
     return moment(date).tz(timeZone).format();
   }
@@ -151,18 +151,18 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
             this.selectedOwnerAccount.action = "Update";
           }
         } else {
-          this.snackBar.openSnackBar('Failed to load building data', 'Close',3000 );
+          this.snackBar.openSnackBar('Failed to load building data', 'Close', 3000);
         }
 
       },
       error: (error) => {
         this.transactionData = new TransactionDTO();
-        this.snackBar.openSnackBar('Error loading building data', 'Close', 3000 );
+        this.snackBar.openSnackBar('Error loading building data', 'Close', 3000);
         console.error('Error loading building data:', error);
       }
     });
   }
- 
+
   loadBuildingOwnerListData(): void {
     this._buildingOwnerService.getAllBuildingOwners().subscribe({
       next: (response) => {
@@ -217,7 +217,12 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
 
   private getPdfDto(): PdfDTO {
     const selectedOwner = this.buildingOwners.find(owner => owner.id === this.selectedBuilding?.id);
-    
+    var x = this.balanceDue
+    var isCreditForStatement = false;
+    if (this.selectedBuildingAccount.isInCredit) {
+      // x = x * -1;
+      isCreditForStatement = true;
+    }
     return {
       invoiceDate: this.filterDTO.fromDate ? this.convertToSAST(new Date(this.filterDTO.fromDate)) : this.convertToSAST(new Date()),
       dueDate: this.filterDTO.toDate ? this.convertToSAST(new Date(this.filterDTO.toDate)) : this.convertToSAST(new Date()),
@@ -227,17 +232,18 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
       customerEmail: selectedOwner?.email || 'N/A',
       taxNumber: this.selectedBuildingAccount?.buildingTaxNumber || 'N/A',
       statementItems: this.statementItems || [],
-      grandTotal: this.balanceDue,
+      grandTotal:x, //this.balanceDue,
+      accountIsInCredit:isCreditForStatement,
     };
-}
+  }
 
-private convertToSAST(date: Date): Date {
-  // Adjust the UTC time to SAST (GMT+2)
-  const offset = 2 * 60; // SAST is GMT+2 in minutes
-  const localTime = date.getTime();
-  const adjustedTime = localTime + (offset * 60 * 1000); // Adjusting to GMT+2
-  return new Date(adjustedTime);
-}
+  private convertToSAST(date: Date): Date {
+    // Adjust the UTC time to SAST (GMT+2)
+    const offset = 2 * 60; // SAST is GMT+2 in minutes
+    const localTime = date.getTime();
+    const adjustedTime = localTime + (offset * 60 * 1000); // Adjusting to GMT+2
+    return new Date(adjustedTime);
+  }
 
   async downloadInvoice(): Promise<void> {
     if (this.userPreferencesService.getDontAskAgainDownload()) {
@@ -278,7 +284,7 @@ private convertToSAST(date: Date): Date {
       if (action === 'download') {
         const link = document.createElement('a');
         link.href = URL.createObjectURL(pdfBlob);
-        link.download = `statement_${this.filterDTO}.pdf`;
+        link.download = `statement_${this.selectedBuildingAccount.bookNumber}.pdf`;
         link.click();
       } else if (action === 'preview') {
         const pdfUrl = URL.createObjectURL(pdfBlob);
