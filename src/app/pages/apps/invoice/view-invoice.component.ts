@@ -254,9 +254,15 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
 
   openCreditNote(): void {
     this.dialogRef.close();
-    this.dialog.open(CreditNoteComponent, {
+   const dialogref= this.dialog.open(CreditNoteComponent, {
       width: '80vw',
       data: this.invoiceDetail
+    });
+
+    dialogref.afterClosed().subscribe((result) => {
+      if (result) {
+      this.closeDialog();
+      }
     });
   }
 

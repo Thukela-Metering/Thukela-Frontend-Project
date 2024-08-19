@@ -74,7 +74,7 @@
           <h5 class="m-b-5 f-w-600 f-s-16" style="color: #7587a4;">Sub total: {{ invoiceDetail.subTotal | currency: 'R' }}</h5>
           <h5 class="m-b-5 f-w-600 f-s-16" style="color: #7587a4;">Discount: {{ invoiceDetail.discount | currency: 'R' }}</h5>
           <span class="f-w-600 f-s-16" style="color: #7587a4;">VAT: {{ invoiceDetail.vat | currency: 'R' }}</span>
-          <h3 class="m-b-0 b-t-1 p-t-20 f-s-18" style="color: white;">Invoice Balance: {{ (invoiceDetail.runningBalance) | currency: 'R' }}</h3>
+          <h3 class="m-b-0 b-t-1 p-t-20 f-s-18" style="color: white;">Invoice Balance: {{ (invoiceDetail.outstandingAmount) | currency: 'R' }}</h3>
           <h5 class="m-b-5 f-w-600 f-s-16" style="color: #7587a4;">  Amount Paid: {{ (invoiceDetail.invoiceBalance ?? 0) | currency: 'R' }}</h5>
         </div>
         <div class="row m-t-30">

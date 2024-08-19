@@ -116,6 +116,7 @@ export class CreditNoteComponent implements OnInit {
       response => {
         if (response.success) {
           this.snackbarService.openSnackBar('Credit note created successfully.', 'Close', 5000);
+          this.dialogRef.close({ event: "Add CreditNote", data: response.data });
           this.dialogRef.close(response.data);
         } else {
           this.snackbarService.openSnackBar('Failed to create credit note.', 'Close', 5000);
