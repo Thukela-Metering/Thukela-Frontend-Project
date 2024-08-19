@@ -145,6 +145,7 @@ export class PaymentComponent implements OnInit {
     try {
       var paymentRemainder = this.customAmount;
       var newPaymentDTOToSave = new PaymentDTO();
+      if(this.invoices.length >0){
       for (const invoice of this.invoices) {
         if (invoice.paymentAmount! > 0) {
           const outstandingAmount = ((invoice.outstandingAmount! - (invoice.paymentAmount || 0))).toFixed(2);
@@ -153,6 +154,7 @@ export class PaymentComponent implements OnInit {
           newPaymentDTOToSave.InvoicesPayed?.push(invoice)
         }
       }
+    }
      // newPaymentDTOToSave.outstandingAmount = paymentRemainder;
       this.selectedPaymentDate.setHours(this.selectedPaymentDate.getUTCHours() + 2);
       newPaymentDTOToSave.paymentDate = this.selectedPaymentDate;

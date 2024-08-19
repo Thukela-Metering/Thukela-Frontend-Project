@@ -94,11 +94,18 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
     const invoice = this.invoices.find((inv) => inv.id === invoiceId);
 
     if (invoice) {
-      this.dialog.open(AppInvoiceViewComponent, {
+   const dialogRef =   this.dialog.open(AppInvoiceViewComponent, {
         width: '1600px', // You can adjust the width as needed
         data: invoice,
       });
-    }
+   
+      dialogRef.afterClosed().subscribe((result) => {
+       if (result) {
+        this.loadInvoicesListData();
+       }
+      
+    });
+  }
   }
 
   calculateRunningBalance(invoice: InvoiceDTO): number {
@@ -136,6 +143,7 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
           );
   
           forkJoin(ownerRequests).subscribe((updatedInvoices) => {
+            this.dataSource.data = [];
             this.dataSource.data = updatedInvoices.map(invoice => {
               invoice.runningBalance = this.calculateRunningBalance(invoice);
               return invoice;
