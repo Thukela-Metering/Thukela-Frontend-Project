@@ -164,7 +164,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
       subTotal: this.invoiceDetail.subTotal || 0,
       discount: this.invoiceDetail.discount || 0,
       vat: this.invoiceDetail.vat || 0,
-      grandTotal: this.invoiceDetail.runningBalance || 0,
+      grandTotal: this.invoiceDetail.outstandingAmount || 0,
       items: this.invoiceDetail.items || [],
       note: this.data.note || ""
     };
