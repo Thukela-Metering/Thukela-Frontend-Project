@@ -172,6 +172,7 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
             this.snackbarService.openSnackBar("Successfully created new link Between Building And Representative", "dismiss");
             this.selectedBuilding = 0;
             this.selectedRepresentative = 0;
+            this.LoadTableData();
           }
         },
         error: (error) => {
@@ -186,6 +187,7 @@ export class AppBuildingRepresentativeLinkComponent implements OnInit, AfterView
             this.snackbarService.openSnackBar("Successfully Updated link Between Building And Representative", "dismiss");
             this.selectedBuilding = 0;
             this.selectedRepresentative = 0;
+            this.LoadTableData();
           }
         },
         error: (error) => {
