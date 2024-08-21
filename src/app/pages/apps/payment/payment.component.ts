@@ -59,7 +59,9 @@ export class PaymentComponent implements OnInit {
       next: (data) => {
         this.accountDTO = data.data?.buildingAccountDTOs![0] ?? new BuildingAccountDTO();
         if (!this.accountDTO.isInCredit) {
-          this.accountDTO.accountRunningBalance = this.accountDTO.accountRunningBalance! * -1;
+          this.accountDTO.accountRunningBalance = this.accountDTO.accountRunningBalance! ;
+        }else{
+          this.accountDTO.accountRunningBalance = this.accountDTO.accountRunningBalance! *-1 ;
         }
         this.accountDTO.accountRunningBalance?.toFixed(2)
         console.log(data.data?.buildingAccountDTOs![0]);
@@ -120,7 +122,7 @@ export class PaymentComponent implements OnInit {
 
   distributeCredit(invoice: PaymentInvoiceItemDTO): void {
     const previouslyAppliedCredit = this.appliedCredits.get(invoice.id) || 0;
-    let remainingCredit = this.accountDTO.accountRunningBalance! + previouslyAppliedCredit;
+    let remainingCredit = this.accountDTO.availableCredit! + previouslyAppliedCredit;
 
     if (invoice.isSelected) {
       const outstandingAmount = invoice.outstandingAmount! - invoice.paymentAmount!;
@@ -130,12 +132,12 @@ export class PaymentComponent implements OnInit {
       remainingCredit -= creditToApply;
       this.appliedCredits.set(invoice.id, creditToApply);
     } else {
-      remainingCredit = this.accountDTO.accountRunningBalance! + previouslyAppliedCredit;
+      remainingCredit = this.accountDTO.availableCredit! + previouslyAppliedCredit;
       invoice.paymentAmount! -= previouslyAppliedCredit;
       this.appliedCredits.delete(invoice.id);
     }
 
-    this.accountDTO.accountRunningBalance = remainingCredit;
+    this.accountDTO.availableCredit = remainingCredit;
     this.dataSource.data = [...this.invoices]; // Trigger change detection
     this.cdRef.detectChanges();
   }
@@ -179,7 +181,7 @@ export class PaymentComponent implements OnInit {
   }
 
   submit() {
-    if (!this.accountDTO.isInCredit) {
+    if (this.accountDTO.accountRunningBalance!<0) {
       this.accountDTO.accountRunningBalance = this.accountDTO.accountRunningBalance! * -1;
     }
     this.buildingAccountService.updateBuildingAccount(this.accountDTO).subscribe({
