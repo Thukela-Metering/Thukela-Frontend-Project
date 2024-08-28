@@ -110,5 +110,20 @@ export const navItems: NavItem[] = [
       },
     ],
   },
+  {
+    navCap: 'Products',
+  },
+  {
+    displayName: 'Product-management',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
+      {
+        displayName: 'Product-management-screen',
+        iconName: 'point',
+        route: 'apps/product-management',     
+      },
+    ],
+  },
   
 ];

@@ -23,3 +23,4 @@ export * from './StatementFIlterDTO';
 export * from './searchResult.DTO';
 export * from './paymentInvoiceItemDTO';
 export * from './buildingRepesentativeTableItemDTO';
+export * from './productDTO'
