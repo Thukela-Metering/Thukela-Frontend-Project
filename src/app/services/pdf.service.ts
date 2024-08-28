@@ -7,7 +7,7 @@ import { PdfDTO } from '../DTOs/pdfDTO';
   providedIn: 'root'
 })
 export class PdfService {
-  private apiUrl = 'http://localhost:80/api'; 
+  private apiUrl = 'http://localhost:8080/api'; 
 
   constructor(private http: HttpClient) { }
 

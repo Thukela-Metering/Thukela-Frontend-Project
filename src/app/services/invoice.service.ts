@@ -12,7 +12,7 @@ export class InvoiceService {
 
   constructor(private http: HttpClient) { }
 
-     private apiUrl = 'http://localhost:80/api';
+     private apiUrl = 'http://localhost:8080/api';
     //private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
   
     getAllInvoices(active:boolean):Observable<OperationalResultDTO<TransactionDTO>> {
