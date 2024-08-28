@@ -7,7 +7,9 @@ import { PdfDTO } from '../DTOs/pdfDTO';
   providedIn: 'root'
 })
 export class PdfService {
-  private apiUrl = 'https://thukelanewbackendtesting.co.za/api'; 
+ // private apiUrl = 'http://localhost:80/api'; 
+ 
+ private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
   constructor(private http: HttpClient) { }
 

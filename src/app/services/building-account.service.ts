@@ -10,8 +10,10 @@ import { BuildingAccountDTO } from '../DTOs/BuildingAccountDTO';
 })
 export class BuildingAccountService {
   constructor(private http: HttpClient) { }
-   //private apiUrl = 'http://localhost:80/api';
-  private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
+  // private apiUrl = 'http://localhost:80/api';
+  //private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
+  
+  private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
   getAllBuildingAccounts(isActive:boolean):Observable<OperationalResultDTO<TransactionDTO>>{
     {
