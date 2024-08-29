@@ -8,16 +8,11 @@ import { OperationalResultDTO, StatementFilterDTO, TransactionDTO } from '../DTO
 })
 export class StatementService {
   constructor(private http: HttpClient) { }
-   private apiUrl = 'http://localhost:8080/api';
-  //private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
 
+ //  private apiUrl = 'http://localhost:8080/api';
 
-// getByAccountId(filterDTO:StatementFilterDTO):Observable<OperationalResultDTO<TransactionDTO>>{
-//     {
-//       var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Statement/GetByAccountId`);
-//       return getResponse;
-//     }
-//   }
+  private apiUrl = 'https://thukelameteringproduction.co.za/api';
+
 getByAccountId(filterDTO: StatementFilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {
     return this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Statement/GetByAccountId`, filterDTO);
   }

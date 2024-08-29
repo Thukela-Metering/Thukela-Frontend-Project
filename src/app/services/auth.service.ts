@@ -14,8 +14,11 @@ import { OperationalResultDTO, TransactionDTO } from '../DTOs/dtoIndex';
 export class AuthService {
   isauthenticated: boolean = false;
 
-  private apiUrl = 'http://localhost:8080/api'; // Replace with your API URL
 
+  //private apiUrl = 'http://localhost:8080/api'; // Replace with your API URL
+
+
+  private apiUrl = 'https://thukelameteringproduction.co.za/api';
  // private apiUrl = 'https://thukelanewbackendtesting.co.za/api'; // Replace with your API URL
 
 
