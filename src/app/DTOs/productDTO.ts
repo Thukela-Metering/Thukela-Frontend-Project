@@ -7,4 +7,5 @@ export class ProductDTO extends BaseDTO {
     costPrice: number;
     sellingPrice:number;
     action?:string;
+    showActionMenu?: boolean;
 }
