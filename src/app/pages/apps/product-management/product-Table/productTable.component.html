@@ -1,6 +1,6 @@
 <mat-card class="cardWithShadow">
   <mat-card-content class="p-24">
-    <label class="radio-group-label">Manage Active or Inactive Building Owners:</label>
+    <label class="radio-group-label">Manage Active or Inactive Products:</label>
     <mat-radio-group [(ngModel)]="manageActiveProducts" (change)="loadProductListData()" name="isActive" class="w-100">
       <mat-radio-button [value]="true">Active</mat-radio-button>
       <mat-radio-button [value]="false">Inactive</mat-radio-button>
@@ -13,7 +13,7 @@
     <div class="row justify-content-between">
       <div class="col-lg-4">
         <mat-form-field appearance="outline" class="w-100 hide-hint">
-          <input matInput #searchInput placeholder="Search Building Owner" (keyup)="applyFilter(searchInput.value)" />
+          <input matInput #searchInput placeholder="Search Product" (keyup)="applyFilter(searchInput.value)" />
           <mat-icon matSuffix>
             <i-tabler name="search" class="icon-20"></i-tabler>
           </mat-icon>
@@ -21,7 +21,7 @@
       </div>
       <div class="col-lg-4 d-flex align-items-center justify-content-end">
         <button mat-flat-button (click)="openDialog('Add', {})" color="primary">
-          Add Building Owner
+          Add Product
         </button>
       </div>
     </div>
