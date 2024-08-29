@@ -8,9 +8,9 @@ import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 })
 export class CreditNoteService {
 
-  // private apiUrl = 'http://localhost:8080/api';
+   private apiUrl = 'http://localhost:8080/api';
 
-  private apiUrl = 'https://thukelameteringproduction.co.za/api';
+ // private apiUrl = 'https://thukelameteringproduction.co.za/api';
   constructor(private http: HttpClient) { }
 
   getAllCreditNotes(isActive: boolean): Observable<OperationalResultDTO<TransactionDTO>> {

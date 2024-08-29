@@ -20,7 +20,7 @@ export * from './buildingOwnerDTO';
 export * from './InvoiceDTO';
 export * from './StatementItemDTO';
 export * from './StatementFIlterDTO';
-export * from './searchResult.DTO';
+export * from './buildingAccountSearchResult.DTO';
 export * from './paymentInvoiceItemDTO';
 export * from './buildingRepesentativeTableItemDTO';
-export * from './productDTO'
+export * from './productDTO';

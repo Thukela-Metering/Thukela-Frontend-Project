@@ -99,8 +99,24 @@
               <td class="p-16" style="color: white;">
                 {{ index + 1 }} 
               </td>
-
               <td class="p-16">
+                <mat-form-field appearance="outline" class="w-100 hide-hint">
+                  <input
+                    type="text"
+                    matInput
+                    class="form-control"
+                    formControlName="itemName"
+                    (keyup)="onItemNameInput(row, $event)"
+                    [matAutocomplete]="auto"
+                  />
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProductSelected(row, $event.option.value)">
+                    <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
+                      {{ product.name }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </td>
+              <!-- <td class="p-16">
                 <mat-form-field appearance="outline" class="w-100 hide-hint">
                   <input
                     type="text"
@@ -110,7 +126,7 @@
                     (input)="itemsChanged()"
                   />
                 </mat-form-field>
-              </td>
+              </td> -->
 
               <td class="p-16">
                 <mat-form-field appearance="outline" class="w-100 hide-hint">
