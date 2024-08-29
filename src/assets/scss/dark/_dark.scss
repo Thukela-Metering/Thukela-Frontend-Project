@@ -83,6 +83,18 @@ mat-card-content {
   overflow: hidden;
 }
 /////////////Success Border Class end//////////////
+/// custom table column width
+.quantity-column-header,
+.quantity-column-cell {
+  width: 5%; /* Adjust this value to set the desired width */
+  min-width: 5%; /* Prevent the column from expanding */
+  max-width: 5%; /* Enforce the column width */
+}
+
+.quantity-column-cell mat-form-field {
+  width: 100%; /* Ensure the input takes up the full width of the reduced column */
+}
+/// custom table column width end
 .radio-group-label {
   margin-bottom: 8px;
   /* Space between label and radio buttons */
