@@ -1,20 +1,24 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SearchResultDTO } from '../DTOs/dtoIndex';
+import { BuildingAccountSearchResultDTO, ProductDTO } from '../DTOs/dtoIndex';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
 
- //  private baseUrl = 'http://localhost:8080/api'; ///api/Filter/search
+   private apiUrl = 'http://localhost:8080/api'; ///api/Filter/search
 
-  private apiUrl = 'https://thukelameteringproduction.co.za/api';
+ // private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
   constructor(private http: HttpClient) {}
 
-  search(query: string): Observable<SearchResultDTO[]> {
-    return this.http.get<SearchResultDTO[]>(`${this.apiUrl}/Filter/search?query=${query}`);
+  searchBuildingAccount(query: string): Observable<BuildingAccountSearchResultDTO[]> {
+    return this.http.get<BuildingAccountSearchResultDTO[]>(`${this.apiUrl}/Filter/search?query=${query}`);
+  }
+
+  searchProduct(query: string): Observable<ProductDTO[]> {
+    return this.http.get<ProductDTO[]>(`${this.apiUrl}/Filter/searchProduct?query=${query}`);
   }
 }
