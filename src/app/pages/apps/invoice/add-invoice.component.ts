@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Optional, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray, UntypedFormGroup, UntypedFormArray, AbstractControl, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ReplaySubject, Subject, Subscription, last, takeUntil } from 'rxjs';
+import { Observable, ReplaySubject, Subject, Subscription, last, takeUntil } from 'rxjs';
 import { BuildingAccountDTO } from 'src/app/DTOs/BuildingAccountDTO';
 import { InvoiceDTO } from 'src/app/DTOs/InvoiceDTO';
 import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
@@ -12,8 +12,10 @@ import { BuildingService } from 'src/app/services/building.service';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
-import { AppInvoiceListComponent } from './invoice.component';
 import { LineItemDTO } from 'src/app/DTOs/LineItemDTO';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { ProductDTO } from 'src/app/DTOs/dtoIndex';
+import { SearchService } from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-add-invoice',
@@ -45,6 +47,7 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
   selectedBuildingNum: string | null = null;
   displayedColumns: string[] = ['index', 'itemName', 'description', 'unitPrice', 'units', 'lineDiscount', 'itemTotal', 'actions'];
   minDate: Date;
+  filteredProducts: Observable<ProductDTO[]>;
 
   subTotal = 0;
   vat = 0.0; 
@@ -61,6 +64,7 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     private _buildingService: BuildingService,
     private _buildingOwnerService: BuildingOwnerService,
     private _buildingAccountService: BuildingAccountService,
+    private _searchService:SearchService,
     private snackbarService: SnackbarService,
     public dialogRef: MatDialogRef<AppAddInvoiceComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
@@ -462,5 +466,34 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
         this.snackbarService.openSnackBar(error.message, "dismiss");
       }
     );
+  }
+
+  onItemNameInput(row: AbstractControl, event: Event): void {
+    const input = (event.target as HTMLInputElement).value;
+  
+    // Cast row to FormGroup
+    const formGroup = row as FormGroup;
+    
+    if (input.length >= 2) {  // Start search when input length is 2 or more
+      this.filteredProducts = this._searchService.searchProduct(input).pipe(
+        debounceTime(300),
+        switchMap(() => this._searchService.searchProduct(input))
+      );
+    } else {
+      this.filteredProducts = new Observable<ProductDTO[]>();  // Clear previous results if input is too short
+    }
+  }
+  
+  onProductSelected(row: AbstractControl, selectedProduct: ProductDTO): void {
+    // Cast row to FormGroup
+    const formGroup = row as FormGroup;
+  
+    formGroup.patchValue({
+      itemName: selectedProduct.name,
+      description: selectedProduct.description,
+      unitPrice: selectedProduct.sellingPrice,
+      units:1
+    });
+    this.itemsChanged();  // Recalculate totals
   }
 }
