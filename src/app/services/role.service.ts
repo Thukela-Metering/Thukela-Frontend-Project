@@ -8,9 +8,9 @@ import { OperationalResultDTO, TransactionDTO } from '../DTOs/dtoIndex';
   providedIn: 'root'
 })
 export class RoleService {
- // private apiUrl = 'http://localhost:80/api';
-  //private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
-  
+
+  //private apiUrl = 'http://localhost:8080/api';
+
   private apiUrl = 'https://thukelameteringproduction.co.za/api';
   constructor(private http: HttpClient) { }
 //credentials: { username: string, password: string }

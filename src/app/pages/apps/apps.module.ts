@@ -57,6 +57,8 @@ import { LottieComponent } from 'ngx-lottie';
 import { LottieLoaderComponent } from './loaders/lottie-loader.component';
 import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoice.component';
 import { PaymentTableComponent } from './payment/payment-table.component';
+import { AppAddProductComponent } from './product-management/add-product/AddProduct.component';
+import { AppProductTableComponent } from './product-management/product-Table/productTable.component';
 
 
 
@@ -116,7 +118,9 @@ import { PaymentTableComponent } from './payment/payment-table.component';
     PaymentComponent,
     HangfireDashboardComponent,
     BorderColorDirective,
-    LottieLoaderComponent
+    LottieLoaderComponent,
+    AppAddProductComponent,
+    AppProductTableComponent
   ],
   providers: [DatePipe],
 })
