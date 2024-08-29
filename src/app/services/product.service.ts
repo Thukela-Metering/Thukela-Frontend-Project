@@ -11,7 +11,7 @@ export class ProductService {
     constructor(private http: HttpClient) { }
 
     //private apiUrl = 'http://localhost:8080/api';
-    private apiUrl = 'https://thukelanewbackendtesting.co.za/api';
+    private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
     updateProduct(productData: ProductDTO): Observable<OperationalResultDTO<TransactionDTO>> {
         var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Product/Update/${productData.id}`, productData);
