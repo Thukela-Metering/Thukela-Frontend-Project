@@ -92,6 +92,10 @@ export const navItems: NavItem[] = [
       { displayName: 'Recurring Invoices',
         iconName: 'point',
         route: 'apps/recurring',   
+      },
+      { displayName: 'Bad Dept',
+        iconName: 'point',
+        route: 'apps/badDept',   
       }
     ],
   },
