@@ -1,16 +1,11 @@
-import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, OnInit,ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog} from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
-import { PersonDTO } from 'src/app/DTOs/personDTO';
-import { UserService as PersonService } from 'src/app/services/user.service';
-import { UserDataDTO, UserDataDTO as UserRegistrationDTO } from 'src/app/DTOs/userDataDTO';
+
 import { AuthService } from 'src/app/services/auth.service';
-import { LookupValueDTO } from 'src/app/DTOs/lookupValueDTO';
-import { SystemUserDTO } from 'src/app/DTOs/systemUserDTO';
-import { BuildingService } from 'src/app/services/building.service';
-import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
+
 import { badDeptDTO, BuildingAccountDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { MatSort } from '@angular/material/sort';
@@ -135,11 +130,12 @@ export class AppBadDeptAccountViewComponent implements OnInit, AfterViewInit {
             data: this.newBadDeptRecordToSave,
         });
         dialogRef.afterClosed().subscribe((result) => {
-            if (result.event === 'Add') {
+            setTimeout(() => {
                 //  this.addRowData(result.data);
                 this.loadBadDeptData();
                 this.manageActiveBadDept = true;
-            }
+            },300);
+        
         });
     }
 }
