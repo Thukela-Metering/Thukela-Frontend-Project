@@ -12,7 +12,7 @@ import { SnackbarService } from "src/app/services/snackbar.service";
 
 @Component({
     selector: 'app-bad-dept-modal-content',
-    templateUrl: 'BadDeptModal.html',
+    templateUrl: 'badDeptModal.html',
   })
   
   export class AppBadDeptModalComponent implements OnInit, OnChanges {
