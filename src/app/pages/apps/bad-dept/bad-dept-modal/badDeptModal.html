@@ -1,0 +1,39 @@
+<mat-dialog-content style="max-width: 600px">
+    <div [formGroup]="badDeptForm">
+  
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Account Number</mat-label>
+        <input  matInput formControlName="buildingAccountNumber">
+      </mat-form-field>
+      <div class="col-lg-6">
+        <div class="w-100" style="margin: 10px;">
+          <label class="mat-slide-toggle-label">Close Account</label>
+          <mat-slide-toggle formControlName="closeAccount" [checked]="local_data.closeAccount"></mat-slide-toggle>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-lg-6">
+        <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Amount</mat-label>
+            <input matInput formControlName="amount">
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <div class="w-100">
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Note</mat-label>
+                <textarea matInput formControlName="note"></textarea>
+              </mat-form-field>
+        
+          </div>
+        </div>
+      </div>
+      <br>      
+  
+      <div class="form-actions">
+        <button mat-stroked-button color="warn" (click)="onCancel()">Cancel</button>
+        <button mat-flat-button color="primary"  [disabled]="!badDeptForm.valid" (click)="doAction()">{{action}}</button>
+      </div>
+    </div>
+  </mat-dialog-content>
