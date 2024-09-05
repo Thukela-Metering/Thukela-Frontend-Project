@@ -59,6 +59,9 @@ import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoi
 import { PaymentTableComponent } from './payment/payment-table.component';
 import { AppAddProductComponent } from './product-management/add-product/AddProduct.component';
 import { AppProductTableComponent } from './product-management/product-Table/productTable.component';
+import { AppBadDeptModalComponent } from './bad-dept/bad-dept-modal/badDeptModal';
+import { AppBadDeptMainTableComponent } from './bad-dept/bad-dept-main-table/badDeptMainTable';
+import { AppBadDeptAccountViewComponent } from './bad-dept/bad-dept-account-view/badDeptAccountView';
 
 
 
@@ -120,7 +123,10 @@ import { AppProductTableComponent } from './product-management/product-Table/pro
     BorderColorDirective,
     LottieLoaderComponent,
     AppAddProductComponent,
-    AppProductTableComponent
+    AppProductTableComponent,
+    AppBadDeptModalComponent,
+    AppBadDeptMainTableComponent,
+    AppBadDeptAccountViewComponent
   ],
   providers: [DatePipe],
 })

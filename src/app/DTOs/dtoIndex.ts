@@ -24,3 +24,4 @@ export * from './buildingAccountSearchResult.DTO';
 export * from './paymentInvoiceItemDTO';
 export * from './buildingRepesentativeTableItemDTO';
 export * from './productDTO';
+export * from './badDeptDTO';

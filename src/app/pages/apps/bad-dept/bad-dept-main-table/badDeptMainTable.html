@@ -1,0 +1,66 @@
+<mat-card class="cardWithShadow">
+    <div class="radio-group-label-container">
+      <label class="radio-group-label">Manage Active or Inactive bad dept:</label>
+      <mat-radio-group [(ngModel)]="manageActiveBadDept" (change)="loadBadDeptData()" name="isActive" class="w-100">
+        <mat-radio-button [value]="true">Active</mat-radio-button>
+        <mat-radio-button [value]="false">Inactive</mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </mat-card>
+  
+  <mat-card class="cardWithShadow">
+    <mat-card-content class="p-24">
+      <div class="row justify-content-between">
+        <div class="col-lg-4">
+          <mat-form-field appearance="outline" class="w-100 hide-hint">
+            <input matInput placeholder="Search bad dept" (keyup)="applyFilter($any($event.target).value)" />
+            <mat-icon matSuffix>
+              <i-tabler name="search" class="icon-20"></i-tabler>
+            </mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-4 d-flex align-items-center justify-content-end">
+          <button mat-flat-button (click)="navigateToSearchPage()" color="primary">Search Account To Close</button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  
+  <mat-card class="cardWithShadow">
+    <mat-card-content class="p-24">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSource" matSort class="w-100">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">#</th>
+            <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+          </ng-container>
+  
+          <ng-container matColumnDef="bookNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Book Number</th>
+            <td mat-cell *matCellDef="let element">
+              <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ element.buildingAccountNumber }}</p>
+            </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Amount</th>
+            <td mat-cell *matCellDef="let element">
+              <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ element.amount }}</p>
+            </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="note">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Note</th>
+            <td mat-cell *matCellDef="let element">
+              <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ element.note }}</p>
+            </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  
