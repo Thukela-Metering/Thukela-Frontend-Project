@@ -21,6 +21,7 @@ import { LottieLoaderComponent } from './loaders/lottie-loader.component';
 import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoice.component';
 import { PaymentTableComponent } from './payment/payment-table.component';
 import { AppProductTableComponent } from './product-management/product-Table/productTable.component';
+import { QuoteComponent } from './quote/quote.component';
 
 
 export const AppsRoutes: Routes = [
@@ -200,6 +201,17 @@ export const AppsRoutes: Routes = [
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Product-management' },
+          ],
+        },
+      },
+      {
+        path: 'Quotes',
+        component: QuoteComponent,
+        data: {
+          title: 'Quotes',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Quotes' },
           ],
         },
       },

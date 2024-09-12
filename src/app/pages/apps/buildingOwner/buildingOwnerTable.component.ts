@@ -93,7 +93,6 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
       next: (response) => {
         if (response && response.data) {
           if(response.success){
-            console.log("Here is the response for all building owners:",response)
           this.buildingOwners = response.data.buildingOwnerAccountDTOs ?? [];
           this.dataSource.data = response.data.buildingOwnerAccountDTOs ?? [];
           this.filterBuildingOwners();
@@ -122,6 +121,7 @@ openDialog(action: string, obj: any): void {
     width: '500px',
     data: obj,
   });
+  
   dialogRef.afterClosed().subscribe((result) => {
 
     if(result){
