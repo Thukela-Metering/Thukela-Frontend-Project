@@ -202,11 +202,11 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
   getStatusColor(status: number): string {
     switch (status) {
       case 0:
-        return '#a3e4a1';
+        return '#0ccf19';
       case 1:
-        return '#f5a2a2';
+        return '#ab031d';
       case 2:
-        return '#fff6a2';
+        return '#ad6f11';
       default:
         return '';
     }

@@ -100,6 +100,21 @@ export const navItems: NavItem[] = [
     ],
   },
   {
+    navCap: 'Job Management',
+  },
+  {
+    displayName: 'Invoicing',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
+      {
+        displayName: 'Job Card List',
+        iconName: 'point',
+        route: 'apps/Job-Cards',     
+      }
+    ],
+  },
+  {
     navCap: 'Tools',
   },
   {
@@ -111,6 +126,21 @@ export const navItems: NavItem[] = [
         displayName: 'Hangfire Dashboard',
         iconName: 'point',
         route: 'apps/hangfire',     
+      },
+    ],
+  },
+  {
+    navCap: 'Job Cards',
+  },
+  {
+    displayName: 'Job Cards',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
+      {
+        displayName: 'Job Cards',
+        iconName: 'point',
+        route: 'apps/Job-Cards',     
       },
     ],
   },

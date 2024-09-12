@@ -62,6 +62,8 @@ import { AppProductTableComponent } from './product-management/product-Table/pro
 import { AppBadDeptModalComponent } from './bad-dept/bad-dept-modal/badDeptModal';
 import { AppBadDeptMainTableComponent } from './bad-dept/bad-dept-main-table/badDeptMainTable';
 import { AppBadDeptAccountViewComponent } from './bad-dept/bad-dept-account-view/badDeptAccountView';
+import { AppJobCardTableComponent } from './job-cards/job-card-table/job-card.component';
+import { AppJobCardModalComponent } from './job-cards/job-card-modal/job-card-modal.component';
 
 
 
@@ -126,7 +128,9 @@ import { AppBadDeptAccountViewComponent } from './bad-dept/bad-dept-account-view
     AppProductTableComponent,
     AppBadDeptModalComponent,
     AppBadDeptMainTableComponent,
-    AppBadDeptAccountViewComponent
+    AppBadDeptAccountViewComponent,
+    AppJobCardTableComponent,
+    AppJobCardModalComponent
   ],
   providers: [DatePipe],
 })

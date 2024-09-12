@@ -1,5 +1,6 @@
 import { LineItemDTO } from './LineItemDTO';
 import { BaseDTO } from './baseDTO';
+import { PaymentStatus } from './enums';
 
 export class InvoiceDTO extends BaseDTO {
   referenceNumber?: string;
@@ -27,8 +28,3 @@ export class InvoiceDTO extends BaseDTO {
   runningBalance?: number;
 }
 
-export enum PaymentStatus {
-  Paid = 0,
-  Unpaid = 1,
-  PartiallyPaid = 2
-}
