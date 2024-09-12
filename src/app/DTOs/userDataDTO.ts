@@ -8,6 +8,7 @@ export class UserDataDTO  extends BaseDTO{
     address: string;
     username?: string;
     password?:string;
+    isThukelaEmployee?:boolean;
     confirmPassword?:string;
     userRole!:number;
     action?:string;

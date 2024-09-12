@@ -16,6 +16,7 @@ import { LineItemDTO } from 'src/app/DTOs/LineItemDTO';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ProductDTO } from 'src/app/DTOs/dtoIndex';
 import { SearchService } from 'src/app/services/filter.service';
+import { QuotesDTO } from 'src/app/DTOs/QuotesDTO';
 
 @Component({
   selector: 'app-add-invoice',
@@ -81,14 +82,15 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.addForm = this.fb.group({
-      paymentMethod: ['', Validators.required],
-      invoiceDate: [this.minDate, Validators.required],
-      dueDate: ['', Validators.required],
-      billTo: ['', Validators.required],
-      note: ['Note: *please contact us if no invoice received, non-receipt does not constitute grounds for non-payment!'],
-      isRecurring: [false],
-      rows: this.fb.array([this.createItemFormGroup()])
+        paymentMethod: ['', Validators.required],
+        invoiceDate: [this.minDate, Validators.required],
+        dueDate: ['', Validators.required],
+        billTo: ['', Validators.required],
+        note: ['Note: *please contact us if no invoice received, non-receipt does not constitute grounds for non-payment!'],
+        isRecurring: [false],
+        rows: this.fb.array([this.createItemFormGroup()])
     });
+
     this.rows = this.addForm.get('rows') as FormArray;
     this.dialogRef.updateSize('95vw', '95vh');  // Adjusting width and height
 
@@ -99,37 +101,77 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     this.generateDueDateOptions(this.minDate);
 
     if (this.data && this.data.invoice) {
-      this.isUpdateMode = true;
-      this.populateFormWithInvoiceData(this.data.invoice);
+        this.isUpdateMode = true;
+        this.populateFormWithInvoiceData(this.data.invoice);
+    } else if (this.data && this.data.quote) {
+        this.isUpdateMode = false;
+        this.populateFormWithQuoteData(this.data.quote, this.data.selectedOwnerAccount); // Pass the selected owner account
     } else {
-      this.isUpdateMode = false;
+        this.isUpdateMode = false;
     }
 
-    // Listen for changes in the invoiceDate form control and update dueDateOptions
     this.addForm.get('invoiceDate').valueChanges.subscribe((invoiceDate: Date) => {
-      this.onInvoiceDateChange(invoiceDate);
+        this.onInvoiceDateChange(invoiceDate);
     });
 
-    // Listen for changes in the billTo form control and update selectedOwnerAccountNumber
     this.addForm.get('billTo').valueChanges.subscribe((building: BuildingDTO) => {
-      this.onBuildingSelectionChange(building);
+        this.onBuildingSelectionChange(building);
     });
 
-    // Filter buildings
-    this.buildingFilterCtrl.valueChanges
-      .pipe(takeUntil(this._onDestroy))
-      .subscribe(() => {
+    this.buildingFilterCtrl.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe(() => {
         this.filterBuildings();
-      });
+    });
 
-    // Subscribe to filteredBuildings and update filteredBuildingsArray
-    this.filteredBuildings
-      .pipe(takeUntil(this._onDestroy))
-      .subscribe((buildings) => {
+    this.filteredBuildings.pipe(takeUntil(this._onDestroy)).subscribe((buildings) => {
         this.filteredBuildingsArray = buildings;
-      });
+    });
+}
 
+
+private async populateFormWithQuoteData(quote: QuotesDTO, selectedOwnerAccount: BuildingOwnerDTO): Promise<void> {
+  this.selectedDueDate = new Date(); // Set the default due date
+  
+  // Wait for the buildings to be loaded before proceeding
+  await this.loadBuildingData();
+
+  // Find the associated building using the buildingId or clientId from the passed data
+  let associatedBuilding: BuildingDTO | undefined;
+
+  if (selectedOwnerAccount?.buildingId) {
+      associatedBuilding = this.retrievedBuildings.find(building => building.id === selectedOwnerAccount.buildingId);
+  } else if (quote.buildingId) {
+      associatedBuilding = this.retrievedBuildings.find(building => building.id === quote.buildingId);
   }
+
+  // If an associated building is found, set it in the form
+  if (associatedBuilding) {
+      this.addForm.patchValue({
+          billTo: associatedBuilding // Set the actual building object in the form control
+      });
+  }
+
+  this.addForm.patchValue({
+      invoiceDate: new Date(), // Assuming today's date for the new invoice
+      dueDate: this.selectedDueDate,
+      note: quote.note || this.addForm.get('note')?.value
+  });
+
+  const rowsArray = this.addForm.get('rows') as FormArray;
+  rowsArray.clear();
+  quote.items?.forEach(item => {
+      rowsArray.push(this.fb.group({
+          itemId: [item.id],
+          itemName: [item.itemName, Validators.required],
+          description: [item.description, Validators.required],
+          units: [item.units, [Validators.required, Validators.min(1)]],
+          unitPrice: [item.unitPrice, [Validators.required, Validators.min(0.01)]],
+          lineDiscount: [item.lineDiscount, [Validators.min(0)]],
+          itemTotal: [item.itemTotal, { disabled: true }]
+      }));
+  });
+
+  this.itemsChanged(); // Recalculate totals after populating
+}
 
   ngOnDestroy(): void {
     this._onDestroy.next();
@@ -234,18 +276,22 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     return lastRow && lastRow.valid;
   }
 
-  private loadBuildingData(): void {
-    this._buildingService.getAllBuildings(true).subscribe({
-      next: (response: any) => {
-        this.retrievedBuildings = response.data?.buildingDTOs ?? [];
-        this.filteredBuildings.next(this.retrievedBuildings.slice());
-        this.filteredBuildingsArray = this.retrievedBuildings.slice();
-      },
-      error: (error) => {
-        console.error('There was an error!', error);
-      }
+  private loadBuildingData(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        this._buildingService.getAllBuildings(true).subscribe({
+            next: (response: any) => {
+                this.retrievedBuildings = response.data?.buildingDTOs ?? [];
+                this.filteredBuildings.next(this.retrievedBuildings.slice());
+                this.filteredBuildingsArray = this.retrievedBuildings.slice();
+                resolve();
+            },
+            error: (error) => {
+                console.error('There was an error!', error);
+                reject(error);
+            }
+        });
     });
-  }
+}
 
   private async getBuildingOwner(buildingId: number): Promise<void> {
     return new Promise((resolve, reject) => {

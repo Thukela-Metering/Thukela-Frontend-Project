@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Optional, Inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, Optional, Inject, Input, OnChanges, SimpleChanges, EventEmitter, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -7,7 +7,7 @@ import { BuildingDTO } from 'src/app/DTOs/buildingDTO';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { BuildingService } from 'src/app/services/building.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { LookupValueDTO } from 'src/app/DTOs/lookupValueDTO';
 import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { LookupValueManagerService } from 'src/app/services/lookupValueManager.service';
@@ -16,8 +16,13 @@ import { LookupValueManagerService } from 'src/app/services/lookupValueManager.s
   selector: 'app-building-owner-dialog-content',
   templateUrl: 'buildingOwner.component.html',
 })
-export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
+export class AppBuildingOwnerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() localDataFromComponent: BuildingOwnerDTO;
+  @Input() isPortfolioCreation: boolean = false;
+  @Input() selectedBuilding: BuildingDTO;
+
+  @Output() submissionSuccess = new EventEmitter<BuildingOwnerDTO>();
+
   action: string;
   local_data: BuildingOwnerDTO;
   DropDownValues: LookupValueDTO[] = [];
@@ -26,7 +31,7 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
   private formChangesSubscription: Subscription;
   buildingFilterCtrl: FormControl = new FormControl();
   buildings: BuildingDTO[] = [];
-  filteredBuildings: BuildingDTO[] = [...this.buildings];
+  filteredBuildings: BuildingDTO[] = [];
 
   constructor(
     @Optional() public dialogRef: MatDialogRef<AppBuildingOwnerComponent>,
@@ -35,26 +40,30 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
     private _buildingService: BuildingService,
     private lookupValueService: LookupValueManagerService,
     private snackbarService: SnackbarService,
-    public dialog: MatDialog,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingOwnerDTO,
   ) {
     this.local_data = { ...data };
-    this.action = this.local_data.action ? this.local_data.action : "Update";
+    this.action = this.local_data?.action ?? "Update";
   }
+
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
-      if (this.accountForm) {
-        this.accountForm.patchValue(this.localDataFromComponent);
+    if (this.isPortfolioCreation && this.selectedBuilding) {
+      this.action = "Add";
+      this.accountForm.patchValue({ buildingId: this.selectedBuilding.id });
+      const existingBuilding = this.filteredBuildings.find(b => b.id === this.selectedBuilding.id);
+      if (!existingBuilding) {
+        this.filteredBuildings.push(this.selectedBuilding);
       }
     }
   }
+
   ngOnInit(): void {
     this.accountForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       fax: [''],
       contactNumber: [''],
-      buildingId: [{ value: '', disabled: this.action !== 'Add' }, Validators.required],
+      buildingId: [{ value: this.selectedBuilding ? this.selectedBuilding.id : '', disabled: this.action !== 'Add' }, Validators.required],
       accountNumber: [''],
       bank: ['', Validators.required],
       taxable: [false, Validators.required],
@@ -64,57 +73,29 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
       additionalInformation: ['']
     });
 
-    // this.onPreferredCommunicationChange();
-    this.getDropdownValues("Bank", "Bank");
     this.loadBuildingOwnerListData();
-    this.setupBuildingFilter();
+    this.getDropdownValues("Bank", "Bank");
+
     if (this.data != null) {
       this.accountForm.patchValue(this.local_data);
       this.accountForm.get('preferredCommunication')?.setValue(9);
       console.log(this.accountForm);
     }
-    if (this.localDataFromComponent) {
-      this.accountForm.patchValue(this.localDataFromComponent);
-    }
-  }
 
-  setupBuildingFilter(): void {
     this.buildingFilterCtrl.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(value => {
-      this.filterBuildings(value || ''); // Use an empty string if value is falsy
+      this.filterBuildings(value || '');
     });
-  }
 
-  loadBuildingOwnerListData(): void {
-    this._buildingService.getAllBuildings(true).subscribe({
-      next: (response) => {
-        this.buildings = response.data?.buildingDTOs ?? [];
-        this.filteredBuildings = this.buildings;
-      },
-      error: (error) => {
-        console.error('There was an error!', error);
-      }
-    });
-  }
+    // Ensure unique IDs
+    this.filteredBuildings = Array.from(new Set(this.filteredBuildings.map(b => b.id)))
+      .map(id => this.filteredBuildings.find(b => b.id === id)!);
 
-  filterBuildings(filter: string): void {
-    const filterValue = filter ? filter.toLowerCase() : '';
-    this.filteredBuildings = this.buildings.filter(option => option.name?.toLowerCase().includes(filterValue));
-  }
-
-  onPreferredCommunicationChange() {
-    this.formChangesSubscription = this.accountForm.get('preferredCommunication')!.valueChanges
-      .subscribe(value => {
-        const contactNumberControl = this.accountForm.get('contactNumber');
-        if (value === '10') {
-          contactNumberControl?.setValidators([Validators.required]);
-        } else {
-          contactNumberControl?.clearValidators();
-        }
-        contactNumberControl?.updateValueAndValidity(); // Important to apply the validation changes
-      });
+    if (this.localDataFromComponent) {
+      this.accountForm.patchValue(this.localDataFromComponent);
+    }
   }
 
   getDropdownValues(lookupGroupValue: string, lookupListValue: string) {
@@ -145,21 +126,53 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
     );
   }
 
-  
-  
-  onSubmit() {
+  loadBuildingOwnerListData(): void {
+    this._buildingService.getAllBuildings(true).subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.buildings = response.data?.buildingDTOs ?? [];
+          this.filteredBuildings = this.buildings;
+
+          // If a building is already selected (in case of portfolio creation), ensure it's in the list
+          if (this.selectedBuilding) {
+            const existingBuilding = this.buildings.find(b => b.id === this.selectedBuilding.id);
+            if (!existingBuilding) {
+              this.buildings.push(this.selectedBuilding);
+              this.filteredBuildings.push(this.selectedBuilding);
+            }
+
+            // Set the selected building
+            this.accountForm.patchValue({ buildingId: this.selectedBuilding.id });
+          }
+        }
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+      }
+    });
+  }
+
+  filterBuildings(filter: string): void {
+    const filterValue = filter ? filter.toLowerCase() : '';
+    this.filteredBuildings = this.buildings.filter(option => option.name?.toLowerCase().includes(filterValue));
+  }
+
+  onSubmit(): void {
     if (this.accountForm.valid) {
       this.mapFormValuesToLocalData();
-  
-      if (this.action === "Add") {
-        const buildingOwnerData = { ...this.local_data };
-        this._buildingOwnerService.addNewBuildingOwner(buildingOwnerData).subscribe(
+
+      const actionData = this.local_data?.action ? this.local_data : this.localDataFromComponent;
+      if (actionData.action === "Add") {
+        this._buildingOwnerService.addNewBuildingOwner(this.local_data).subscribe(
           response => {
-            if (response.success) {
-              this.snackbarService.openSnackBar(response.message, "dismiss");
-              this.accountForm.reset();
-              this.loadBuildingOwnerListData();
-              this.finalizeDialogClose('Add', buildingOwnerData);
+            this.snackbarService.openSnackBar(response.message, "dismiss");
+            this.accountForm.reset();
+            this.loadBuildingOwnerListData();
+
+            this.submissionSuccess.emit(this.local_data);
+
+            if (!this.isPortfolioCreation) {
+              this.finalizeDialogClose('Add', this.local_data);
             }
           },
           error => {
@@ -169,11 +182,16 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
         );
       } else {
         this.updateRowData(this.local_data);
-        this.finalizeDialogClose(this.action, this.local_data);
+
+        this.submissionSuccess.emit(this.local_data);
+
+        if (!this.isPortfolioCreation) {
+          this.dialogRef.close({ event: this.action, data: this.local_data });
+        }
       }
     }
   }
-  
+
   finalizeDialogClose(action: string, data: any) {
     setTimeout(() => {
       if (this.dialogRef) {
@@ -181,8 +199,6 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
       }
     }, 300);
   }
-  
-   
 
   private mapFormValuesToLocalData(): void {
     this.local_data.name = this.accountForm.get('name')?.value;
@@ -197,31 +213,31 @@ export class AppBuildingOwnerComponent implements OnInit, OnDestroy, OnChanges {
     this.local_data.isActive = this.accountForm.get('isActive')?.value;
     this.local_data.preferredCommunication = this.accountForm.get('preferredCommunication')?.value;
     this.local_data.additionalInformation = this.accountForm.get('additionalInformation')?.value;
-  }  
-  
+  }
+
   updateRowData(row_obj: BuildingOwnerDTO): void {
     this._buildingOwnerService.updateBuildingOwnerData(row_obj).subscribe({
       next: (response) => {
         if (response.success) {
-          console.log(response);
-          this.snackbarService.openSnackBar(response.message, "dismiss");
-          this.dialogRef.close({ event: 'Update', data: response });
-          // this.loadBuildingOwnerListData();
-      
+          this.snackbarService.openSnackBar(response.message, 'dismiss');
+          if (!this.isPortfolioCreation) {
+            this.dialogRef.close({ event: 'Update', data: response });
+          } else {
+            this.submissionSuccess.emit(row_obj);
+          }
         } else {
-          this.snackbarService.openSnackBar(response.message, "dismiss");
-          this.dialogRef.close({ event: 'Update', data: response });
-          // this.loadBuildingOwnerListData();              
+          this.snackbarService.openSnackBar(response.message, 'dismiss');
+          if (!this.isPortfolioCreation) {
+            this.dialogRef.close({ event: 'Update', data: response });
+          }
         }
       },
       error: (error) => {
         console.error('There was an error!', error);
-        this.snackbarService.openSnackBar(error.message, "dismiss");
+        this.snackbarService.openSnackBar(error.message, 'dismiss');
       }
     });
-    // this.loadBuildingOwnerListData();
   }
-  
 
   onCancel() {
     this.accountForm.reset();

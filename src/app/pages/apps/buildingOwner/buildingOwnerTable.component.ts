@@ -7,6 +7,7 @@ import { BuildingOwnerDTO } from 'src/app/DTOs/buildingOwnerDTO';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { AppBuildingOwnerComponent } from './buildingOwner.component';
 import { MatSort } from '@angular/material/sort';
+import { LookupValueManagerService } from 'src/app/services/lookupValueManager.service';
 
 @Component({
   selector: 'app-building-owner',
@@ -39,7 +40,8 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
   constructor(
     public dialog: MatDialog,
     private _buildingOwnerService: BuildingOwnerService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private lookupService: LookupValueManagerService 
   ) {}
 
   ngOnInit(): void {
@@ -85,7 +87,9 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
   applyFilter(filterValue: string): void {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-
+  mapCategoryToString(categoryId: number | undefined): string {
+    return this.lookupService.getDescriptionById(categoryId!) || 'unknown';
+  }
    loadBuildingOwnerListData(): void {
     this.buildingOwners = [];
     this.dataSource.data = [];
@@ -93,7 +97,6 @@ export class AppBuildingOwnerTableComponent implements OnInit, AfterViewInit {
       next: (response) => {
         if (response && response.data) {
           if(response.success){
-            console.log("Here is the response for all building owners:",response)
           this.buildingOwners = response.data.buildingOwnerAccountDTOs ?? [];
           this.dataSource.data = response.data.buildingOwnerAccountDTOs ?? [];
           this.filterBuildingOwners();
@@ -122,6 +125,7 @@ openDialog(action: string, obj: any): void {
     width: '500px',
     data: obj,
   });
+  
   dialogRef.afterClosed().subscribe((result) => {
 
     if(result){

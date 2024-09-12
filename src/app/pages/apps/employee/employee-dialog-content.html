@@ -68,6 +68,12 @@
       </div>
     </div>
     <div class="col-lg-6">
+      <mat-radio-group name="isThukelaEmployee" class="w-100" [(ngModel)]="local_data.isThukelaEmployee">
+        <mat-radio-button [value]="true">is Employee</mat-radio-button>
+        <mat-radio-button [value]="false">is not Employee</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div class="col-lg-6">
       <!-- <mat-form-field appearance="outline" class="w-100"> -->
         <mat-radio-group name="isActive" class="w-100" [(ngModel)]="local_data.isActive">
           <mat-radio-button [value]="true">Active</mat-radio-button>
@@ -94,6 +100,7 @@
           placeholder="isActive" /> -->
       <!-- </mat-form-field> -->
     </div>
+
     <div class="form-actions">
       <button mat-stroked-button color="warn" type="button" (click)="closeDialog()">Cancel</button>
       <button mat-flat-button color="primary" type="submit" (click)="doAction()" [disabled]="userForm.invalid">

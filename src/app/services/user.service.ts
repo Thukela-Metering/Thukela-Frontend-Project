@@ -29,6 +29,13 @@ export class UserService {
       return getResponse;
     }
   }
+  getUserDataEmployeeList(isactive:boolean): Observable<OperationalResultDTO<TransactionDTO>> {
+    {
+      const params = new HttpParams().set('isactive', isactive.toString());
+      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Person/getEmployeeUserListData`,{ params });      
+      return getResponse;
+    }
+  }
   updatePersonData(personData:PersonDTO): Observable<OperationalResultDTO<TransactionDTO>>{
     var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Person/${personData.id}`,personData)
     return response;

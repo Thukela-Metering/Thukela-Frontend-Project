@@ -40,7 +40,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
   ];
   dataSource = new MatTableDataSource(this.persons);
 
-  constructor(public dialog: MatDialog, public datePipe: DatePipe, private _personService: PersonService, private authService: AuthService) { }
+  constructor(public dialog: MatDialog, public datePipe: DatePipe, private _personService: PersonService, private authService: AuthService, private snackbarService: SnackbarService,) { }
   
   ngOnInit(): void {
     this.loadUserListData();
@@ -150,6 +150,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
         value.username = row_obj.username;
         value.password = row_obj.password;
         value.guid = row_obj.guid;
+        value.isThukelaEmployee = row_obj.isThukelaEmployee;
         value.confirmPassword = row_obj.confirmPassword;
         value.userRole = row_obj.userRole;
         if (value.isActive != false) {
@@ -158,20 +159,24 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
         else{
           this.manageActiveUsers = false;
         }
-      }
+    
       if (row_obj.isActive) {
         row_obj.dateDeleted = undefined;
       }
       this._personService.updateUserData(row_obj).subscribe({
         next: (response) => {
           if (response) {
+            this.snackbarService.openSnackBar(response.message,"dismiss");
             this.loadUserListData();
           }
         },
         error: (error) => {
+          this.snackbarService.openSnackBar(error.message,"dismiss");
           console.error('There was an error!', error);
         }
+        
       });
+    }
       return true;
     });
   }

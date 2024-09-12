@@ -1,4 +1,4 @@
-import { PaymentStatus } from "./InvoiceDTO";
+import { PaymentStatus } from "./enums";
 
 export class PaymentInvoiceItemDTO {
     id: string;

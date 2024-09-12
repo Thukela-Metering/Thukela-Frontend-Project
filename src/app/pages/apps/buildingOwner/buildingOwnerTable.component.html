@@ -67,7 +67,7 @@
         <ng-container matColumnDef="bank">
           <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Bank</th>
           <td mat-cell *matCellDef="let element">
-            <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ element.bank }}</p>
+            <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ mapCategoryToString(element.bank) }}</p>
           </td>
         </ng-container>
 

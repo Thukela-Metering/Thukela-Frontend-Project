@@ -66,15 +66,30 @@ export const navItems: NavItem[] = [
     route: '/apps',
     children: [
       {
+        displayName: 'Quotes',
+        iconName: 'point',
+        route: 'apps/Quotes',     
+      },
+      {
         displayName: 'Invoice List',
         iconName: 'point',
         route: 'apps/invoice',     
       },
-      {
-        displayName: 'Statement Screen',
+      { displayName: 'Credit Note',
         iconName: 'point',
-        route: 'apps/statement',     
+        route: 'apps/creditNote',   
       },
+      { displayName: 'Recurring Invoices',
+        iconName: 'point',
+        route: 'apps/recurring',   
+      },
+    ],
+  },
+  {
+    displayName: 'Payments',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
       {
         displayName: 'Load Payment',
         iconName: 'point',
@@ -85,35 +100,55 @@ export const navItems: NavItem[] = [
         iconName: 'point',
         route: 'apps/payment',              
       },
-      { displayName: 'Credit Note',
-        iconName: 'point',
-        route: 'apps/creditNote',   
-      },
-      { displayName: 'Recurring Invoices',
-        iconName: 'point',
-        route: 'apps/recurring',   
-      },
-      { displayName: 'Bad Dept',
-        iconName: 'point',
-        route: 'apps/badDept',   
-      }
     ],
   },
   {
-    navCap: 'Tools',
+    displayName: 'Ledger',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
+      { displayName: 'Bad Dept',
+        iconName: 'point',
+        route: 'apps/badDept',   
+      },
+      {
+       displayName: 'Statement Screen',
+       iconName: 'point',
+       route: 'apps/statement',     
+      },
+    ],
   },
   {
-    displayName: 'Tools',
+    navCap: 'Job Cards',
+  },
+  {
+    displayName: 'Job Cards',
     iconName: 'file-invoice',
     route: '/apps',
     children: [
       {
-        displayName: 'Hangfire Dashboard',
+        displayName: 'Job Cards',
         iconName: 'point',
-        route: 'apps/hangfire',     
+        route: 'apps/Job-Cards',     
       },
     ],
   },
+  
+  // {
+  //   navCap: 'Tools',
+  // },
+  // {
+  //   displayName: 'Tools',
+  //   iconName: 'file-invoice',
+  //   route: '/apps',
+  //   children: [
+  //     {
+  //       displayName: 'Hangfire Dashboard',
+  //       iconName: 'point',
+  //       route: 'apps/hangfire',     
+  //     },
+  //   ],
+  // },
   {
     navCap: 'Products',
   },

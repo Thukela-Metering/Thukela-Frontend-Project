@@ -1,0 +1,83 @@
+@if(action !== 'Delete') {
+<mat-dialog-content style="max-width: 600px">
+    <div [formGroup]="jobCardForm">   
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Building</mat-label>
+        <mat-select (selectionChange)="GetAccountInfo($event)" formControlName="buildingId">
+          <mat-option *ngFor="let building of filteredBuildings" [value]="building.id">
+            {{ building.name }}
+          </mat-option>
+        </mat-select>
+        <input matInput [formControl]="buildingFilterCtrl" placeholder="Filter buildings" >
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Account Number</mat-label>
+        <input matInput formControlName="accountNumber">
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="categoryId">
+            <mat-option *ngFor="let category of DropDownCategoryValues" [value]="category.id">{{category.description}}</mat-option>
+          </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Division</mat-label>
+        <mat-select formControlName="divisionId">
+          <mat-option *ngFor="let division of DropDownDivisionValues" [value]="division.id">{{division.description}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option *ngFor="let status of jobCardStatuses" [value]="status.value">
+            {{ status.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Employee</mat-label>
+        <mat-select formControlName="employeeGuid">
+          <mat-option *ngFor="let person of persons" [value]="person.guid">{{person.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Notes</mat-label>
+        <textarea matInput formControlName="notes"></textarea>
+      </mat-form-field>
+    
+        <mat-radio-group name="isActive" class="w-100"formControlName="isActive" >
+            <mat-radio-button [value]="true">Active</mat-radio-button>
+            <mat-radio-button [value]="false">Inactive</mat-radio-button>
+          </mat-radio-group>
+    
+      <div class="form-actions">
+        <button mat-stroked-button color="warn" (click)="onCancel()">Cancel</button>
+        <button mat-flat-button color="primary" [disabled]="!jobCardForm.valid" (click)="doAction()">{{action}}</button>
+      </div>
+    </div>
+  </mat-dialog-content>
+}@else {
+    <div class="p-x-24">
+      <p class="mat-drawer-container">Sure to delete <span class="f-w-600">{{local_data.referenceNumber}}</span> ?</p>
+    </div>
+    <div mat-dialog-actions class="p-x-24 p-b-24">
+      <button mat-button (click)="doAction()" mat-flat-button color="warn">
+        {{action}}
+      </button>
+      <button mat-button (click)="onCancel()" class="m-l-8">Cancel</button>
+    </div>
+    }
