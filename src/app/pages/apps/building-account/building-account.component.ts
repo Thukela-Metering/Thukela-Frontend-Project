@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnChanges, OnInit, Optional, SimpleChanges } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnInit, Optional, Output, SimpleChanges, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { BuildingAccountDTO } from 'src/app/DTOs/BuildingAccountDTO';
 import { BuildingAccountService } from 'src/app/services/building-account.service';
@@ -14,6 +14,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class BuildingAccountsComponent implements OnInit, OnChanges {
   @Input() localDataFromComponent: BuildingAccountDTO;
+  @Input() isPortfolioCreation: boolean = false;
+  @Input() selectedBuilding: BuildingDTO; // Receiving the selected building data
+
+  @Output() submissionSuccess = new EventEmitter<BuildingAccountDTO>();  // Emit BuildingAccountDTO
+
   accountsForm: FormGroup;
   action: string;
   buildingAccount: BuildingAccountDTO[] = [];
@@ -32,50 +37,52 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingDTO,
   ) {
     this.local_data = { ...data };
-    if(this.data != null){
-      this.action = this.local_data.action ? this.local_data.action : "Update";
-    }else
-    {
-      this.action = "Add";
-    }
+    this.action = this.local_data?.action ?? 'Add';
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
-      if (this.accountsForm) {
-        this.accountsForm.patchValue(this.localDataFromComponent);
+    if (this.isPortfolioCreation && this.selectedBuilding) {
+      // Avoid re-adding the building and ensure the correct selection
+      this.accountsForm.patchValue({ buildingId: this.selectedBuilding.id });
+      const existingBuilding = this.filteredBuildings.find(b => b.id === this.selectedBuilding.id);
+      if (!existingBuilding) {
+          this.filteredBuildings.push(this.selectedBuilding);
       }
-      this.action = this.localDataFromComponent.action ? this.localDataFromComponent.action : "Update";
     }
-  }
+  }  
 
   ngOnInit(): void {
     this.accountsForm = this.fb.group({
-      buildingId: [{ value: '', disabled: this.action !== 'Add' }, Validators.required],
-      municipalityOne: ['', Validators.required],
-      municipalityTwo: [''],
-      readingSlip: [false, Validators.required],
-      creditControl: [false],
-      isActive: [false],
-      buildingTaxNumber: [''],
-      bookNumber: ['', Validators.required],
+        buildingId: [{ value: this.selectedBuilding ? this.selectedBuilding.id : '', disabled: this.action !== 'Add' }, Validators.required],
+        municipalityOne: ['', Validators.required],
+        municipalityTwo: [''],
+        readingSlip: [false, Validators.required],
+        creditControl: [false],
+        isActive: [false],
+        buildingTaxNumber: [''],
+        bookNumber: ['', Validators.required],
     });
-  
+
     this.loadBuildingListData();
+    
     this.buildingFilterCtrl.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
+        debounceTime(300),
+        distinctUntilChanged()
     ).subscribe(value => {
-      this.filterBuildings(value || '');
+        this.filterBuildings(value || '');
     });
-  
+
+    // Ensure unique IDs
+    this.filteredBuildings = Array.from(new Set(this.filteredBuildings.map(b => b.id)))
+        .map(id => this.filteredBuildings.find(b => b.id === id)!);
+
     if (this.data != null) {
-      this.accountsForm.patchValue(this.data);
+        this.accountsForm.patchValue(this.data);
     }
     if (this.localDataFromComponent) {
-      this.accountsForm.patchValue(this.localDataFromComponent);
+        this.accountsForm.patchValue(this.localDataFromComponent);
     }
-  }  
+  }
 
   loadBuildingListData(): void {
     this._buildingService.getAllBuildings(true).subscribe({
@@ -84,6 +91,18 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
           this.buildings = response.data?.buildingDTOs ?? [];
           this.buildings.sort((a, b) => this.customSort(a.name!, b.name!));
           this.filteredBuildings = this.buildings;
+
+          // If a building is already selected (in case of portfolio creation), make sure it is included in the list
+          if (this.selectedBuilding) {
+            const existingBuilding = this.buildings.find(b => b.id === this.selectedBuilding.id);
+            if (!existingBuilding) {
+              this.buildings.push(this.selectedBuilding);
+              this.filteredBuildings.push(this.selectedBuilding);
+            }
+
+            // Set the selected building
+            this.accountsForm.patchValue({ buildingId: this.selectedBuilding.id });
+          }
         }
       },
       error: (error) => {
@@ -116,8 +135,9 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
   }  
 
   async onSubmit(): Promise<void> {
-    if (this.action == "Add") {
-      var some = new BuildingAccountDTO();
+    const actionToUse = this.localDataFromComponent?.action || this.action;
+    if (actionToUse === "Add") {
+      const some = new BuildingAccountDTO();
       some.buildingId = this.accountsForm.get("buildingId")?.value;
       some.municipalityOne = this.accountsForm.get("municipalityOne")?.value;
       some.municipalityTwo = this.accountsForm.get("municipalityTwo")?.value;
@@ -126,17 +146,23 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
       some.isActive = this.accountsForm.get("isActive")?.value;
       some.buildingTaxNumber = this.accountsForm.get("buildingTaxNumber")?.value;
       some.bookNumber = this.accountsForm.get("bookNumber")?.value;
-
-      console.log("the value in onSubmit: ");
-      console.log(some);
+  
       this._buildingAccountService.addNewBuildingAccount(some).subscribe(
         response => {
-          console.log(response);
           this.buildingAccount.push(some);
-          console.log(some);
           this.snackbarService.openSnackBar(response.message, "dismiss");
           this.accountsForm.reset();
-          this.onCancel();
+          this.loadBuildingListData();
+  
+          // Emit the newly added BuildingAccountDTO
+          this.submissionSuccess.emit(some);
+  
+          // Close the dialog only if not part of portfolio creation
+          if (!this.isPortfolioCreation) {
+            if (this.dialogRef) {
+              this.dialogRef.close({ event: this.action, data: this.local_data });
+            }
+          }
         },
         error => {
           console.error(error);
@@ -146,10 +172,15 @@ export class BuildingAccountsComponent implements OnInit, OnChanges {
     } else {
       this.mapFormValuesToLocalData();
       this.local_data.isActive = this.accountsForm.value.isActive;
-      if (this.dialogRef) {
+  
+      await this.updateRowData(this.local_data);
+  
+      // Emit the updated BuildingAccountDTO
+      this.submissionSuccess.emit(this.local_data);
+  
+      // Close the dialog only if not part of portfolio creation
+      if (!this.isPortfolioCreation) {
         this.dialogRef.close({ event: this.action, data: this.local_data });
-      } else {
-        await this.updateRowData(this.local_data);
       }
     }
   }

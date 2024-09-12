@@ -1,4 +1,4 @@
-import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit, Input, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -89,26 +89,32 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
     });
   }
 
-  openDialog(action: string, obj: any): void {
+  openDialog(action: string, obj: any = {}): void {
     obj.action = action;
+  
+    if (action === 'Add') {
+      // Ensure the object has the structure needed for adding a building
+      obj = { ...new BuildingDTO(), action: 'Add' };
+    }
+  
     const dialogRef = this.dialog.open(AppBuildingDialogContentComponent, {
       data: obj,
     });
+  
     dialogRef.afterClosed().subscribe((result) => {
       if (result.event === 'Add') {
-        //  this.addRowData(result.data);
         this.loadBuildingListData();
         this.manageActiveBuildings = true;
       } else if (result.event === 'Update') {
         this.loadBuildingListData();
         this.manageActiveBuildings = true;
-        //  this.updateRowData(result.data);
       } else if (result.event === 'Delete') {
         this.deleteRowData(result.data);
         this.manageActiveBuildings = true;
       }
     });
   }
+  
   // tslint:disable-next-line - Disables all
   deleteRowData(row_obj: BuildingDTO): boolean | any {
     row_obj.isActive = false;
@@ -135,40 +141,41 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
   selector: 'app-building-dialog-content',
   templateUrl: 'building-dialog-content.html',
 })
-
 export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
 
   @Input() localDataFromComponent: BuildingDTO;
+  @Input() isPortfolioCreation: boolean = false;
+  @Output() submissionSuccess = new EventEmitter<BuildingDTO>();
   action: string;
   buildingDTO: BuildingDTO = new BuildingDTO();
   local_data: BuildingDTO;
   DropDownValues: LookupValueDTO[] = [];
+
   constructor(
     @Optional() public dialogRef: MatDialogRef<AppBuildingDialogContentComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: BuildingDTO,
     private _buildingService: BuildingService,
     public datePipe: DatePipe,
     private authService: AuthService,
-    private personService: PersonService,
     private snackbarService: SnackbarService,
-
   ) {
     this.local_data = { ...data };
     this.action = this.local_data.action ? this.local_data.action : "Update";
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
       this.local_data.isActive = this.localDataFromComponent.isActive;
       this.local_data = this.localDataFromComponent;
     }
   }
+
   ngOnInit(): void {
     this.getDropdownValues();
-    
   }
 
   getDropdownValues() {
-    var userRoleResponse = this.authService.getLookupValues().subscribe(
+    this.authService.getLookupValues().subscribe(
       (response: OperationalResultDTO<TransactionDTO>) => {
         if (response.success) {
           if (response.data != null) {
@@ -184,43 +191,47 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
               lookupValue.dateCreated = item.dateCreated;
               return lookupValue;
             });
-            console.log(this.DropDownValues);
-
           }
         }
       },
       error => {
-        // Handle error
         console.error(error);
       }
     );
   }
+
   doAction(): void {
-    if (this.action == "Add") {
-      this.buildingDTO.name = this.local_data.name;
-      this.buildingDTO.nSquareMetersame = this.local_data.nSquareMetersame;
-      this.buildingDTO.sdgMeterZone = this.local_data.sdgMeterZone;
-      this.buildingDTO.name = this.local_data.name;
-      this.buildingDTO.address = this.local_data.address;
-      this.buildingDTO.notes = this.local_data.notes;
-      this.buildingDTO.isActive = this.local_data.isActive;
+    const actionData = this.local_data?.action ? this.local_data : this.localDataFromComponent;
+    if (actionData.action === "Add") {
+      // Ensure all properties are set correctly for a new building
+      this.buildingDTO = {
+        name: this.local_data.name,
+        nSquareMetersame: this.local_data.nSquareMetersame,
+        sdgMeterZone: this.local_data.sdgMeterZone,
+        address: this.local_data.address,
+        notes: this.local_data.notes,
+        isActive: this.local_data.isActive,
+      };
       this.addRowData(this.buildingDTO);
-      if (this.dialogRef) {
-        this.dialogRef.close({ event: this.action, data: this.local_data });
-      }
     } else {
       this.updateRowData(this.local_data);
-      if (this.dialogRef) {
-        this.dialogRef.close({ event: this.action, data: this.local_data });
-      }
     }
   }
+
   updateRowData(row_obj: BuildingDTO): boolean | any {
     this._buildingService.updateBuildingData(row_obj).subscribe({
       next: (response) => {
         if (response) {
           console.log(response);
           this.snackbarService.openSnackBar(response.message, "dismiss");
+          this.submissionSuccess.emit(row_obj);  // Emit success event
+
+          // Only close the dialog if not part of a specific process
+          if (!this.isPortfolioCreation) {
+            if (this.dialogRef) {
+              this.dialogRef.close({ event: this.action, data: this.local_data });
+            }
+          }
         }
       },
       error: (error) => {
@@ -230,28 +241,42 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
     });
     return true;
   }
+
   addRowData(row_obj: BuildingDTO): void {
     this._buildingService.addNewBuilding(row_obj).subscribe(
-      response => {
-        console.log(response);
-        var userDataDTO = new BuildingDTO();
-        userDataDTO.id = row_obj.id,
-          userDataDTO.name = row_obj.name,
-          userDataDTO.nSquareMetersame = row_obj.nSquareMetersame,
-          userDataDTO.sdgMeterZone = row_obj.sdgMeterZone,
-          userDataDTO.address = row_obj.address,
-          userDataDTO.notes = row_obj.notes,
-          
-        this.snackbarService.openSnackBar(response.message, "dismiss");
-        console.log(row_obj);
-      },
-      error => {
-        this.snackbarService.openSnackBar(error.message, "dismiss");
-        console.error(error);
-      }
+        response => {
+            if (response.success) {
+                // If saved successfully, load the building list to retrieve the full BuildingDTO
+                this._buildingService.getAllBuildings(true).subscribe(
+                    buildingResponse => {
+                        const savedBuilding = buildingResponse.data?.buildingDTOs?.find(b => b.name === row_obj.name);
+
+                        if (!savedBuilding) {
+                            this.snackbarService.openSnackBar("Building not found after saving.", "dismiss");
+                        } else {
+                            this.submissionSuccess.emit(savedBuilding);  // Emit the found building with the ID
+                            if (!this.isPortfolioCreation) {
+                              if (this.dialogRef) {
+                                this.dialogRef.close({ event: this.action, data: this.local_data });
+                              }
+                          }
+                          this.snackbarService.openSnackBar("Building saved successfully", "dismiss");
+                        }
+                    },
+                    error => {
+                        console.error("Error retrieving building list:", error);
+                    }
+                );
+            } else {
+                console.error("Failed to save the building:", response.message);
+            }
+        },
+        error => {
+            this.snackbarService.openSnackBar(error.message, "dismiss");
+            console.error(error);
+        }
     );
   }
-
 
   closeDialog(): void {
     this.dialogRef.close({ event: 'Cancel' });

@@ -100,7 +100,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
     this._buildingOwnerService.getBuildingOwnerAccountByBuildingId(this.data.buildingId ?? 0, true).subscribe({
       next: (response: any) => {
         this.retrievedBuildings = response.data?.buildingOwnerAccountDTOs ?? [];
-        this.foundOwnerAccount = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+        this.foundOwnerAccount = this.retrievedBuildings.find(owner => owner.buildingId === this.invoiceDetail.buildingId);
       },
       error: (error) => {
         console.error('There was an error!', error);
@@ -150,7 +150,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
   }
 
   private getPdfDto(): PdfDTO {
-    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+    const selectedOwner = this.retrievedBuildings.find(owner => owner.buildingId === this.invoiceDetail.buildingId);
     
     return {
       referenceNumber: this.invoiceDetail.referenceNumber || "",
@@ -160,7 +160,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
       customerAddress: selectedOwner?.address || 'N/A',
       customerPhone: selectedOwner?.contactNumber || 'N/A',
       customerEmail: selectedOwner?.email || 'N/A',
-      taxNumber: this.retrievedAccounts.find(account => account.id === this.invoiceDetail.buildingId)?.buildingTaxNumber || 'N/A',
+      taxNumber: this.retrievedAccounts.find(account => account.buildingId === this.invoiceDetail.buildingId)?.buildingTaxNumber || 'N/A',
       subTotal: this.invoiceDetail.subTotal || 0,
       discount: this.invoiceDetail.discount || 0,
       vat: this.invoiceDetail.vat || 0,

@@ -12,4 +12,5 @@ export class LineItemDTO {
     invoiceId?: number;
     isCreditNote: boolean;
     creditNoteLineValue: number;
+  quoteRef: string;
   }

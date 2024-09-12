@@ -59,6 +59,11 @@ import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoi
 import { PaymentTableComponent } from './payment/payment-table.component';
 import { AppAddProductComponent } from './product-management/add-product/AddProduct.component';
 import { AppProductTableComponent } from './product-management/product-Table/productTable.component';
+import { QuoteComponent } from './quote/quote.component';
+import { AddquoteComponent } from './quote/addquote/addquote.component';
+import { AddQuoteCustomerDetailsComponent } from './quote/add-quote-customer-details/add-quote-customer-details.component';
+import { ViewQuoteComponent } from './quote/view-quote/view-quote.component';
+import { AddNewPortfolioForConvertComponent } from './quote/add-new-portfolio-for-convert/add-new-portfolio-for-convert.component';
 import { AppBadDeptModalComponent } from './bad-dept/bad-dept-modal/badDeptModal';
 import { AppBadDeptMainTableComponent } from './bad-dept/bad-dept-main-table/badDeptMainTable';
 import { AppBadDeptAccountViewComponent } from './bad-dept/bad-dept-account-view/badDeptAccountView';
@@ -108,11 +113,16 @@ import { AppBadDeptAccountViewComponent } from './bad-dept/bad-dept-account-view
     AppInvoiceViewComponent,
     PdfPreviewComponent,
     SafePipe,
+    AddNewPortfolioForConvertComponent,
+    AddquoteComponent,
+    ViewQuoteComponent,
     ConfirmDownloadDialogComponent,
+    AddQuoteCustomerDetailsComponent,
     AppAddInvoiceComponent,
     AppAddBuildingComponent,    
     LookupValueManagerComponent,
     ProcessInvoiceComponent,
+    QuoteComponent,
     AppBuildingRepresentativeLinkComponent,
     PortfolioComponent,
     PaymentTableComponent,
