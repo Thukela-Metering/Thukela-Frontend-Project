@@ -83,16 +83,6 @@ export const navItems: NavItem[] = [
         iconName: 'point',
         route: 'apps/recurring',   
       },
-      { displayName: 'Bad Dept',
-        iconName: 'point',
-        route: 'apps/badDept',   
-      },
-      {
-       displayName: 'Statement Screen',
-       iconName: 'point',
-       route: 'apps/statement',     
-      },
-      
     ],
   },
   {
@@ -109,6 +99,22 @@ export const navItems: NavItem[] = [
         displayName: 'Payment List',
         iconName: 'point',
         route: 'apps/payment',              
+      },
+    ],
+  },
+  {
+    displayName: 'Ledger',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
+      { displayName: 'Bad Dept',
+        iconName: 'point',
+        route: 'apps/badDept',   
+      },
+      {
+       displayName: 'Statement Screen',
+       iconName: 'point',
+       route: 'apps/statement',     
       },
     ],
   },

@@ -14,7 +14,7 @@
     <div class="row justify-content-between">
       <div class="col-lg-4">
         <mat-form-field appearance="outline" class="w-100 hide-hint">
-          <input matInput #searchInput placeholder="Search Building Account" (keyup)="applyFilter(searchInput.value)" />
+          <input matInput #searchInput placeholder="Add New Job Card" (keyup)="applyFilter(searchInput.value)" />
           <mat-icon matSuffix>
             <i-tabler name="search" class="icon-20"></i-tabler>
           </mat-icon>
@@ -22,7 +22,7 @@
       </div>
       <div class="col-lg-4 d-flex align-items-center justify-content-end">
         <button mat-flat-button (click)="openDialog('Add', {})" color="primary">
-          Add Building Account
+          Add New Job Card
         </button>
       </div>
     </div>

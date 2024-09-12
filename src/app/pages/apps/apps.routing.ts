@@ -260,7 +260,7 @@ export const AppsRoutes: Routes = [
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Quotes' },
-            }
+            
           ],
         },
       },
