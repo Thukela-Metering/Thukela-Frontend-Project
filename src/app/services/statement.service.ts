@@ -9,27 +9,26 @@ import { OperationalResultDTO, StatementFilterDTO, TransactionDTO } from '../DTO
 export class StatementService {
   constructor(private http: HttpClient) { }
 
-  //  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'http://localhost:8080/api';
+  //private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
- private apiUrl = 'https://thukelameteringproduction.co.za/api';
-
-getByAccountId(filterDTO: StatementFilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+  getByAccountId(filterDTO: StatementFilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {
     return this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Statement/GetByAccountId`, filterDTO);
   }
-  
-  getByAccountGuid(filterDTO:StatementFilterDTO):Observable<OperationalResultDTO<TransactionDTO>>{
+
+  getByAccountGuid(filterDTO: StatementFilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {
     {
       var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Statement/GetByAccountGuid`);
       return getResponse;
     }
   }
-  getByOwnerId(filterDTO:StatementFilterDTO):Observable<OperationalResultDTO<TransactionDTO>>{
+  getByOwnerId(filterDTO: StatementFilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {
     {
       var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Statement/GetByOwnerId`);
       return getResponse;
     }
   }
-  getByOwnerGuid(filterDTO:StatementFilterDTO):Observable<OperationalResultDTO<TransactionDTO>>{
+  getByOwnerGuid(filterDTO: StatementFilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {
     {
       var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Statement/GetByOwnerGuid`);
       return getResponse;

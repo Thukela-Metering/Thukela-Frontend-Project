@@ -10,30 +10,29 @@ export class BuildingOwnerService {
     constructor(private http: HttpClient) { }
 
 
-   //   private apiUrl = 'http://localhost:8080/api';
+    private apiUrl = 'http://localhost:8080/api';
+    //private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
- private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
-    
     addNewBuildingOwner(buildingOwnerToSave: BuildingOwnerDTO): Observable<OperationalResultDTO<TransactionDTO>> {
         {
             var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingOwnerAccount`, buildingOwnerToSave);
             return getResponse;
         }
     }
-    
+
     getAllBuildingOwners(): Observable<OperationalResultDTO<TransactionDTO>> {
         {
-            var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingOwnerAccount`);      
+            var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingOwnerAccount`);
             return getResponse;
         }
     }
-    
+
     updateBuildingOwnerData(buildingData: BuildingOwnerDTO): Observable<OperationalResultDTO<TransactionDTO>> {
         var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingOwnerAccount/${buildingData.id}`, buildingData)
         return response;
     }
-      
+
     deleteBuildingOwner(BuildingData: BuildingOwnerDTO): Observable<OperationalResultDTO<TransactionDTO>> {
         var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingOwnerAccount/delete/${BuildingData.id}`, BuildingData)
         return response;

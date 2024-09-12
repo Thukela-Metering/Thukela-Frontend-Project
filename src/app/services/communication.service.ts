@@ -11,9 +11,8 @@ import { TransactionDTO } from '../DTOs/transactionDTO';
 })
 export class CommunicationService {
 
-   //private apiUrl = 'http://localhost:8080/api'; 
-
-  private apiUrl = 'https://thukelameteringproduction.co.za/api';
+  private apiUrl = 'http://localhost:8080/api';
+  //private apiUrl = 'https://thukelameteringproduction.co.za/api';
   constructor(private http: HttpClient) { }
 
   sendEmail(pdfDto: PdfDTO, emailData: any, templateNum: number): Observable<OperationalResultDTO<any>> {
@@ -31,7 +30,7 @@ export class CommunicationService {
   processInvoices(invoices: InvoiceDTO[]): Observable<OperationalResultDTO<TransactionDTO>> {
     var response = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Communication/ProcessInvoice`, invoices);
     return response;
-  }  
+  }
 
   sendEmailWithBlob(formData: FormData, templateNum: number): Observable<OperationalResultDTO<any>> {
     const headers = new HttpHeaders({
