@@ -22,7 +22,8 @@ import { ProcessInvoiceComponent } from './invoice/process-invoice/process-invoi
 import { PaymentTableComponent } from './payment/payment-table.component';
 import { AppProductTableComponent } from './product-management/product-Table/productTable.component';
 import { QuoteComponent } from './quote/quote.component';
-
+import { AppBadDeptAccountViewComponent } from './bad-dept/bad-dept-account-view/badDeptAccountView';
+import { AppBadDeptMainTableComponent } from './bad-dept/bad-dept-main-table/badDeptMainTable';
 
 export const AppsRoutes: Routes = [
   {
@@ -121,6 +122,41 @@ export const AppsRoutes: Routes = [
         component: SearchComponent,
         data: {
           title: 'search',
+          searchType: 'statement',  // Pass the search type here
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Filter' },
+          ],
+        },
+      },
+      {
+        path: 'badDeptSearch',
+        component: SearchComponent,
+        data: {
+          title: 'search',
+          searchType: 'badDept',  // Pass the search type here
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Filter' },
+          ],
+        },
+      },
+      {
+        path: 'badDept',
+        component: AppBadDeptMainTableComponent,
+        data: {
+          title: 'All Bad Dept',         
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Filter' },
+          ],
+        },
+      },
+      {
+        path: 'badDept/:id',
+        component: AppBadDeptAccountViewComponent,
+        data: {
+          title: 'Account Bad Dept',         
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Filter' },

@@ -64,6 +64,9 @@ import { AddquoteComponent } from './quote/addquote/addquote.component';
 import { AddQuoteCustomerDetailsComponent } from './quote/add-quote-customer-details/add-quote-customer-details.component';
 import { ViewQuoteComponent } from './quote/view-quote/view-quote.component';
 import { AddNewPortfolioForConvertComponent } from './quote/add-new-portfolio-for-convert/add-new-portfolio-for-convert.component';
+import { AppBadDeptModalComponent } from './bad-dept/bad-dept-modal/badDeptModal';
+import { AppBadDeptMainTableComponent } from './bad-dept/bad-dept-main-table/badDeptMainTable';
+import { AppBadDeptAccountViewComponent } from './bad-dept/bad-dept-account-view/badDeptAccountView';
 
 
 
@@ -130,7 +133,10 @@ import { AddNewPortfolioForConvertComponent } from './quote/add-new-portfolio-fo
     BorderColorDirective,
     LottieLoaderComponent,
     AppAddProductComponent,
-    AppProductTableComponent
+    AppProductTableComponent,
+    AppBadDeptModalComponent,
+    AppBadDeptMainTableComponent,
+    AppBadDeptAccountViewComponent
   ],
   providers: [DatePipe],
 })
