@@ -66,24 +66,14 @@ export const navItems: NavItem[] = [
     route: '/apps',
     children: [
       {
+        displayName: 'Quotes',
+        iconName: 'point',
+        route: 'apps/Quotes',     
+      },
+      {
         displayName: 'Invoice List',
         iconName: 'point',
         route: 'apps/invoice',     
-      },
-      {
-        displayName: 'Statement Screen',
-        iconName: 'point',
-        route: 'apps/statement',     
-      },
-      {
-        displayName: 'Load Payment',
-        iconName: 'point',
-        route: 'apps/statementSearch',              
-      },
-      {
-        displayName: 'Payment List',
-        iconName: 'point',
-        route: 'apps/payment',              
       },
       { displayName: 'Credit Note',
         iconName: 'point',
@@ -96,36 +86,29 @@ export const navItems: NavItem[] = [
       { displayName: 'Bad Dept',
         iconName: 'point',
         route: 'apps/badDept',   
-      }
+      },
+      {
+       displayName: 'Statement Screen',
+       iconName: 'point',
+       route: 'apps/statement',     
+      },
+      
     ],
   },
   {
-    navCap: 'Job Management',
-  },
-  {
-    displayName: 'Invoicing',
+    displayName: 'Payments',
     iconName: 'file-invoice',
     route: '/apps',
     children: [
       {
-        displayName: 'Job Card List',
+        displayName: 'Load Payment',
         iconName: 'point',
-        route: 'apps/Job-Cards',     
-      }
-    ],
-  },
-  {
-    navCap: 'Tools',
-  },
-  {
-    displayName: 'Tools',
-    iconName: 'file-invoice',
-    route: '/apps',
-    children: [
+        route: 'apps/statementSearch',              
+      },
       {
-        displayName: 'Hangfire Dashboard',
+        displayName: 'Payment List',
         iconName: 'point',
-        route: 'apps/hangfire',     
+        route: 'apps/payment',              
       },
     ],
   },
@@ -144,6 +127,22 @@ export const navItems: NavItem[] = [
       },
     ],
   },
+  
+  // {
+  //   navCap: 'Tools',
+  // },
+  // {
+  //   displayName: 'Tools',
+  //   iconName: 'file-invoice',
+  //   route: '/apps',
+  //   children: [
+  //     {
+  //       displayName: 'Hangfire Dashboard',
+  //       iconName: 'point',
+  //       route: 'apps/hangfire',     
+  //     },
+  //   ],
+  // },
   {
     navCap: 'Products',
   },

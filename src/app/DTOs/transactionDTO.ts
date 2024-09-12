@@ -19,6 +19,7 @@ import { userLoginDTO } from "./userLoginDTO";
 import { InvoiceDTO } from "./InvoiceDTO";
 import { PaymentInvoiceItemDTO } from "./paymentInvoiceItemDTO";
 import { ProductDTO } from "./productDTO";
+import { QuotesDTO } from "./QuotesDTO";
 import { badDeptDTO } from "./badDeptDTO";
 import { JobCardDTO } from "./jobCardDTO";
 
@@ -43,6 +44,7 @@ export class TransactionDTO {
     paymentInvoiceItemDTOs?:PaymentInvoiceItemDTO[];
     creditNoteDTOs?: CreditNoteDTO[];
     invoicesDTOs?: InvoiceDTO[];
+    quotesDTOs?: QuotesDTO[];
     productDTOs?:ProductDTO[];
     badDeptDTOs?:badDeptDTO[];
     jobCardDTOs?:JobCardDTO[];

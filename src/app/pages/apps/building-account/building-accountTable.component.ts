@@ -86,13 +86,9 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
     this.buildingService.getAllBuildings(this.manageActiveBuildingAccounts).subscribe({
       next: (response: OperationalResultDTO<any>) => {
         const buildingsMap = new Map<string, BuildingDTO>(); // Map to store building ID and BuildingDTO
-        const buildings = response.data?.buildingDTOs ?? []; // Assuming the data structure
-  
-        console.log('Buildings received:', buildings);
-  
+        const buildings = response.data?.buildingDTOs ?? []; // Assuming the data structure  
         // Store buildings in a Map for easy lookup by ID
         buildings.forEach((building: BuildingDTO) => {
-          console.log(`Mapping building ID ${building.id} to name ${building.name}`);
           buildingsMap.set((building.id!).toString(), building);
         });
   
@@ -101,13 +97,11 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
           next: (response: OperationalResultDTO<TransactionDTO>) => {
             if (response && response.data) {
               this.buildingAccounts = response.data.buildingAccountDTOs ?? [];
-              console.log('Building accounts received:', this.buildingAccounts);
   
               // Match building accounts with building names
               this.buildingAccounts = this.buildingAccounts.map(account => {
                 const building = buildingsMap.get(account.buildingId?.toString() || '');
                 const buildingName = building ? building.name : 'Unknown Building';
-                console.log(`Account ID ${account.id}: matched building ID ${account.buildingId} to name ${buildingName}`);
                 return {
                   ...account,
                   buildingName
@@ -117,7 +111,6 @@ export class AppBuildingAccountTableComponent implements OnInit, AfterViewInit {
               // Update the data source
               this.dataSource.data = this.buildingAccounts;
               this.dataSource.sort = this.sort; // Ensure sorting is applied
-              console.log('Data source updated with building names:', this.dataSource.data);
             }
           },
           error: (error) => {

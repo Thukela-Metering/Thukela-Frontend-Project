@@ -103,7 +103,6 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
        if (result) {
         this.loadInvoicesListData();
        }
-      
     });
   }
   }
