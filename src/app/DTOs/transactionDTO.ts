@@ -21,6 +21,7 @@ import { PaymentInvoiceItemDTO } from "./paymentInvoiceItemDTO";
 import { ProductDTO } from "./productDTO";
 import { QuotesDTO } from "./QuotesDTO";
 import { badDeptDTO } from "./badDeptDTO";
+import { JobCardDTO } from "./jobCardDTO";
 
 export class TransactionDTO {
     authenticationResponseDTOs?: AuthenticationResponseDTO[];
@@ -46,6 +47,7 @@ export class TransactionDTO {
     quotesDTOs?: QuotesDTO[];
     productDTOs?:ProductDTO[];
     badDeptDTOs?:badDeptDTO[];
+    jobCardDTOs?:JobCardDTO[];
     stringResponseProperty?: string;
     intResponseProperty?: number;
     boolResponseProperty?: boolean;

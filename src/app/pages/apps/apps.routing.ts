@@ -24,6 +24,7 @@ import { AppProductTableComponent } from './product-management/product-Table/pro
 import { QuoteComponent } from './quote/quote.component';
 import { AppBadDeptAccountViewComponent } from './bad-dept/bad-dept-account-view/badDeptAccountView';
 import { AppBadDeptMainTableComponent } from './bad-dept/bad-dept-main-table/badDeptMainTable';
+import { AppJobCardTableComponent } from './job-cards/job-card-table/job-card.component';
 
 export const AppsRoutes: Routes = [
   {
@@ -241,6 +242,17 @@ export const AppsRoutes: Routes = [
         },
       },
       {
+        path: 'Job-Cards',
+        component: AppJobCardTableComponent,
+        data: {
+          title: 'Job Cards',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Product-management' },
+            ],
+      },
+      },
+      {
         path: 'Quotes',
         component: QuoteComponent,
         data: {
@@ -248,6 +260,7 @@ export const AppsRoutes: Routes = [
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Quotes' },
+            }
           ],
         },
       },

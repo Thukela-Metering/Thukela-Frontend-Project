@@ -25,3 +25,5 @@ export * from './paymentInvoiceItemDTO';
 export * from './buildingRepesentativeTableItemDTO';
 export * from './productDTO';
 export * from './badDeptDTO';
+export * from './enums';
+export * from './jobCardDTO';

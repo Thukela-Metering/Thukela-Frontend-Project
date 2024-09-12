@@ -86,7 +86,13 @@ export const navItems: NavItem[] = [
       { displayName: 'Bad Dept',
         iconName: 'point',
         route: 'apps/badDept',   
-      }
+      },
+      {
+       displayName: 'Statement Screen',
+       iconName: 'point',
+       route: 'apps/statement',     
+      },
+      
     ],
   },
   {
@@ -107,10 +113,21 @@ export const navItems: NavItem[] = [
     ],
   },
   {
-    displayName: 'Statement Screen',
-    iconName: 'point',
-    route: 'apps/statement',     
+    navCap: 'Job Cards',
   },
+  {
+    displayName: 'Job Cards',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
+      {
+        displayName: 'Job Cards',
+        iconName: 'point',
+        route: 'apps/Job-Cards',     
+      },
+    ],
+  },
+  
   // {
   //   navCap: 'Tools',
   // },
