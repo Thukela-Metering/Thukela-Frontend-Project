@@ -8,7 +8,8 @@ import { BuildingOwnerDTO, LookupValueDTO, OperationalResultDTO, TransactionDTO 
   providedIn: 'root'
 })
 export class LookupValueManagerService {
-  private apiUrl = 'http://localhost:8080/api'; // Adjust your API URL accordingly
+  //private apiUrl = 'http://localhost:8080/api'; // Adjust your API URL accordingly
+  private apiUrl = 'https://thukelameteringproduction.co.za/api';
   private lookupValues: LookupValueDTO[] = []; // Cache for lookup values
   private lookupValuesLoaded = false; // Flag to check if values are loaded
 
@@ -24,6 +25,28 @@ export class LookupValueManagerService {
       this.lookupValuesLoaded = true; // Mark as loaded since we have values in sessionStorage
     }
   }
+
+    addNewLookupValue(lookupValueToSave: LookupValueDTO): Observable<OperationalResultDTO<TransactionDTO>> 
+        {
+            var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/LookupValueManager`, lookupValueToSave);
+            return getResponse;
+        }
+      
+    getLookupValueById(Id:number): Observable<OperationalResultDTO<TransactionDTO>>
+    {
+        var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/LookupValueManager`, Id);
+        return getResponse;
+    }
+    getLookupValueList(lookupGroupValue: string, lookupListValue: string): Observable<OperationalResultDTO<TransactionDTO>>
+    {
+        var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/LookupValueManager/GetSpecificListLookupValues`, {
+            params: {
+                lookupGroupValue: lookupGroupValue,
+                lookupListValue: lookupListValue
+            }
+        });
+        return getResponse;
+    }
 
   // Fetch lookup values if not already loaded
   getAllLookupValues(): Observable<OperationalResultDTO<TransactionDTO>> {

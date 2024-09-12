@@ -11,8 +11,8 @@ import { BadDeptService } from "src/app/services/badDept.service";
 import { SnackbarService } from "src/app/services/snackbar.service";
 
 @Component({
-    selector: 'app-bad-dept-content',
-    templateUrl: 'BadDeptModal.html',
+    selector: 'app-bad-dept-modal-content',
+    templateUrl: 'badDeptModal.html',
   })
   
   export class AppBadDeptModalComponent implements OnInit, OnChanges {

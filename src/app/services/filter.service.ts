@@ -8,9 +8,9 @@ import { BuildingAccountSearchResultDTO, ProductDTO } from '../DTOs/dtoIndex';
 })
 export class SearchService {
 
-   private apiUrl = 'http://localhost:8080/api'; ///api/Filter/search
+ //  private apiUrl = 'http://localhost:8080/api'; ///api/Filter/search
 
- // private apiUrl = 'https://thukelameteringproduction.co.za/api';
+  private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
   constructor(private http: HttpClient) {}
 

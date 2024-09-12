@@ -10,9 +10,9 @@ import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
   export class BuildingLinkingService {
     constructor(private http: HttpClient) { }
 
-   private apiUrl = 'http://localhost:8080/api';
+  // private apiUrl = 'http://localhost:8080/api';
 
-  // private apiUrl = 'https://thukelameteringproduction.co.za/api';
+   private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
     addNewBuildingLinkToRepresentative(buildingToSave:BuildingRepresentativeLinkDTO):Observable<OperationalResultDTO<TransactionDTO>>{{
         var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Linking`,buildingToSave);      
