@@ -85,28 +85,6 @@ export class LookupValueManagerService {
     sessionStorage.removeItem('lookupValues'); // Clear sessionStorage on logout
   }
 
-  // Existing methods remain intact below
-
-  // Add new lookup value
-  addNewLookupValue(lookupValueToSave: LookupValueDTO): Observable<OperationalResultDTO<TransactionDTO>> {
-    return this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/LookupValueManager`, lookupValueToSave);
-  }
-
-  // Get lookup value by ID
-  getLookupValueById(id: number): Observable<OperationalResultDTO<TransactionDTO>> {
-    return this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/LookupValueManager`, id);
-  }
-
-  // Get specific list of lookup values
-  getLookupValueList(lookupGroupValue: string, lookupListValue: string): Observable<OperationalResultDTO<TransactionDTO>> {
-    return this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/LookupValueManager/GetSpecificListLookupValues`, {
-      params: {
-        lookupGroupValue,
-        lookupListValue
-      }
-    });
-  }
-
   // Get all lists
   getAllLists(): Observable<OperationalResultDTO<TransactionDTO>> {
     return this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/LookupValueManager/GetAllLists`);
