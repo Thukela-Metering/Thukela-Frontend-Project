@@ -50,10 +50,16 @@
         </div>
       </form>
       <div class="text-right m-t-30">
-        <h5 class="m-b-5 f-w-600 f-s-16" style="color: #7587a4;">Sub total: {{ creditNoteDetail.creditNoteTotal | currency: 'R' }}</h5>
-        <span class="f-w-600 f-s-16" style="color: #7587a4;">VAT: {{ (creditNoteDetail.creditNoteTotal! * 0.15) | currency: 'R' }}</span>
-        <h3 class="m-b-0 b-t-1 p-t-20 f-s-18" style="color: white;">Grand Total: {{ creditNoteDetail.creditNoteTotal! + (creditNoteDetail.creditNoteTotal! * 0.15) | currency: 'R' }}</h3>
-      </div>
+        <h5 class="m-b-5 f-w-600 f-s-16" style="color: #7587a4;">
+          Sub total: {{ (creditNoteDetail.creditNoteTotal! / 1.15) | currency: 'R' }}
+        </h5>
+        <span class="f-w-600 f-s-16" style="color: #7587a4;">
+          VAT: {{ (creditNoteDetail.creditNoteTotal! - (creditNoteDetail.creditNoteTotal! / 1.15)) | currency: 'R' }}
+        </span>
+        <h3 class="m-b-0 b-t-1 p-t-20 f-s-18" style="color: white;">
+          Grand Total: {{ creditNoteDetail.creditNoteTotal! | currency: 'R' }}
+        </h3>
+      </div>      
       <div class="row m-t-30">
         <div class="col-sm-6 d-flex justify-content-start">
           <button mat-stroked-button (click)="closeDialog()" color="primary" class="m-r-10">Back</button>

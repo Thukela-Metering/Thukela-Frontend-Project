@@ -136,8 +136,10 @@ export class AppJobCardTableComponent implements OnInit, AfterViewInit {
     }
 
     async openDialog(action: string, obj: any): Promise<void> {
-        await this.loadBuildingOwnerListData();
-        await this.loadBuildingAccount();
+        if (action === 'Preview') {
+            await this.loadBuildingOwnerListData();
+            await this.loadBuildingAccount();
+        }
         setTimeout(async () => {
         //
         obj.action = action;
