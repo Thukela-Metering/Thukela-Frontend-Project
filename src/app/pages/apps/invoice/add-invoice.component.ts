@@ -17,6 +17,7 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { ProductDTO } from 'src/app/DTOs/dtoIndex';
 import { SearchService } from 'src/app/services/filter.service';
 import { QuotesDTO } from 'src/app/DTOs/QuotesDTO';
+import { QuoteService } from 'src/app/services/quotes.service';
 
 @Component({
   selector: 'app-add-invoice',
@@ -62,6 +63,7 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder,
     private _invoiceService: InvoiceService,
+    private _quoteService: QuoteService,
     private _buildingService: BuildingService,
     private _buildingOwnerService: BuildingOwnerService,
     private _buildingAccountService: BuildingAccountService,
@@ -100,15 +102,15 @@ export class AppAddInvoiceComponent implements OnInit, OnChanges {
     this.generatePaymentMethod();
     this.generateDueDateOptions(this.minDate);
 
-    if (this.data && this.data.invoice) {
-        this.isUpdateMode = true;
-        this.populateFormWithInvoiceData(this.data.invoice);
-    } else if (this.data && this.data.quote) {
-        this.isUpdateMode = false;
-        this.populateFormWithQuoteData(this.data.quote, this.data.selectedOwnerAccount); // Pass the selected owner account
-    } else {
-        this.isUpdateMode = false;
-    }
+    if (this.data && this.data.quote) {
+      this.isUpdateMode = false;
+      this.populateFormWithQuoteData(this.data.quote, this.data.selectedOwnerAccount); // Handle quote data
+  } else if (this.data && this.data.invoice) {
+      this.isUpdateMode = true;
+      this.populateFormWithInvoiceData(this.data.invoice); // Handle invoice data
+  } else {
+      this.isUpdateMode = false;
+  }
 
     this.addForm.get('invoiceDate').valueChanges.subscribe((invoiceDate: Date) => {
         this.onInvoiceDateChange(invoiceDate);
@@ -485,6 +487,10 @@ private async populateFormWithQuoteData(quote: QuotesDTO, selectedOwnerAccount: 
         if (response.success) {
           this.snackbarService.openSnackBar(response.message, "dismiss");
           this.saveClicked.emit();
+          if (this.data.quote) {
+            // Call the method to update the InvoiceConvert flag
+            this.updateInvoiceConvertFlag(this.data.quote, this.invoice.referenceNumber!); // Passing the quote and the new invoice reference
+          }
           this.dialogRef.close();
         }
       },
@@ -542,4 +548,33 @@ private async populateFormWithQuoteData(quote: QuotesDTO, selectedOwnerAccount: 
     });
     this.itemsChanged();  // Recalculate totals
   }
+
+  private updateInvoiceConvertFlag(quote: QuotesDTO, invoiceRef: string): void {
+    const updateDto: TransactionDTO = {
+        quotesDTOs: [
+            {
+                ...quote,
+                invoiceConvert: true,  // Set the flag to true
+                invoiceRef: invoiceRef  // Assign the generated invoice reference
+            }
+        ]
+    };
+
+    this._quoteService.updateQuoteToInvoiceStatus(updateDto).subscribe({
+        next: (response) => {
+            if (response.success) {
+                console.log('InvoiceConvert flag updated successfully.');
+                this.snackbarService.openSnackBar("Quote status updated successfully.", "dismiss", 3000);
+            } else {
+                console.error('Failed to update InvoiceConvert flag:', response.message);
+                this.snackbarService.openSnackBar("Failed to update quote status.", "dismiss", 3000);
+            }
+        },
+        error: (error) => {
+            console.error('Error updating InvoiceConvert flag:', error);
+            this.snackbarService.openSnackBar("Error occurred during update.", "dismiss", 3000);
+        }
+    });
+}
+
 }

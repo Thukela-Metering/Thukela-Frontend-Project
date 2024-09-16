@@ -95,9 +95,11 @@ export class AppJobCardTableComponent implements OnInit, AfterViewInit {
                 return 'Unknown';
         }
     }
+
     mapCategoryToString(categoryId: number | undefined): string {
         return this.lookupService.getDescriptionById(categoryId!) || 'unknown';
       }
+      
     getStatusColor(status: JobcardStatus | undefined): string {
         switch (status) {
             case JobcardStatus.Completed:
@@ -243,6 +245,7 @@ export class AppJobCardTableComponent implements OnInit, AfterViewInit {
 
     private getPdfDto(): PdfDTO {
         const selectedOwner = this.retrievedBuildings.find(owner => owner.buildingId === this.selectedJobCard!.buildingId);
+        const foundCatgeory = this.mapCategoryToString(this.selectedJobCard!.categoryId);
         return {
             invoiceDate: this.convertToSAST(new Date(this.selectedJobCard!.date)),
             dueDate: this.convertToSAST(new Date(this.selectedJobCard!.date!)),
@@ -251,7 +254,7 @@ export class AppJobCardTableComponent implements OnInit, AfterViewInit {
             customerPhone: selectedOwner?.contactNumber || 'N/A',
             customerEmail: selectedOwner?.email || 'N/A',
             taxNumber: this.retrievedAccounts.find(account => account.buildingId === this.selectedJobCard!.buildingId)?.buildingTaxNumber || 'N/A',
-            category: this.selectedJobCard!.categoryId, 
+            category: foundCatgeory, 
             jobDescription: this.selectedJobCard!.description, 
             accountNumber: this.selectedJobCard!.accountNumber || "", 
             note: this.selectedJobCard!.notes || "", 

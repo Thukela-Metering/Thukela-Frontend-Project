@@ -21,6 +21,6 @@ export interface PdfDTO {
     accountIsInCredit? :boolean;
     jobDescription? :string;
     accountNumber? :string;
-    category? :number;
+    category? :string;
 
   }

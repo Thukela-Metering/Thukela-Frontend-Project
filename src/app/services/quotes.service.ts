@@ -50,4 +50,9 @@ export class QuoteService {
     return getResponse;
   }
 
+  updateQuoteToInvoiceStatus(transaction: TransactionDTO): Observable<OperationalResultDTO<any>> {
+    var getResponse = this.http.put<OperationalResultDTO<any>>(`${this.apiUrl}/Quotes/UpdateToInvoiceStatus`, transaction);
+    return getResponse;
+  }
+
 }

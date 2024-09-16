@@ -17,4 +17,6 @@ export class QuotesDTO extends BaseDTO {
   buildingAccountId: number;
   quoteDate: Date;
   tempClient?: TempClientDTO;
+  invoiceConvert?: boolean;
+  invoiceRef?: string;
 }
