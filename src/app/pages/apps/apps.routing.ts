@@ -25,6 +25,7 @@ import { QuoteComponent } from './quote/quote.component';
 import { AppBadDeptAccountViewComponent } from './bad-dept/bad-dept-account-view/badDeptAccountView';
 import { AppBadDeptMainTableComponent } from './bad-dept/bad-dept-main-table/badDeptMainTable';
 import { AppJobCardTableComponent } from './job-cards/job-card-table/job-card.component';
+import { AppDebitorsReportComponent } from './reports/debitorsReport/depitors-report.component';
 
 export const AppsRoutes: Routes = [
   {
@@ -115,6 +116,17 @@ export const AppsRoutes: Routes = [
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Invoicing' },
+          ],
+        },
+      },
+      {
+        path: 'debitorsReport',
+        component: AppDebitorsReportComponent,
+        data: {
+          title: 'Debitors Report',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Debitors Report' },
           ],
         },
       },

@@ -49,6 +49,9 @@ export class SearchComponent implements OnInit {
       case 'statement':
         this.router.navigate(['apps/payment', result.accountId]);
         break;
+        case 'debitorsReport':
+          this.router.navigate(['apps/debitorsReport', result.accountId]);
+          break;
       // Add more cases here based on different search types
       default:
         console.warn('Unknown search type:', this.searchType);
