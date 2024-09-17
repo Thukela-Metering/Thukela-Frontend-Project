@@ -151,7 +151,6 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
 
   private getPdfDto(): PdfDTO {
     const selectedOwner = this.retrievedBuildings.find(owner => owner.buildingId === this.invoiceDetail.buildingId);
-    
     return {
       referenceNumber: this.invoiceDetail.referenceNumber || "",
       invoiceDate: this.convertToSAST(new Date(this.invoiceDetail.invoiceDate!)),

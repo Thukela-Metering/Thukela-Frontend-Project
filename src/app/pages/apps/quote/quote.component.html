@@ -58,12 +58,16 @@
           <a mat-icon-button (click)="openViewDialog(element.id)" class="d-flex align-items-center justify-content-center">
             <i-tabler name="eye" class="icon-18 d-flex align-items-center"></i-tabler>
           </a>
-          <button mat-icon-button (click)="openDialog('Add', element.guid)" class="d-flex align-items-center justify-content-center">
+          <button mat-icon-button 
+                  (click)="openDialog('Add', element.guid)" 
+                  class="d-flex align-items-center justify-content-center"
+                  [disabled]="element.invoiceConvert"
+                  [style.color]="element.invoiceConvert ? '#ab031d' : '#0ccf19'">
             <i-tabler name="edit" class="icon-18 d-flex align-items-center"></i-tabler>
           </button>
         </td>
       </ng-container>
-
+                     
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>

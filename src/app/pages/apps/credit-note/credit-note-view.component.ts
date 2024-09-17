@@ -157,6 +157,11 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
 
   private getCreditNotePdfDto(): PdfDTO {
     const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+  
+    // Calculate subtotal and VAT
+    const subtotal = this.creditNoteDetail?.creditNoteTotal ? this.creditNoteDetail.creditNoteTotal / 1.15 : 0;
+    const vat = this.creditNoteDetail?.creditNoteTotal ? this.creditNoteDetail.creditNoteTotal - subtotal : 0;
+  
     return {
       referenceNumber: this.creditNoteDetail?.id?.toString() || "",
       originalRef: this.creditNoteDetail?.invoiceReferenceNumber || "",
@@ -167,14 +172,14 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
       customerPhone: selectedOwner?.contactNumber || 'N/A',
       customerEmail: selectedOwner?.email || 'N/A',
       taxNumber: this.retrievedAccounts.find(account => account.id === this.invoiceDetail.buildingId)?.buildingTaxNumber || 'N/A',
-      subTotal: this.creditNoteDetail?.creditNoteTotal || 0,
-      discount: 0,
-      vat: this.creditNoteDetail?.creditNoteTotal ? this.creditNoteDetail.creditNoteTotal * 0.15 : 0,
-      grandTotal: this.creditNoteDetail?.creditNoteTotal ? this.creditNoteDetail.creditNoteTotal * 1.15 : 0,
+      subTotal: subtotal,
+      discount: 0,  // Assuming discount is 0 or you can replace it with the actual discount value
+      vat: vat,
+      grandTotal: this.creditNoteDetail?.creditNoteTotal || 0,
       items: this.creditNoteDetail?.items || [],
       note: ""
     };
-  }
+  }  
 
   private async generateCreditNotePDF(action: 'download' | 'preview' | 'email'): Promise<void> {
     const pdfDto = this.getCreditNotePdfDto();

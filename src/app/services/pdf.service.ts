@@ -32,4 +32,10 @@ export class PdfService {
     var response = this.http.post(`${this.apiUrl}/pdf/Quote`, pdfDto, { responseType: 'blob' });
     return response;
   }
+
+  generateJobCardPdf(pdfDto: PdfDTO): Observable<Blob> {
+    var response = this.http.post(`${this.apiUrl}/pdf/JobCard`, pdfDto, { responseType: 'blob' });
+    return response;
+  }
+
 }
