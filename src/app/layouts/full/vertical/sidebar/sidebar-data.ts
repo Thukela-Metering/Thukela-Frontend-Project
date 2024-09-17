@@ -133,6 +133,21 @@ export const navItems: NavItem[] = [
       },
     ],
   },
+  {
+    navCap: 'Reporting',
+  },
+  {
+    displayName: 'Reports',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
+      {
+        displayName: 'Debitors Report',
+        iconName: 'point',
+        route: 'apps/debitorsReport',     
+      },
+    ],
+  },
   
   // {
   //   navCap: 'Tools',

@@ -1,0 +1,153 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+      <div class="row justify-content-between">
+        <div class="col-sm-4">
+            &nbsp;
+          <!-- <mat-form-field appearance="outline" class="w-100 hide-hint">
+            <input matInput placeholder="Search statement content" (keyup)="filter($any($event.target).value)" />
+            <mat-icon matSuffix>
+              <i-tabler name="search" class="icon-20"></i-tabler>
+            </mat-icon>
+          </mat-form-field> -->
+        </div>
+        <!-- do date selector component here -->
+        <div class="col-sm-4 mx-2">
+          <mat-card class="cardWithShadow p-3">
+            <mat-card-content class="p-24">
+              <div class="row">
+                <div class="col-12 mb-3">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>From Date:</mat-label>
+                        <input matInput [matDatepicker]="fromDateDP" placeholder="Select From Date"
+                          [(ngModel)]="filterDTO.fromDate" id="fromDate"  />
+                        <mat-datepicker-toggle matSuffix [for]="fromDateDP"></mat-datepicker-toggle>
+                        <mat-datepicker #fromDateDP></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>To Date:</mat-label>
+                        <input matInput [matDatepicker]="toDateDP" placeholder="Select To Date"
+                          [(ngModel)]="filterDTO.toDate" id="toDate" />
+                        <mat-datepicker-toggle matSuffix [for]="toDateDP"></mat-datepicker-toggle>
+                        <mat-datepicker #toDateDP></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button style="float: right;" mat-stroked-button (click)="loadReportData()" color="primary">Get Statement</button>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <!-- end of date selector component -->
+      </div>
+    </mat-card-content>
+  </mat-card>
+  
+  <mat-card class="cardWithShadow" *ngIf="dataLoaded">
+    <mat-card-content>
+      <div class="container-fluid">
+        <!-- Buttons to download, email, and preview the invoice -->
+        <!-- Table with statement data -->
+        <div class="table-responsive">
+          <table mat-table [dataSource]="reportSalesItems" matSort class="no-wrap m-t-0 v-middle w-100">
+            <ng-container matColumnDef="buildingOwnerName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                Property Group
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white;">
+                {{ element.buildingOwnerName }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="buildingName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                Center (building)
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                {{ element.buildingName }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="amountExclVat">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                Amount Excl Vat
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white;">
+                {{ element.amountExclVat| currency:'R' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="amountInclVat">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                amount Incl Vat
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                {{ element.amountInclVat | currency:'R' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="vatTotal">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                vat Total
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white;">
+                {{ element.vatTotal | currency:'R' }}
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedSalesColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedSalesColumns"></tr>
+          </table>
+          <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator> -->
+        </div>        
+        <br>
+        <mat-divider></mat-divider>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+  <mat-card class="cardWithShadow" *ngIf="dataLoaded">
+    <mat-card-content>
+      <div class="container-fluid">
+        <!-- Buttons to download, email, and preview the invoice -->
+        <!-- Table with statement data -->
+        <div class="table-responsive">
+          <table mat-table [dataSource]="reportBadDeptItems" matSort class="no-wrap m-t-0 v-middle w-100">
+            <ng-container matColumnDef="buildingOwnerName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                Property Group
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white;">
+                {{ element.buildingOwnerName }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="buildingName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                Center (building)
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                {{ element.buildingName }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="amountInclVat">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                amount Incl Vat
+              </th>
+              <td mat-cell *matCellDef="let element" class="f-s-14">
+                {{ element.amountInclVat | currency:'R' }}
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedBadDeptColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedBadDeptColumns"></tr>
+          </table>
+          <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator> -->
+        </div>        
+        <br>
+        <mat-divider></mat-divider>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  
