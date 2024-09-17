@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
@@ -26,7 +26,9 @@ import { AppAddInvoiceComponent } from '../../invoice/add-invoice.component';
   templateUrl: './view-quote.component.html',
 })
 export class ViewQuoteComponent implements OnInit, AfterViewInit {
+  @Output() dialogClosed: EventEmitter<void> = new EventEmitter<void>();
   itemDetail: QuotesDTO;
+  isInvoiceConvertDisabled: boolean = false;
   quoteDetail: QuotesDTO;
   retrievedBuildings: BuildingOwnerDTO[] = [];
   retrievedAccounts: BuildingAccountDTO[] = [];
@@ -58,6 +60,7 @@ export class ViewQuoteComponent implements OnInit, AfterViewInit {
     private pdfService: PdfService
   ) {
     this.quoteDetail = { ...data, items: data.items ?? [] }; // Ensure `items` is at least an empty array
+    this.isInvoiceConvertDisabled = this.quoteDetail?.invoiceConvert ?? false;
     this.dataSource = new MatTableDataSource<LineItemDTO>(this.quoteDetail.items || []);
     this.quoteForm = this.fb.group({
       items: this.fb.array([])
@@ -98,6 +101,7 @@ export class ViewQuoteComponent implements OnInit, AfterViewInit {
 
   closeDialog(): void {
     this.dialogRef.close();
+    this.dialogClosed.emit();  // Emit the event when the dialog is closed
   }
 
   loadBuildingOwnerListData(): void {
@@ -156,10 +160,13 @@ export class ViewQuoteComponent implements OnInit, AfterViewInit {
     }
   }
 
-  public openInvoiceDialogWithQuote(quote: QuotesDTO): void {
+public openInvoiceDialogWithQuote(quote: QuotesDTO): void {
+  if (this.isInvoiceConvertDisabled) {
+    return;
+  } else {
     if (quote.tempClient) {
       console.log('Client is temporary, opening Add Portfolio dialog.');
-  
+
       // Initialize selectedBuilding and selectedOwnerAccount with temporary client data if not already defined
       if (!this.selectedBuilding) {
         this.selectedBuilding = new BuildingDTO();
@@ -167,16 +174,16 @@ export class ViewQuoteComponent implements OnInit, AfterViewInit {
       if (!this.selectedOwnerAccount) {
         this.selectedOwnerAccount = new BuildingOwnerDTO();
       }
-  
+
       // Populate the selected building's address with the temp client's address
       this.selectedBuilding.address = this.quoteDetail.tempClient?.address;
-  
+
       // Populate the selected owner account with temp client details
       this.selectedOwnerAccount.name = this.quoteDetail.tempClient?.name || "";
       this.selectedOwnerAccount.email = this.quoteDetail.tempClient?.email || "";
       this.selectedOwnerAccount.contactNumber = this.quoteDetail.tempClient?.contactNumber || "";
       this.selectedOwnerAccount.address = this.quoteDetail.tempClient?.address || "";
-  
+
       // Prepare the data object to pass to the dialog
       const dataObject = {
         action: 'Add',
@@ -184,17 +191,17 @@ export class ViewQuoteComponent implements OnInit, AfterViewInit {
         selectedBuildingAccount: this.selectedBuildingAccount,
         selectedOwnerAccount: this.selectedOwnerAccount
       };
-  
+
       // Open the "Add Portfolio" dialog with the prepared data
       const dialogRef = this.dialog.open(AddNewPortfolioForConvertComponent, {
         width: '600px',
         data: dataObject
       });
-  
+
       dialogRef.afterClosed().subscribe(result => {
         if (result && result.action === 'Add') {
           console.log('The Add Portfolio dialog was closed', result);
-          
+
           // Reopen the invoice dialog with the new customer data and the quote data
           const dataObjectForInvoice = {
             quote: quote, // Pass the quote data to the invoice component
@@ -202,34 +209,41 @@ export class ViewQuoteComponent implements OnInit, AfterViewInit {
             selectedOwnerAccount: result.selectedOwnerAccount, // Pass the newly created owner account
             selectedBuildingAccount: result.selectedBuildingAccount // Pass the newly created building account
           };
-      
+
           this.dialog.open(AppAddInvoiceComponent, {
             width: '1200px',
             data: dataObjectForInvoice
           });
-      
+
           this.dialogRef.close(); // Close the current dialog
+          this.dialogRef.afterClosed().subscribe(() => {
+            this.dialogClosed.emit();  // Emit the event when the dialog is closed after conversion
+          });
         } else {
           console.log('The Add Portfolio dialog was closed without adding a new portfolio');
         }
-      });      
+      });
     } else {
       console.log('Client is not temporary, opening Add Invoice dialog.');
-  
+
       const dataObject: any = {
         quote: quote, // Pass the quote data to the invoice component
         selectedBuilding: this.selectedBuilding, // Pass the selected building if available
         selectedOwnerAccount: this.foundOwnerAccount, // Add the client details
       };
-  
-      this.dialog.open(AppAddInvoiceComponent, {
+
+      const dialogRef = this.dialog.open(AppAddInvoiceComponent, {
         width: '1200px',
         data: dataObject
       });
-  
+
       this.dialogRef.close(); // Close the current dialog
+      dialogRef.afterClosed().subscribe(() => {
+        this.dialogClosed.emit();  // Emit the event when the dialog is closed after conversion
+      });
     }
   }
+}
 
   async emailQuote(): Promise<void> {
     await this.sendPDF();

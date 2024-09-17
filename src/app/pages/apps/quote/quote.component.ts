@@ -108,22 +108,26 @@ openAddQuoteDialog(data: any): void {
 }
 
 
-  openViewDialog(quoteId: number): void {
-    const quote = this.quotes.find((qt) => qt.id === quoteId);
+openViewDialog(quoteId: number): void {
+  const quote = this.quotes.find((qt) => qt.id === quoteId);
 
-    if (quote) {
-      const dialogRef = this.dialog.open(ViewQuoteComponent, {
-        width: '1600px',
-        data: quote,
-      });
+  if (quote) {
+    const dialogRef = this.dialog.open(ViewQuoteComponent, {
+      width: '1600px',
+      data: quote,
+    });
 
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          this.loadQuotesListData();
-        }
-      });
-    }
+    dialogRef.componentInstance.dialogClosed.subscribe(() => {
+      this.loadQuotesListData();  // Refresh the table when the dialog is closed
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadQuotesListData();
+      }
+    });
   }
+}
 
   loadQuotesListData(): void {
     this._quoteService.getAllQuotes(true).subscribe({
