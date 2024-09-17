@@ -160,91 +160,91 @@ export class ViewQuoteComponent implements OnInit, AfterViewInit {
     }
   }
 
-  public openInvoiceDialogWithQuote(quote: QuotesDTO): void {
-    if (this.isInvoiceConvertDisabled) {
-      return;
-    } else {
-      if (quote.tempClient) {
-        console.log('Client is temporary, opening Add Portfolio dialog.');
-  
-        // Initialize selectedBuilding and selectedOwnerAccount with temporary client data if not already defined
-        if (!this.selectedBuilding) {
-          this.selectedBuilding = new BuildingDTO();
-        }
-        if (!this.selectedOwnerAccount) {
-          this.selectedOwnerAccount = new BuildingOwnerDTO();
-        }
-  
-        // Populate the selected building's address with the temp client's address
-        this.selectedBuilding.address = this.quoteDetail.tempClient?.address;
-  
-        // Populate the selected owner account with temp client details
-        this.selectedOwnerAccount.name = this.quoteDetail.tempClient?.name || "";
-        this.selectedOwnerAccount.email = this.quoteDetail.tempClient?.email || "";
-        this.selectedOwnerAccount.contactNumber = this.quoteDetail.tempClient?.contactNumber || "";
-        this.selectedOwnerAccount.address = this.quoteDetail.tempClient?.address || "";
-  
-        // Prepare the data object to pass to the dialog
-        const dataObject = {
-          action: 'Add',
-          selectedBuilding: this.selectedBuilding,
-          selectedBuildingAccount: this.selectedBuildingAccount,
-          selectedOwnerAccount: this.selectedOwnerAccount
-        };
-  
-        // Open the "Add Portfolio" dialog with the prepared data
-        const dialogRef = this.dialog.open(AddNewPortfolioForConvertComponent, {
-          width: '600px',
-          data: dataObject
-        });
-  
-        dialogRef.afterClosed().subscribe(result => {
-          if (result && result.action === 'Add') {
-            console.log('The Add Portfolio dialog was closed', result);
-  
-            // Reopen the invoice dialog with the new customer data and the quote data
-            const dataObjectForInvoice = {
-              quote: quote, // Pass the quote data to the invoice component
-              selectedBuilding: result.selectedBuilding, // Pass the newly created building
-              selectedOwnerAccount: result.selectedOwnerAccount, // Pass the newly created owner account
-              selectedBuildingAccount: result.selectedBuildingAccount // Pass the newly created building account
-            };
-  
-            this.dialog.open(AppAddInvoiceComponent, {
-              width: '1200px',
-              data: dataObjectForInvoice
-            });
-  
-            this.dialogRef.close(); // Close the current dialog
-            this.dialogRef.afterClosed().subscribe(() => {
-              this.dialogClosed.emit();  // Emit the event when the dialog is closed after conversion
-            });
-          } else {
-            console.log('The Add Portfolio dialog was closed without adding a new portfolio');
-          }
-        });
-      } else {
-        console.log('Client is not temporary, opening Add Invoice dialog.');
-  
-        const dataObject: any = {
-          quote: quote, // Pass the quote data to the invoice component
-          selectedBuilding: this.selectedBuilding, // Pass the selected building if available
-          selectedOwnerAccount: this.foundOwnerAccount, // Add the client details
-        };
-  
-        const dialogRef = this.dialog.open(AppAddInvoiceComponent, {
-          width: '1200px',
-          data: dataObject
-        });
-  
-        this.dialogRef.close(); // Close the current dialog
-        dialogRef.afterClosed().subscribe(() => {
-          this.dialogClosed.emit();  // Emit the event when the dialog is closed after conversion
-        });
+public openInvoiceDialogWithQuote(quote: QuotesDTO): void {
+  if (this.isInvoiceConvertDisabled) {
+    return;
+  } else {
+    if (quote.tempClient) {
+      console.log('Client is temporary, opening Add Portfolio dialog.');
+
+      // Initialize selectedBuilding and selectedOwnerAccount with temporary client data if not already defined
+      if (!this.selectedBuilding) {
+        this.selectedBuilding = new BuildingDTO();
       }
+      if (!this.selectedOwnerAccount) {
+        this.selectedOwnerAccount = new BuildingOwnerDTO();
+      }
+
+      // Populate the selected building's address with the temp client's address
+      this.selectedBuilding.address = this.quoteDetail.tempClient?.address;
+
+      // Populate the selected owner account with temp client details
+      this.selectedOwnerAccount.name = this.quoteDetail.tempClient?.name || "";
+      this.selectedOwnerAccount.email = this.quoteDetail.tempClient?.email || "";
+      this.selectedOwnerAccount.contactNumber = this.quoteDetail.tempClient?.contactNumber || "";
+      this.selectedOwnerAccount.address = this.quoteDetail.tempClient?.address || "";
+
+      // Prepare the data object to pass to the dialog
+      const dataObject = {
+        action: 'Add',
+        selectedBuilding: this.selectedBuilding,
+        selectedBuildingAccount: this.selectedBuildingAccount,
+        selectedOwnerAccount: this.selectedOwnerAccount
+      };
+
+      // Open the "Add Portfolio" dialog with the prepared data
+      const dialogRef = this.dialog.open(AddNewPortfolioForConvertComponent, {
+        width: '600px',
+        data: dataObject
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result && result.action === 'Add') {
+          console.log('The Add Portfolio dialog was closed', result);
+
+          // Reopen the invoice dialog with the new customer data and the quote data
+          const dataObjectForInvoice = {
+            quote: quote, // Pass the quote data to the invoice component
+            selectedBuilding: result.selectedBuilding, // Pass the newly created building
+            selectedOwnerAccount: result.selectedOwnerAccount, // Pass the newly created owner account
+            selectedBuildingAccount: result.selectedBuildingAccount // Pass the newly created building account
+          };
+
+          this.dialog.open(AppAddInvoiceComponent, {
+            width: '1200px',
+            data: dataObjectForInvoice
+          });
+
+          this.dialogRef.close(); // Close the current dialog
+          this.dialogRef.afterClosed().subscribe(() => {
+            this.dialogClosed.emit();  // Emit the event when the dialog is closed after conversion
+          });
+        } else {
+          console.log('The Add Portfolio dialog was closed without adding a new portfolio');
+        }
+      });
+    } else {
+      console.log('Client is not temporary, opening Add Invoice dialog.');
+
+      const dataObject: any = {
+        quote: quote, // Pass the quote data to the invoice component
+        selectedBuilding: this.selectedBuilding, // Pass the selected building if available
+        selectedOwnerAccount: this.foundOwnerAccount, // Add the client details
+      };
+
+      const dialogRef = this.dialog.open(AppAddInvoiceComponent, {
+        width: '1200px',
+        data: dataObject
+      });
+
+      this.dialogRef.close(); // Close the current dialog
+      dialogRef.afterClosed().subscribe(() => {
+        this.dialogClosed.emit();  // Emit the event when the dialog is closed after conversion
+      });
     }
   }
-  
+}
+
   async emailQuote(): Promise<void> {
     await this.sendPDF();
   }
