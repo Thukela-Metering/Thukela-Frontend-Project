@@ -36,37 +36,40 @@
       <mat-divider></mat-divider>
       <div class="row m-y-24 p-t-24 justify-content-between">
         <div class="col-sm-6 text-left">
-          <mat-checkbox formControlName="useExistingCustomer" (change)="onUseExistingCustomerChange()">
-            Use existing customer
-          </mat-checkbox>
+          <div *ngIf="!isUpdateMode">
+            <mat-checkbox formControlName="useExistingCustomer" (change)="onUseExistingCustomerChange()">
+              Use existing customer
+            </mat-checkbox>
 
-          <mat-form-field appearance="outline" class="w-100" *ngIf="!isUpdateMode">
-            <mat-label style="color: white;">Bill to</mat-label>
-            <mat-select formControlName="billTo" [disabled]="!addForm.get('useExistingCustomer')?.value">
-              <mat-option>
-                <ngx-mat-select-search
-                  placeholderLabel="Find building..."
-                  noEntriesFoundLabel="'No matching record found'"
-                  class="searchfield-class"
-                  [formControl]="buildingFilterCtrl">
-                </ngx-mat-select-search>
-              </mat-option>
-              <mat-option *ngFor="let building of filteredBuildings | async" [value]="building">
-                {{ building.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <div class="justify-content-between">
-             <button mat-raised-button color="primary" class="align-self-right" (click)="openDialog('Add', {})"
-                     *ngIf="!addForm.get('useExistingCustomer')?.value">
-               Add Details
-             </button>
-           </div>
-           <div *ngIf="isUpdateMode" style="color: white; font-size: 16px;">
-             Bill to: {{ addForm.get('billTo')?.value }}
-           </div>  
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label style="color: white;">Bill to</mat-label>
+              <mat-select formControlName="billTo" [disabled]="!addForm.get('useExistingCustomer')?.value">
+                <mat-option>
+                  <ngx-mat-select-search
+                    placeholderLabel="Find building..."
+                    noEntriesFoundLabel="'No matching record found'"
+                    class="searchfield-class"
+                    [formControl]="buildingFilterCtrl">
+                  </ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let building of filteredBuildings | async" [value]="building">
+                  {{ building.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="justify-content-between">
+              <button mat-raised-button color="primary" class="align-self-right" (click)="openDialog('Add', {})"
+                      *ngIf="!addForm.get('useExistingCustomer')?.value">
+                Add Details
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="isUpdateMode" style="color: white; font-size: 16px;">
+            Bill to: {{ addForm.get('billTo')?.value }}
           </div>
         </div>
+      </div>
     </form>
 
     <div [formGroup]="addForm">
