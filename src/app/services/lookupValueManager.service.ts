@@ -8,8 +8,8 @@ import { BuildingOwnerDTO, LookupValueDTO, OperationalResultDTO, TransactionDTO 
   providedIn: 'root'
 })
 export class LookupValueManagerService {
-  private apiUrl = 'http://localhost:8080/api'; 
-//private apiUrl = 'https://thukelameteringproduction.co.za/api';
+ // private apiUrl = 'http://localhost:8080/api'; 
+private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
   private lookupValues: LookupValueDTO[] = []; // Cache for lookup values
   private lookupValuesLoaded = false; // Flag to check if values are loaded
@@ -85,7 +85,6 @@ export class LookupValueManagerService {
     this.lookupValuesLoaded = false;
     sessionStorage.removeItem('lookupValues'); // Clear sessionStorage on logout
   }
-
   // Get all lists
   getAllLists(): Observable<OperationalResultDTO<TransactionDTO>> {
     return this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/LookupValueManager/GetAllLists`);
