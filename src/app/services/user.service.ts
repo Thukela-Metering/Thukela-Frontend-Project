@@ -10,8 +10,8 @@ import { OperationalResultDTO, TransactionDTO } from '../DTOs/dtoIndex';
 })
 export class UserService {
   
-  // private apiUrl = 'http://localhost:8080/api';
- private apiUrl = 'https://thukelameteringproduction.co.za/api';
+    //private apiUrl = 'http://localhost:8080/api';
+    private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
 
   constructor(private http: HttpClient) { }
