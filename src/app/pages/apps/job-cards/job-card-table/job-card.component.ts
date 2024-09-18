@@ -51,6 +51,8 @@ export class AppJobCardTableComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.loadJobCardListData();
+        this.loadBuildingAccount();
+        this.loadBuildingOwnerListData();
     }
 
     selectJobCard(jobCard: JobCardDTO): void {
@@ -137,7 +139,7 @@ export class AppJobCardTableComponent implements OnInit, AfterViewInit {
         console.log('Updating job card:', jobCard);
     }
 
-    async openDialog(action: string, obj: any): Promise<void> {
+    async openDialog(action: string, obj: any): Promise<void> { 
         if (action === 'Preview') {
             await this.loadBuildingOwnerListData();
             await this.loadBuildingAccount();
@@ -225,23 +227,29 @@ export class AppJobCardTableComponent implements OnInit, AfterViewInit {
       }
 
     //pdf logic
-    private async generatePDF(action: 'preview'): Promise<void> {
+    private async generatePDF(action: 'download' | 'preview'): Promise<void> {
         const pdfDto = this.getPdfDto();
-    
         try {
             const response = await this.pdfService.generateJobCardPdf(pdfDto).toPromise();
             const pdfBlob = new Blob([response || ""], { type: 'application/pdf' });
-    
-            if (action === 'preview') {
+
+            if (action === 'download') {
+                const fileName = `jobcard_${this.selectedJobCard!.referenceNumber}.pdf`;
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(pdfBlob);
+                link.download = fileName;
+                link.click();
+                this.snackbarService.openSnackBar(`Job Card "${fileName}" downloaded successfully.`, 'Close');
+              } else if (action === 'preview') {
                 const pdfUrl = URL.createObjectURL(pdfBlob);
                 this.pdfDataUrl = pdfUrl;
                 this.openPdfPreview();
             }
         } catch (error) {
             console.error('Error generating PDF:', error);
-            this.snackbarService.openSnackBar("Error generating PDF", "dismiss");
+            this.snackbarService.openSnackBar("Error generating PDF", "Close");
         }
-    }    
+    }   
 
     private getPdfDto(): PdfDTO {
         const selectedOwner = this.retrievedBuildings.find(owner => owner.buildingId === this.selectedJobCard!.buildingId);
@@ -269,6 +277,10 @@ export class AppJobCardTableComponent implements OnInit, AfterViewInit {
           data: { pdfDataUrl: this.pdfDataUrl }
         });
     }
+
+    downloadJobCard(jobCard: JobCardDTO): void {
+        this.generatePDF('download');
+    }    
 
     private convertToSAST(date: Date): Date {
         // Get the UTC time from the date

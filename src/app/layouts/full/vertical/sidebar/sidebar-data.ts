@@ -148,22 +148,6 @@ export const navItems: NavItem[] = [
       },
     ],
   },
-  
-  // {
-  //   navCap: 'Tools',
-  // },
-  // {
-  //   displayName: 'Tools',
-  //   iconName: 'file-invoice',
-  //   route: '/apps',
-  //   children: [
-  //     {
-  //       displayName: 'Hangfire Dashboard',
-  //       iconName: 'point',
-  //       route: 'apps/hangfire',     
-  //     },
-  //   ],
-  // },
   {
     navCap: 'Products',
   },
@@ -176,6 +160,26 @@ export const navItems: NavItem[] = [
         displayName: 'Product-management-screen',
         iconName: 'point',
         route: 'apps/product-management',     
+      },
+    ],
+  },
+  {
+    navCap: 'Tools',
+  },
+  {
+    displayName: 'Tools',
+    iconName: 'file-invoice',
+    route: '/apps',
+    children: [
+      {
+        displayName: 'Hangfire Dashboard',
+        iconName: 'point',
+        route: 'apps/hangfire',     
+      },
+      {
+        displayName: 'Importing',
+        iconName: 'point',
+        route: 'apps/Import',     
       },
     ],
   },

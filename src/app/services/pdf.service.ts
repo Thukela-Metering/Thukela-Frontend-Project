@@ -38,4 +38,9 @@ export class PdfService {
     return response;
   }
 
+  generateDebitorsReportPdf(pdfDto: PdfDTO): Observable<Blob> {
+    var response = this.http.post(`${this.apiUrl}/pdf/DebitorsReport`, pdfDto, { responseType: 'blob' });
+    return response;
+  }
+
 }

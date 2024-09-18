@@ -486,12 +486,17 @@ private async populateFormWithQuoteData(quote: QuotesDTO, selectedOwnerAccount: 
       response => {
         if (response.success) {
           this.snackbarService.openSnackBar(response.message, "dismiss");
-          this.saveClicked.emit();
+          this.saveClicked.emit();  // Emit event to notify the parent
+
           if (this.data.quote) {
-            // Call the method to update the InvoiceConvert flag
-            this.updateInvoiceConvertFlag(this.data.quote, this.invoice.referenceNumber!); // Passing the quote and the new invoice reference
+            this.updateInvoiceConvertFlag(this.data.quote, this.invoice.referenceNumber!)
+              .then(() => {
+                this.saveClicked.emit();  // Emit the event after the quote is updated
+                this.dialogRef.close();
+              });
+          } else {
+            this.dialogRef.close();
           }
-          this.dialogRef.close();
         }
       },
       error => {
@@ -499,9 +504,9 @@ private async populateFormWithQuoteData(quote: QuotesDTO, selectedOwnerAccount: 
         this.snackbarService.openSnackBar(error.message, "dismiss");
       }
     );
-  }
-  
-  updateInvoice(): void {
+}
+
+updateInvoice(): void {
     this.transaction.invoicesDTOs = [];
     this.transaction.invoicesDTOs.push(this.invoice);
   
@@ -509,7 +514,7 @@ private async populateFormWithQuoteData(quote: QuotesDTO, selectedOwnerAccount: 
       response => {
         if (response.success) {
           this.snackbarService.openSnackBar(response.message, "dismiss");
-          this.saveClicked.emit();
+          this.saveClicked.emit();  // Emit event to notify the parent
           this.dialogRef.close();
         }
       },
@@ -549,31 +554,34 @@ private async populateFormWithQuoteData(quote: QuotesDTO, selectedOwnerAccount: 
     this.itemsChanged();  // Recalculate totals
   }
 
-  private updateInvoiceConvertFlag(quote: QuotesDTO, invoiceRef: string): void {
-    const updateDto: TransactionDTO = {
-        quotesDTOs: [
-            {
-                ...quote,
-                invoiceConvert: true,  // Set the flag to true
-                invoiceRef: invoiceRef  // Assign the generated invoice reference
-            }
-        ]
-    };
+  private updateInvoiceConvertFlag(quote: QuotesDTO, invoiceRef: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        const updateDto: TransactionDTO = {
+            quotesDTOs: [
+                {
+                    ...quote,
+                    invoiceConvert: true,
+                    invoiceRef: invoiceRef
+                }
+            ]
+        };
 
-    this._quoteService.updateQuoteToInvoiceStatus(updateDto).subscribe({
-        next: (response) => {
-            if (response.success) {
-                console.log('InvoiceConvert flag updated successfully.');
-                this.snackbarService.openSnackBar("Quote status updated successfully.", "dismiss", 3000);
-            } else {
-                console.error('Failed to update InvoiceConvert flag:', response.message);
-                this.snackbarService.openSnackBar("Failed to update quote status.", "dismiss", 3000);
+        this._quoteService.updateQuoteToInvoiceStatus(updateDto).subscribe({
+            next: (response) => {
+                if (response.success) {
+                    this.snackbarService.openSnackBar("Quote status updated successfully.", "dismiss", 3000);
+                    resolve();
+                } else {
+                    this.snackbarService.openSnackBar("Failed to update quote status.", "dismiss", 3000);
+                    reject();
+                }
+            },
+            error: (error) => {
+                console.error('Error updating InvoiceConvert flag:', error);
+                this.snackbarService.openSnackBar("Error occurred during update.", "dismiss", 3000);
+                reject();
             }
-        },
-        error: (error) => {
-            console.error('Error updating InvoiceConvert flag:', error);
-            this.snackbarService.openSnackBar("Error occurred during update.", "dismiss", 3000);
-        }
+        });
     });
 }
 

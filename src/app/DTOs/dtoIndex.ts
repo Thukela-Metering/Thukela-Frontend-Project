@@ -28,3 +28,5 @@ export * from './badDeptDTO';
 export * from './enums';
 export * from './jobCardDTO';
 export * from './DebitorsReportDTO';
+export * from './debitorSummaryReportDTO';
+export * from './pdfDTO';

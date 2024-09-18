@@ -1,0 +1,94 @@
+<mat-card class="import-card-with-shadow">
+    <mat-card-content>
+      <form [formGroup]="importForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+        
+        <!-- Import Type Selection and Download Template Button -->
+        <div class="row justify-content-between align-items-center">
+          <div class="col-sm-6">
+            <mat-form-field appearance="outline" class="w-100 import-mat-form-field">
+              <mat-label>Select Import Type</mat-label>
+              <mat-select formControlName="importType" required>
+                <mat-option *ngFor="let type of importTypes" [value]="type.value">
+                  {{ type.viewValue }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="importForm.get('importType')?.hasError('required')">
+                Please select an import type.
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-6 text-right">
+            <!-- Download Template Button -->
+            <button 
+              mat-flat-button 
+              color="primary" 
+              type="button" 
+              class="import-button" 
+              (click)="downloadTemplate()" 
+              [disabled]="!importForm.get('importType')?.value"
+            >
+              <mat-icon>download</mat-icon> Download Template
+            </button>
+          </div>
+        </div>
+  
+        <!-- File Upload Area -->
+        <div class="row m-t-20">
+          <div class="col-sm-12">
+            <div
+              class="import-file-drop-zone"
+              [class.drag-over]="dragOver"
+              (drop)="onFileDrop($event)"
+              (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave($event)"
+              (click)="fileInput.click()"
+            >
+              <input
+                type="file"
+                (change)="onFileSelected($event)"
+                accept=".csv"
+                hidden
+                #fileInput
+              />
+              <div class="file-drop-content">
+                <mat-icon style="font-size: 48px; color: #757575;">cloud_upload</mat-icon>
+                <p *ngIf="!selectedFile">Click or drag and drop a CSV file here</p>
+                <p *ngIf="selectedFile">
+                  <strong>{{ selectedFile.name }}</strong>
+                  <br />
+                  Size: {{ (selectedFile.size / 1024) | number: '1.0-2' }} KB
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Buttons Row -->
+        <div class="row m-t-20">
+          <div class="col-sm-12 d-flex justify-content-between">
+            <button
+              mat-flat-button
+              color="warn"
+              type="button"
+              class="import-button"
+              (click)="clearSelectedFile($event)"
+              [disabled]="!selectedFile || isLoading"
+            >
+              <mat-icon>clear</mat-icon> Clear
+            </button>
+  
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              class="import-button"
+              [disabled]="isLoading || !selectedFile || importForm.get('importType')?.invalid"
+            >
+              {{ isLoading ? 'Importing...' : 'Submit' }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  

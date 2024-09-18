@@ -23,6 +23,7 @@ import { QuotesDTO } from "./QuotesDTO";
 import { badDeptDTO } from "./badDeptDTO";
 import { JobCardDTO } from "./jobCardDTO";
 import { DebitorReportDTO } from "./DebitorsReportDTO";
+import { DebitorSummaryReportDTO } from "./debitorSummaryReportDTO";
 
 export class TransactionDTO {
     authenticationResponseDTOs?: AuthenticationResponseDTO[];
@@ -50,6 +51,7 @@ export class TransactionDTO {
     badDeptDTOs?:badDeptDTO[];
     jobCardDTOs?:JobCardDTO[];
     debitorsReportDTOs?:DebitorReportDTO[];
+    debitorsReportSummaryDTOs?:DebitorSummaryReportDTO[];
     stringResponseProperty?: string;
     intResponseProperty?: number;
     boolResponseProperty?: boolean;

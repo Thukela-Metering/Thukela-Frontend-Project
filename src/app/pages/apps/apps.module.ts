@@ -70,6 +70,7 @@ import { AppBadDeptAccountViewComponent } from './bad-dept/bad-dept-account-view
 import { AppJobCardTableComponent } from './job-cards/job-card-table/job-card.component';
 import { AppJobCardModalComponent } from './job-cards/job-card-modal/job-card-modal.component';
 import { AppDebitorsReportComponent } from './reports/debitorsReport/depitors-report.component';
+import { ImportComponent } from './import/import.component';
 
 
 
@@ -131,6 +132,7 @@ import { AppDebitorsReportComponent } from './reports/debitorsReport/depitors-re
     PaymentTableComponent,
     AppStatementScreenComponent,
     SearchComponent,
+    ImportComponent,
     PaymentComponent,
     HangfireDashboardComponent,
     BorderColorDirective,
