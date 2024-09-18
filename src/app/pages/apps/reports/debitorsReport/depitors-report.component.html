@@ -4,16 +4,26 @@
         <div class="col-sm-4">
             &nbsp;
             <div class="row">
-                <div class="col-sm-6 d-flex justify-content-end">
-                  <button mat-fab color="primary" (click)="downloadInvoice()" aria-label="Download Invoice"
-                    style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; margin-left: 10px; display: flex; justify-content: center; align-items: center; padding: 0;">
-                    <mat-icon style="font-size: 18px; position: relative; top: 50%; transform: translateY(-50%);">download</mat-icon>
-                  </button>                 
-                  <button mat-fab color="primary" (click)="previewInvoice()" aria-label="Preview Invoice"
-                    style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; margin-left: 10px; display: flex; justify-content: center; align-items: center; padding: 0;">
-                    <mat-icon style="font-size: 18px; position: relative; top: 50%; transform: translateY(-50%);">visibility</mat-icon>
-                  </button>
-                </div>
+                <div class="button-container">
+                    <button style="margin: 10px"
+                      mat-stroked-button
+                      color="primary"
+                      (click)="downloadInvoice()"
+                      aria-label="Download Invoice"
+                      class="me-2 button-outline"
+                    >
+                      <mat-icon>download</mat-icon> Download
+                    </button>
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      (click)="previewInvoice()"
+                      aria-label="Preview Invoice"
+                      class="button-outline"
+                    >
+                      <mat-icon>visibility</mat-icon> Preview
+                    </button>
+                  </div>
               </div>
         </div>
         <!-- do date selector component here -->
