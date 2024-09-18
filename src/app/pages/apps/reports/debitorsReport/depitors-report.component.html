@@ -3,12 +3,18 @@
       <div class="row justify-content-between">
         <div class="col-sm-4">
             &nbsp;
-          <!-- <mat-form-field appearance="outline" class="w-100 hide-hint">
-            <input matInput placeholder="Search statement content" (keyup)="filter($any($event.target).value)" />
-            <mat-icon matSuffix>
-              <i-tabler name="search" class="icon-20"></i-tabler>
-            </mat-icon>
-          </mat-form-field> -->
+            <div class="row">
+                <div class="col-sm-6 d-flex justify-content-end">
+                  <button mat-fab color="primary" (click)="downloadInvoice()" aria-label="Download Invoice"
+                    style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; margin-left: 10px; display: flex; justify-content: center; align-items: center; padding: 0;">
+                    <mat-icon style="font-size: 18px; position: relative; top: 50%; transform: translateY(-50%);">download</mat-icon>
+                  </button>                 
+                  <button mat-fab color="primary" (click)="previewInvoice()" aria-label="Preview Invoice"
+                    style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; margin-left: 10px; display: flex; justify-content: center; align-items: center; padding: 0;">
+                    <mat-icon style="font-size: 18px; position: relative; top: 50%; transform: translateY(-50%);">visibility</mat-icon>
+                  </button>
+                </div>
+              </div>
         </div>
         <!-- do date selector component here -->
         <div class="col-sm-4 mx-2">
@@ -150,4 +156,78 @@
       </div>
     </mat-card-content>
   </mat-card>
+    <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <mat-card class="cardWithShadow" *ngIf="dataLoaded">
+        <mat-card-content>
+          <div class="container-fluid">
+            <!-- Buttons to download, email, and preview the invoice -->
+            <!-- Table with statement data -->
+            <div class="table-responsive">
+              <table mat-table [dataSource]="reportSummaryItems" matSort class="no-wrap m-t-0 v-middle w-100">
+                <ng-container matColumnDef="buildingOwnerName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                    Property Group
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white;">
+                    {{ element.ownerName }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="balanceBF">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                    Balance BF
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="f-s-14">
+                    {{ element.balanceBF | currency:'R'}}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="sales">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                    Sales
+                  </th>
+                  <td mat-cell *matCellDef="let element" class="f-s-14">
+                    {{ element.sale | currency:'R' }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="creditNotes">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                        Credit Notes
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="f-s-14">
+                      {{ element.creditNote | currency:'R' }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="payments">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                        Payments
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="f-s-14">
+                      {{ element.payment | currency:'R' }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="badDepts">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                        Bad Depts
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="f-s-14">
+                      {{ element.badDept | currency:'R' }}
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="total">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+                        Total
+                    </th>
+                    <td mat-cell *matCellDef="let element" class="f-s-14">
+                      {{ element.total | currency:'R' }}
+                    </td>
+                  </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedSummaryColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedSummaryColumns"></tr>
+              </table>
+              <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator> -->
+            </div>        
+            <br>
+            <mat-divider></mat-divider>
+          </div>
+        </mat-card-content>
+      </mat-card>
   
