@@ -93,20 +93,22 @@ export class QuoteComponent implements OnInit, AfterViewInit {
 }
   
 openAddQuoteDialog(data: any): void {
-  console.log('Data being passed to AddquoteComponent:', data);
-  
   const dialogRef = this.dialog.open(AddquoteComponent, {
       width: '1600px',
       data: data,
   });
 
+  // Listen for the saveClicked event and refresh the quotes list
+  dialogRef.componentInstance.saveClicked.subscribe(() => {
+      this.loadQuotesListData();  // Refresh the table
+  });
+
   dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-          this.loadQuotesListData();
+          this.loadQuotesListData();  // Ensure the table is refreshed after the dialog is closed
       }
   });
 }
-
 
 openViewDialog(quoteId: number): void {
   const quote = this.quotes.find((qt) => qt.id === quoteId);

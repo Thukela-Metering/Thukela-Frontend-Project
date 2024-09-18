@@ -6,6 +6,70 @@
   align-items: flex-start;
   /* Aligns the content to the left */
 }
+//////////Import screen styling////////////////
+.import-card-with-shadow {
+  background-color: #293446;
+  color: #ffffff;
+}
+
+.import-file-drop-zone {
+  border: 2px dashed #757575;
+  border-radius: 5px;
+  padding: 40px;
+  text-align: center;
+  color: #757575;
+  transition: border-color 0.3s, background-color 0.3s;
+  background-color: #343434;
+  cursor: pointer;
+  position: relative;
+}
+
+.import-file-drop-zone:hover {
+  border-color: #3f51b5;
+  color: #3f51b5;
+}
+
+.import-file-drop-zone.drag-over {
+  border-color: #3f51b5;
+  background-color: rgba(63, 81, 181, 0.15);
+}
+
+.import-file-drop-zone .file-drop-content {
+  pointer-events: none;
+}
+
+.import-file-drop-zone p {
+  margin: 20px 0 0;
+}
+
+.import-file-drop-zone mat-icon {
+  margin-bottom: 10px;
+}
+
+/* Adjust the mat-form-field appearance */
+.import-mat-form-field .mat-form-field {
+  color: #ffffff;
+}
+
+.import-mat-form-field .mat-select-placeholder {
+  color: #757575;
+}
+
+.import-mat-form-field .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: #757575;
+}
+
+/* Button styling */
+.import-button[mat-flat-button] {
+  background-color: #3f51b5;
+  color: #ffffff;
+}
+
+.import-button[mat-flat-button]:hover {
+  background-color: #303f9f;
+}
+
+
 
 //////////Global search styling////////////////
 .search-item {
