@@ -6,7 +6,7 @@ import { InvoiceService } from 'src/app/services/invoice.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { AppAddInvoiceComponent } from './add-invoice.component';
 import { MatDialog } from '@angular/material/dialog';
-import { BuildingDTO, BuildingOwnerDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { AppInvoiceViewComponent } from './view-invoice.component'; // Import the view component
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { catchError, forkJoin, map, of } from 'rxjs';
