@@ -279,8 +279,15 @@ export class AppJobCardTableComponent implements OnInit, AfterViewInit {
     }
 
     downloadJobCard(jobCard: JobCardDTO): void {
-        this.generatePDF('download');
-    }    
+        // Load owner and account data first
+        this.loadBuildingOwnerListData();
+        this.loadBuildingAccount();
+
+        // Use setTimeout to wait for data to load before generating the PDF
+        setTimeout(() => {
+            this.generatePDF('download');
+        }, 300); // Adjust the timeout duration as needed
+    }   
 
     private convertToSAST(date: Date): Date {
         // Get the UTC time from the date
