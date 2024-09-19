@@ -216,7 +216,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
   }
 
   private getPdfDto(): PdfDTO {
-    const selectedOwner = this.buildingOwners.find(owner => owner.id === this.selectedBuilding?.id);
+    const selectedOwner = this.buildingOwners.find(owner => owner.buildingId === this.selectedBuilding?.id);
     var x = this.balanceDue
     var isCreditForStatement = false;
     if (this.selectedBuildingAccount.isInCredit) {
