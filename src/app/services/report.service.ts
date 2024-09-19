@@ -7,7 +7,8 @@ import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
   providedIn: 'root'
 })
 export class ReportService {
-  private apiUrl = 'http://localhost:8080/api'; 
+    //private apiUrl = 'http://localhost:8080/api';
+    private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
   constructor(private http: HttpClient) { }
 

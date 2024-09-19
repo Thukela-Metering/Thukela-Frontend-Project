@@ -10,8 +10,8 @@ export class BuildingOwnerService {
     constructor(private http: HttpClient) { }
 
 
-    private apiUrl = 'http://localhost:8080/api';
-    //private apiUrl = 'https://thukelameteringproduction.co.za/api';
+    //private apiUrl = 'http://localhost:8080/api';
+    private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
 
     addNewBuildingOwner(buildingOwnerToSave: BuildingOwnerDTO): Observable<OperationalResultDTO<TransactionDTO>> {

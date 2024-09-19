@@ -103,10 +103,10 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   }
 
   loadBuildingOwnerListData(): void {
-    this._buildingOwnerService.getBuildingOwnerAccountByBuildingId(this.invoiceDetail.buildingId ?? 0, true).subscribe({
+    this._buildingOwnerService.getBuildingOwnerAccountByBuildingId(this.invoiceDetail.buildingAccountId ?? 0, true).subscribe({
       next: (response: any) => {
         this.retrievedBuildings = response.data?.buildingOwnerAccountDTOs ?? [];
-        this.foundOwnerAccount = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+        this.foundOwnerAccount = response.data?.buildingOwnerAccountDTOs[0];
       },
       error: (error) => {
         console.error('There was an error!', error);
@@ -156,7 +156,7 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
   }
 
   private getCreditNotePdfDto(): PdfDTO {
-    const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+    
   
     // Calculate subtotal and VAT
     const subtotal = this.creditNoteDetail?.creditNoteTotal ? this.creditNoteDetail.creditNoteTotal / 1.15 : 0;
@@ -167,10 +167,10 @@ export class CreditNoteViewComponent implements OnInit, AfterViewInit {
       originalRef: this.creditNoteDetail?.invoiceReferenceNumber || "",
       invoiceDate: this.creditNoteDetail?.creditNoteDate ? new Date(this.creditNoteDetail.creditNoteDate) : new Date(),
       dueDate: new Date(),
-      customerName: selectedOwner?.name || 'N/A',
-      customerAddress: selectedOwner?.address || 'N/A',
-      customerPhone: selectedOwner?.contactNumber || 'N/A',
-      customerEmail: selectedOwner?.email || 'N/A',
+      customerName: this.foundOwnerAccount?.name || 'N/A',
+      customerAddress: this.foundOwnerAccount?.address || 'N/A',
+      customerPhone: this.foundOwnerAccount?.contactNumber || 'N/A',
+      customerEmail: this.foundOwnerAccount?.email || 'N/A',
       taxNumber: this.retrievedAccounts.find(account => account.id === this.invoiceDetail.buildingId)?.buildingTaxNumber || 'N/A',
       subTotal: subtotal,
       discount: 0,  // Assuming discount is 0 or you can replace it with the actual discount value

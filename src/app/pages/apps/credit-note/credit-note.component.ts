@@ -55,7 +55,7 @@ export class CreditNoteComponent implements OnInit {
       next: (response: any) => {
         console.log('Building owner data loaded:', response);
         this.retrievedBuildings = response.data?.buildingOwnerAccountDTOs ?? [];
-        this.foundOwnerAccount = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
+        this.foundOwnerAccount = response.data?.buildingOwnerAccountDTOs[0];
       },
       error: (error) => {
         console.error('Error loading building owner data:', error);
@@ -98,7 +98,7 @@ export class CreditNoteComponent implements OnInit {
       creditNoteDate: new Date(),
       creditNoteTotal: totalCreditNoteValue,
       buildingOwnerId: this.foundOwnerAccount?.id,
-      buildingAccountId: this.invoiceDetail.buildingId,
+      buildingAccountId: this.invoiceDetail.buildingAccountId,
       items: this.invoiceDetail.items?.filter(item => item.isCreditNote),
       isActive: true
     };
