@@ -4,66 +4,144 @@
   <mat-dialog-content style="max-width: 600px">
     <form #userForm="ngForm" (ngSubmit)="doAction()">
       <div class="row">
+        <!-- Name Field -->
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Name</mat-label>
-            <input matInput required id="name" name="name" [(ngModel)]="local_data.name" placeholder="Name" #name="ngModel">
-            <mat-error *ngIf="name.invalid && name.touched">Name is required</mat-error>
+            <input
+              matInput
+              required
+              id="name"
+              name="name"
+              [(ngModel)]="local_data.name"
+              placeholder="Name"
+              #name="ngModel"
+            />
+            <mat-error *ngIf="name.invalid && name.touched">
+              Name is required
+            </mat-error>
           </mat-form-field>
         </div>
+
+        <!-- Square Meters Field -->
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Square Meters</mat-label>
-            <input matInput required id="nSquareMetersame" name="nSquareMetersame" [(ngModel)]="local_data.nSquareMetersame" placeholder="Square Meters" #nSquareMetersame="ngModel">
-            <mat-error *ngIf="nSquareMetersame.invalid && nSquareMetersame.touched">Square Meters is required</mat-error>
+            <input
+              matInput
+              required
+              id="nSquareMetersame"
+              name="nSquareMetersame"
+              [(ngModel)]="local_data.nSquareMetersame"
+              placeholder="Square Meters"
+              #nSquareMetersame="ngModel"
+            />
+            <mat-error *ngIf="nSquareMetersame.invalid && nSquareMetersame.touched">
+              Square Meters is required
+            </mat-error>
           </mat-form-field>
-        </div>           
+        </div>
+
+        <!-- SDG Meter Zone Field -->
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>SDG Meter Zone</mat-label>
-            <input matInput id="sdgMeterZone" name="sdgMeterZone" [(ngModel)]="local_data.sdgMeterZone" placeholder="SDG Meter Zone">
+            <input
+              matInput
+              id="sdgMeterZone"
+              name="sdgMeterZone"
+              [(ngModel)]="local_data.sdgMeterZone"
+              placeholder="SDG Meter Zone"
+            />
           </mat-form-field>
         </div>
+
+        <!-- Address Field -->
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Address</mat-label>
-            <input matInput required id="address" name="address" [(ngModel)]="local_data.address" placeholder="Address" #address="ngModel">
-            <mat-error *ngIf="address.invalid && address.touched">Address is required</mat-error>
+            <input
+              matInput
+              required
+              id="address"
+              name="address"
+              [(ngModel)]="local_data.address"
+              placeholder="Address"
+              #address="ngModel"
+            />
+            <mat-error *ngIf="address.invalid && address.touched">
+              Address is required
+            </mat-error>
           </mat-form-field>
         </div>
+
+        <!-- Notes Field -->
         <div class="col-lg-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Notes</mat-label>
-            <input matInput id="notes" name="notes" [(ngModel)]="local_data.notes" placeholder="Notes">
+            <input
+              matInput
+              id="notes"
+              name="notes"
+              [(ngModel)]="local_data.notes"
+              placeholder="Notes"
+            />
           </mat-form-field>
-        </div>     
+        </div>
+
+        <!-- Active Checkbox and Inactive Date Picker -->
         <div class="col-lg-6">
-          <mat-radio-group name="isActive" class="w-100" [(ngModel)]="local_data.isActive">
-            <mat-radio-button [value]="true">Active</mat-radio-button>
-            <mat-radio-button [value]="false">Inactive</mat-radio-button>
-          </mat-radio-group>
-          <ng-container *ngIf="local_data.isActive === false">
+          <!-- Single Checkbox for Active -->
+          <mat-checkbox
+            class="w-100"
+            [(ngModel)]="local_data.isActive"
+            name="isActive"
+            color="primary"
+          >
+            Active
+          </mat-checkbox>
+
+          <!-- Date Picker Visible When Inactive -->
+          <ng-container *ngIf="!local_data.isActive">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Inactive from</mat-label>
               <input
                 matInput
                 [matDatepicker]="startDateDP"
-                placeholder="Inactive from"
+                placeholder="Select date"
                 name="dateDeleted"
                 [(ngModel)]="local_data.dateDeleted"
+                required
               />
               <mat-datepicker-toggle
                 matSuffix
                 [for]="startDateDP"
               ></mat-datepicker-toggle>
               <mat-datepicker #startDateDP></mat-datepicker>
+              <mat-error *ngIf="userForm.submitted && !local_data.dateDeleted">
+                Inactive date is required
+              </mat-error>
             </mat-form-field>
           </ng-container>
         </div>
       </div>
+
+      <!-- Form Actions -->
       <div class="form-actions">
-        <button mat-stroked-button color="warn" type="button" (click)="closeDialog()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="userForm.invalid || name.invalid || nSquareMetersame.invalid || address.invalid">
+        <button
+          mat-stroked-button
+          color="warn"
+          type="button"
+          (click)="closeDialog()"
+        >
+          Cancel
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="userForm.invalid || name.invalid || nSquareMetersame.invalid || address.invalid"
+        >
           {{ action }}
         </button>
       </div>
@@ -71,12 +149,29 @@
   </mat-dialog-content>
 </div>
 
+<!-- Delete Confirmation -->
 <div *ngIf="action === 'Delete'">
   <div class="p-x-24">
-    <p class="mat-drawer-container">Sure to delete <span class="f-w-600">{{ local_data.name }}</span>?</p>
+    <p class="mat-drawer-container">
+      Sure to delete
+      <span class="f-w-600">{{ local_data.name }}</span>?
+    </p>
   </div>
   <div mat-dialog-actions class="p-x-24 p-b-24">
-    <button mat-button (click)="doAction()" mat-flat-button color="warn">{{ action }}</button>
-    <button mat-button (click)="closeDialog()" class="m-l-8">Cancel</button>
+    <button
+      mat-button
+      (click)="doAction()"
+      mat-flat-button
+      color="warn"
+    >
+      {{ action }}
+    </button>
+    <button
+      mat-button
+      (click)="closeDialog()"
+      class="m-l-8"
+    >
+      Cancel
+    </button>
   </div>
 </div>
