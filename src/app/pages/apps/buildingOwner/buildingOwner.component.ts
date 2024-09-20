@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Optional, Inject, Input, OnChanges, SimpleChanges, EventEmitter, Output, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Optional, Inject, Input, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -27,7 +27,6 @@ export class AppBuildingOwnerComponent implements OnInit, OnChanges, OnDestroy {
   local_data: BuildingOwnerDTO;
   DropDownValues: LookupValueDTO[] = [];
   accountForm: FormGroup;
-  banks = ['Bank A', 'Bank B', 'Bank C'];
   private formChangesSubscription: Subscription;
   buildingFilterCtrl: FormControl = new FormControl();
   buildings: BuildingDTO[] = [];
@@ -249,4 +248,5 @@ export class AppBuildingOwnerComponent implements OnInit, OnChanges, OnDestroy {
       this.formChangesSubscription.unsubscribe();
     }
   }
+
 }

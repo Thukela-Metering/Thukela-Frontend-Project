@@ -1,3 +1,5 @@
+<!-- your-dialog.component.html -->
+
 <mat-dialog-content>
   <mat-accordion #accordion="matAccordion" multi>
     <!-- Building -->
@@ -10,7 +12,8 @@
       <app-building-dialog-content 
         [localDataFromComponent]="selectedBuilding"
         [isPortfolioCreation]="true"
-        (submissionSuccess)="onBuildingAdded($event)"></app-building-dialog-content>
+        (submissionSuccess)="onBuildingAdded($event)">
+      </app-building-dialog-content>
     </mat-expansion-panel>
 
     <!-- Building Account -->
@@ -24,7 +27,8 @@
         [localDataFromComponent]="selectedBuildingAccount"
         [isPortfolioCreation]="true"
         [selectedBuilding]="selectedBuilding"
-        (submissionSuccess)="onAccountAdded($event)"></app-building-accounts>
+        (submissionSuccess)="onAccountAdded($event)">
+      </app-building-accounts>
     </mat-expansion-panel>
 
     <!-- Building Owner Account -->
@@ -38,7 +42,8 @@
         [localDataFromComponent]="selectedOwnerAccount"
         [isPortfolioCreation]="true"
         [selectedBuilding]="selectedBuilding"
-        (submissionSuccess)="onOwnerAdded($event)"></app-building-owner-dialog-content>
+        (submissionSuccess)="onOwnerAdded($event)">
+      </app-building-owner-dialog-content>
     </mat-expansion-panel>
   </mat-accordion>
 </mat-dialog-content>
