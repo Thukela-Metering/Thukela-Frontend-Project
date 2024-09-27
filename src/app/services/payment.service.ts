@@ -21,8 +21,11 @@ export class PaymentService {
     }
   }
 
-  getPayments(): Observable<OperationalResultDTO<TransactionDTO>> {
-    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment`);
+  getPayments(getReversedPayment:boolean): Observable<OperationalResultDTO<TransactionDTO>> {   
+    const params = new HttpParams().set('reversedPayments', getReversedPayment.toString());
+
+    // Make the GET request with the query parameters
+    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment`, { params });
     return getResponse;
   }
 
@@ -33,6 +36,11 @@ export class PaymentService {
 
   createPayment(payment: PaymentDTO): Observable<OperationalResultDTO<TransactionDTO>> {
     var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment`, payment);
+    return getResponse;
+  }
+
+  reversePayment(payment: PaymentDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment/ReversePayment`, payment);
     return getResponse;
   }
 }
