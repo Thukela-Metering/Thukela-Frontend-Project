@@ -1,24 +1,73 @@
+
 <mat-card class="cardWithShadow">
-  <mat-card-content class="p-24">
-    <label class="checkbox-group-label">Manage Payments or Reversed Payments:</label>
-    <div class="checkbox-group">
-      <mat-checkbox
-        [(ngModel)]="isActive"
-        (change)="onCheckboxChange('active')"
-        name="isActive"
-      >
-        Payments
-      </mat-checkbox>
-      <mat-checkbox
-        [(ngModel)]="isInactive"
-        (change)="onCheckboxChange('inactive')"
-        name="isInactive"
-      >
-        Reversed Payments
-      </mat-checkbox>
+  <mat-card-content>
+    <div class="row justify-content-between">
+      <div class="col-sm-4">
+        <mat-form-field appearance="outline" class="w-100 hide-hint">
+          <input matInput placeholder="Search statement content" (keyup)="filter($any($event.target).value)" />
+          <mat-icon matSuffix>
+            <i-tabler name="search" class="icon-20"></i-tabler>
+          </mat-icon>
+        </mat-form-field>
+      </div>
+      <!-- do date selector component here -->
+      <div class="col-sm-4 mx-2">
+        <mat-card class="cardWithShadow p-3">
+          <mat-card-content class="p-24">
+            <label class="checkbox-group-label">Manage Payments or Reversed Payments:</label>
+            <div class="checkbox-group">
+              <mat-checkbox
+                [(ngModel)]="isActive"
+                (change)="onCheckboxChange('active')"
+                name="isActive"
+              >
+                Payments
+              </mat-checkbox>
+              <mat-checkbox
+                [(ngModel)]="isInactive"
+                (change)="onCheckboxChange('inactive')"
+                name="isInactive"
+              >
+                Reversed Payments
+              </mat-checkbox>
+            </div>
+            <div class="row">
+              <div class="col-12 mb-3">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>From Date:</mat-label>
+                      <input matInput [matDatepicker]="fromDateDP" placeholder="Select From Date"
+                        [(ngModel)]="selectedFromDate" id="fromDate"  />
+                      <mat-datepicker-toggle matSuffix [for]="fromDateDP"></mat-datepicker-toggle>
+                      <mat-datepicker #fromDateDP></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>To Date:</mat-label>
+                      <input matInput [matDatepicker]="toDateDP" placeholder="Select To Date"
+                        [(ngModel)]="selectedToDate" id="toDate" />
+                      <mat-datepicker-toggle matSuffix [for]="toDateDP"></mat-datepicker-toggle>
+                      <mat-datepicker #toDateDP></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button style="float: right;" mat-stroked-button (click)="loadPaymentData()" color="primary">Get Statement</button>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- end of date selector component -->
     </div>
   </mat-card-content>
 </mat-card>
+
 <div class="mat-elevation-z8">
   <mat-card-content class="p-24" style="overflow-y: auto; max-height: calc(100vh - 200px);">
     <table mat-table [dataSource]="dataSource" matSort class="no-wrap v-middle w-100">

@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { BuildingOwnerDTO, BuildingAccountDTO, StatementItemDTO, StatementFilterDTO, BuildingDTO, TransactionDTO, UserDataDTO } from 'src/app/DTOs/dtoIndex';
+import { BuildingOwnerDTO, BuildingAccountDTO, StatementItemDTO, FilterDTO, BuildingDTO, TransactionDTO, UserDataDTO } from 'src/app/DTOs/dtoIndex';
 import { BuildingService } from 'src/app/services/building.service';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { PortfolioService } from 'src/app/services/portfolio.service';
@@ -27,7 +27,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
   allComplete: boolean = false;
   statementItems: StatementItemDTO[] = [];
   StatementItemList: MatTableDataSource<StatementItemDTO>;
-  filterDTO: StatementFilterDTO = new StatementFilterDTO();
+  filterDTO: FilterDTO = new FilterDTO();
   selectedBuilding: BuildingDTO | null = null;
   buildingOwners: BuildingOwnerDTO[] = [];
   selectedBuildingAccount: BuildingAccountDTO;
@@ -94,7 +94,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
     console.log("The filter DTO :", this.filterDTO);
 
     // Convert dates to strings in the Africa/Johannesburg timezone
-    const filterDTOWithStringDates: StatementFilterDTO = {
+    const filterDTOWithStringDates: FilterDTO = {
       ...this.filterDTO,
       fromDate: this.filterDTO.fromDate ? this.convertToTimeZoneString(new Date(this.filterDTO.fromDate), 'Africa/Johannesburg') : "",
       toDate: this.filterDTO.toDate ? this.convertToTimeZoneString(new Date(this.filterDTO.toDate), 'Africa/Johannesburg') : ""

@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { PaymentService } from 'src/app/services/payment.service';
 import { PaymentDTO } from 'src/app/DTOs/paymentDTO';
-import { PaymentInvoiceItemDTO } from 'src/app/DTOs/dtoIndex';
+import { FilterDTO, PaymentInvoiceItemDTO } from 'src/app/DTOs/dtoIndex';
 
 @Component({
   selector: 'app-payment-table',
@@ -15,6 +15,9 @@ export class PaymentTableComponent implements OnInit {
   payments: PaymentDTO[] = [];
   isActive: boolean = true;
   isInactive: boolean = false;
+  filterDTO: FilterDTO = new FilterDTO();
+  selectedFromDate = new Date();
+  selectedToDate = new Date();
   selectedPaymentToReverse: PaymentDTO = new PaymentDTO();
   paymentInvoiceItemDTO: PaymentInvoiceItemDTO[] = []
   displayedColumns: string[] = [
@@ -32,7 +35,10 @@ export class PaymentTableComponent implements OnInit {
   constructor(private paymentService: PaymentService) { }
 
   ngOnInit(): void {
-    this.loadPaymentData();
+    this.selectedFromDate = new Date();
+    this.selectedToDate = new Date();
+    this.initializeFilterDates();
+ 
   }
 
   ngAfterViewInit(): void {
@@ -54,10 +60,23 @@ export class PaymentTableComponent implements OnInit {
       }
     };
   }
+  initializeFilterDates(): void {
+    const today = new Date();
 
+    // First day of the current month in UTC
+    this.selectedFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));
+
+    // Today's date in UTC
+    this.selectedToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+
+    // Optional: Automatically load payment data after initializing dates
+    this.loadPaymentData();
+  }
   loadPaymentData(): void {
-    var boolToUse = this.isActive ? true:false;
-    this.paymentService.getPayments(this.isActive ? true:false).subscribe({
+    this.filterDTO.fromDate = this.selectedFromDate.toISOString();
+    this.filterDTO.toDate = this.selectedToDate.toISOString();
+    this.filterDTO.booleanFilterValue = this.isActive ? true:false;
+    this.paymentService.getPayments(this.filterDTO).subscribe({
       next: (response: any) => {
         this.payments = response.data.paymentDTOs || [];
         this.dataSource.data = this.payments;
@@ -124,5 +143,8 @@ export class PaymentTableComponent implements OnInit {
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
+  }
+  filter(filterValue: string): void {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 }

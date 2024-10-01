@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { OperationalResultDTO, PaymentInvoiceItemDTO, TransactionDTO } from '../DTOs/dtoIndex';
+import { FilterDTO, OperationalResultDTO, PaymentInvoiceItemDTO, TransactionDTO } from '../DTOs/dtoIndex';
 import { PaymentDTO } from '../DTOs/paymentDTO';
 
 @Injectable({
@@ -21,11 +21,9 @@ export class PaymentService {
     }
   }
 
-  getPayments(getReversedPayment:boolean): Observable<OperationalResultDTO<TransactionDTO>> {   
-    const params = new HttpParams().set('reversedPayments', getReversedPayment.toString());
+  getPayments(filterDTO: FilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {   
 
-    // Make the GET request with the query parameters
-    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment`, { params });
+    var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment/GetPayments`, filterDTO);   
     return getResponse;
   }
 
