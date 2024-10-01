@@ -9,7 +9,7 @@ import { badDeptDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/d
 export class BadDeptService {
 
    // private apiUrl = 'http://localhost:8080/api';
-   private apiUrl = 'https://311c9a10eacd09a8.p61.rt3.io/api';
+   private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
    constructor(private http: HttpClient) { }
 
     getAllBadDept(isActive: boolean): Observable<OperationalResultDTO<TransactionDTO>> {

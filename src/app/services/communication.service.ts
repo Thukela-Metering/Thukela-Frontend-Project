@@ -12,7 +12,7 @@ import { TransactionDTO } from '../DTOs/transactionDTO';
 export class CommunicationService {
 
     //private apiUrl = 'http://localhost:8080/api';
-    private apiUrl = 'https://311c9a10eacd09a8.p61.rt3.io/api';
+    private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
   constructor(private http: HttpClient) { }
 
   sendEmail(pdfDto: PdfDTO, emailData: any, templateNum: number): Observable<OperationalResultDTO<any>> {
