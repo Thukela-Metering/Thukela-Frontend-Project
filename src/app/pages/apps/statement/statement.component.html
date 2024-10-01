@@ -1,0 +1,142 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="row justify-content-between">
+      <div class="col-sm-4">
+        <mat-form-field appearance="outline" class="w-100 hide-hint">
+          <input matInput placeholder="Search statement content" (keyup)="filter($any($event.target).value)" />
+          <mat-icon matSuffix>
+            <i-tabler name="search" class="icon-20"></i-tabler>
+          </mat-icon>
+        </mat-form-field>
+      </div>
+      <!-- do date selector component here -->
+      <div class="col-sm-4 mx-2">
+        <mat-card class="cardWithShadow p-3">
+          <mat-card-content class="p-24">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Owner</mat-label>
+              <mat-select [(ngModel)]="selectedBuilding" (selectionChange)="onBuildingOwnerSelectionChange($event)">
+                <mat-option *ngFor="let building of filteredBuildings" [value]="building">
+                  {{ building.name }}
+                </mat-option>
+              </mat-select>
+              <input matInput placeholder="Filter buildings">
+            </mat-form-field>
+            <div class="row">
+              <div class="col-12 mb-3">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>From Date:</mat-label>
+                      <input matInput [matDatepicker]="fromDateDP" placeholder="Select From Date"
+                        [(ngModel)]="selectedFromDate" id="fromDate"  />
+                      <mat-datepicker-toggle matSuffix [for]="fromDateDP"></mat-datepicker-toggle>
+                      <mat-datepicker #fromDateDP></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>To Date:</mat-label>
+                      <input matInput [matDatepicker]="toDateDP" placeholder="Select To Date"
+                        [(ngModel)]="selectedToDate" id="toDate" />
+                      <mat-datepicker-toggle matSuffix [for]="toDateDP"></mat-datepicker-toggle>
+                      <mat-datepicker #toDateDP></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button style="float: right;" mat-stroked-button (click)="loadData()" color="primary">Get Statement</button>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <!-- end of date selector component -->
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow" *ngIf="dataLoaded">
+  <mat-card-content>
+    <div class="container-fluid">
+      <!-- Buttons to download, email, and preview the invoice -->
+      <div class="row">
+        <div class="col-sm-6 d-flex justify-content-end">
+          <button mat-fab color="primary" (click)="downloadInvoice()" aria-label="Download Invoice"
+            style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; margin-left: 10px; display: flex; justify-content: center; align-items: center; padding: 0;">
+            <mat-icon style="font-size: 18px; position: relative; top: 50%; transform: translateY(-50%);">download</mat-icon>
+          </button>
+          <button mat-fab color="primary" (click)="emailInvoice()" aria-label="Email Invoice"
+            style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; margin-left: 10px; display: flex; justify-content: center; align-items: center; padding: 0;">
+            <mat-icon style="font-size: 18px; position: relative; top: 50%; transform: translateY(-50%);">email</mat-icon>
+          </button>
+          <button mat-fab color="primary" (click)="previewInvoice()" aria-label="Preview Invoice"
+            style="width: 30px; height: 30px; min-width: 30px; min-height: 30px; margin-left: 10px; display: flex; justify-content: center; align-items: center; padding: 0;">
+            <mat-icon style="font-size: 18px; position: relative; top: 50%; transform: translateY(-50%);">visibility</mat-icon>
+          </button>
+        </div>
+      </div>
+      <!-- Table with statement data -->
+      <div class="table-responsive">
+        <table mat-table [dataSource]="StatementItemList" matSort class="no-wrap m-t-0 v-middle w-100">
+          <ng-container matColumnDef="Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+              Date
+            </th>
+            <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white;">
+              {{ element.date | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Account">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+              Account
+            </th>
+            <td mat-cell *matCellDef="let element" class="f-s-14">
+              {{ element.accountNumber }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Transaction">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+              Transaction
+            </th>
+            <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white;">
+              {{ element.transaction }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Amount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+              Amount
+            </th>
+            <td mat-cell *matCellDef="let element" class="f-s-14">
+              {{ element.amount | currency:'R' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="ClosingBalance">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">
+              Closing Balance
+            </th>
+            <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white;">
+              {{ element.closingBalance | currency:'R' }}
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator> -->
+      </div>
+      <div class="text-right m-t-30">
+        <mat-divider></mat-divider>
+        <h3 class="m-b-0 p-t-20 f-s-18" style="color: white;">
+          <strong>Balance Due: </strong>
+          {{ selectedBuildingAccount.isInCredit ? '-' : '' }}{{ balanceDue | currency:'R' }}
+          <!-- <strong>Balance Due: </strong>{{ balanceDue | currency:'R' }} -->
+        </h3>
+      </div>
+      <br>
+      <mat-divider></mat-divider>
+    </div>
+  </mat-card-content>
+</mat-card>

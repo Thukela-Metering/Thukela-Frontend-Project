@@ -1,0 +1,65 @@
+
+@if(action !== 'Delete') {
+  <h2 class="f-w-500 m-b-24" style="color: white;"><strong>Create/Edit product</strong></h2>
+<div *ngIf="productForm">
+  <mat-dialog-content style="max-width: 600px">
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" placeholder="Name">
+      <mat-error *ngIf="productForm.get('name')?.hasError('required')">Name is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Description</mat-label>
+      <input matInput formControlName="description" placeholder="Description">
+      <mat-error *ngIf="productForm.get('description')?.hasError('required')">description is required</mat-error>    
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Cost Price</mat-label>
+      <input matInput formControlName="costPrice" placeholder="costPrice">
+      <mat-error *ngIf="productForm.get('costPrice')?.hasError('required')">Cost price is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Selling Price</mat-label>
+      <input matInput formControlName="sellingPrice" placeholder="Selling Price">
+      <mat-error *ngIf="productForm.get('sellingPrice')?.hasError('required')">Selling price is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Quantity</mat-label>
+      <input matInput formControlName="quantity" placeholder="Quantity">
+      <mat-error *ngIf="productForm.get('quantity')?.hasError('required')">Quantity is required</mat-error>
+    </mat-form-field>
+
+        <mat-radio-group name="isActive" class="w-100" formControlName="isActive">
+          <mat-radio-button [value]="true">Active</mat-radio-button>
+          <mat-radio-button [value]="false">Inactive</mat-radio-button>
+        </mat-radio-group>
+        
+        <!-- <input type="text" matInput required id="isActive" name="isActive" [(ngModel)]="local_data.isActive"
+          placeholder="isActive" /> -->
+      <!-- </mat-form-field> -->
+   
+    <div class="form-actions">
+        <button mat-stroked-button color="warn" (click)="onCancel()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="!productForm.valid">{{action}}</button>
+      </div>
+  </form>
+</mat-dialog-content>
+</div>
+} @else {
+  <h2 class="f-w-500 m-b-24" style="color: white;"><strong>Delete product</strong></h2>
+  <div class="p-x-24" style="color: white;">
+    <p>Sure to delete <span class="f-w-600">{{local_data.name}}</span> ?</p>
+  </div>
+  <div mat-dialog-actions class="p-x-24 p-b-24">
+    <button mat-button (click)="onSubmit()" mat-flat-button color="warn">
+      {{action}}
+    </button>
+    <button mat-button (click)="onCancel()" class="m-l-8">Cancel</button>
+  </div>
+  }

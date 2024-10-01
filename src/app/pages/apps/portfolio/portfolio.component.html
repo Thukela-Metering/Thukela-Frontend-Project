@@ -1,0 +1,63 @@
+<!-- Portfolio Component HTML -->
+<div class="portfolio-container" [formGroup]="portfolioForm">
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Select Building</mat-label>
+    <mat-select formControlName="building" (selectionChange)="onBuildingChange($event.value)">
+      <mat-option *ngFor="let building of buildings" [value]="building.id">
+        {{ building.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-card class="b-1 shadow-none" *ngIf="transactionData">
+    <mat-card-content class="b-t-1">
+      <div class="d-flex align-items-center m-b-16">
+        <div style="display: flex; align-items: center;">
+          <span style="margin-right: 8px;">Toggle Panels</span>
+          <mat-slide-toggle (change)="togglePanels($event.checked)" color="primary"></mat-slide-toggle>
+        </div>
+      </div>
+
+      <mat-accordion #accordion="matAccordion" multi>
+        <!-- Building -->
+        <mat-expansion-panel class="cardWithShadow">
+          <mat-expansion-panel-header>
+            <mat-panel-title class="f-w-600">
+              Building
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-building-dialog-content [localDataFromComponent]="selectedBuilding"></app-building-dialog-content>
+        </mat-expansion-panel>
+        <!-- Building Account -->
+        <mat-expansion-panel class="cardWithShadow">
+          <mat-expansion-panel-header>
+            <mat-panel-title class="f-w-600">
+              Building Account
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-building-accounts [localDataFromComponent]="selectedBuildingAccount"></app-building-accounts>
+        </mat-expansion-panel>
+
+        <!-- Building Owner Account -->
+        <mat-expansion-panel class="cardWithShadow">
+          <mat-expansion-panel-header>
+            <mat-panel-title class="f-w-600">
+              Building Owner Account
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-building-owner-dialog-content [localDataFromComponent]="selectedOwnerAccount"></app-building-owner-dialog-content>
+        </mat-expansion-panel>
+
+        <!-- Person -->
+        <mat-expansion-panel class="cardWithShadow">
+          <mat-expansion-panel-header>
+            <mat-panel-title class="f-w-600">
+              Person
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-dialog-content [localDataFromComponent]="selectedPerson"></app-dialog-content>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+</div>

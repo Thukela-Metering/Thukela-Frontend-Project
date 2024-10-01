@@ -1,0 +1,111 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content class="p-24">
+    <label class="radio-group-label">Manage Active or Inactive Building Owners:</label>
+    <mat-radio-group [(ngModel)]="manageActiveBuildingOwners" (change)="filterBuildingOwners()" name="isActive" class="w-100">
+      <mat-radio-button [value]="true">Active</mat-radio-button>
+      <mat-radio-button [value]="false">Inactive</mat-radio-button>
+    </mat-radio-group>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow">
+  <mat-card-content class="p-24">
+    <div class="row justify-content-between">
+      <div class="col-lg-4">
+        <mat-form-field appearance="outline" class="w-100 hide-hint">
+          <input matInput #searchInput placeholder="Search Building Owner" (keyup)="applyFilter(searchInput.value)" />
+          <mat-icon matSuffix>
+            <i-tabler name="search" class="icon-20"></i-tabler>
+          </mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-4 d-flex align-items-center justify-content-end">
+        <button mat-flat-button (click)="openDialog('Add', {})" color="primary">
+          Add Building Owner
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" matSort class="w-100">
+        <ng-container matColumnDef="buildingId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Building ID</th>
+          <td mat-cell *matCellDef="let element">{{ element.buildingId }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Name</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ element.name }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Email</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ element.email }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fax">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Fax</th>
+          <td mat-cell *matCellDef="let element">{{ element.fax }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="contactNumber">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Contact Number</th>
+          <td mat-cell *matCellDef="let element">{{ element.contactNumber }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="accountNumber">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Account Number</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ element.accountNumber }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="bank">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Bank</th>
+          <td mat-cell *matCellDef="let element">
+            <p class="f-w-600 mat-subtitle-1 f-s-16 m-t-0">{{ mapCategoryToString(element.bank) }}</p>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="taxable">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Taxable</th>
+          <td mat-cell *matCellDef="let element">{{ element.taxable }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Address</th>
+          <td mat-cell *matCellDef="let element">{{ element.address }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="preferredCommunication">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Preferred Communication</th>
+          <td mat-cell *matCellDef="let element">{{ element.preferredCommunication === 9 ? 'email' : 'mobile' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="additionalInformation">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-16 f-w-600">Additional Information</th>
+          <td mat-cell *matCellDef="let element">{{ element.additionalInformation }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="f-s-16 f-w-600">Action</th>
+          <td mat-cell *matCellDef="let element" class="action-link">
+            <a (click)="openDialog('Update', element)" class="m-r-10 cursor-pointer"><i-tabler name="edit"
+                class="icon-18"></i-tabler></a>
+            <a *ngIf="manageActiveBuildingOwners" (click)="openDialog('Delete', element)" class="m-r-10 cursor-pointer">
+              <i-tabler name="trash" class="icon-18"></i-tabler>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

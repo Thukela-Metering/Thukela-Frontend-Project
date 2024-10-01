@@ -21,10 +21,10 @@ import { AppHorizontalSidebarComponent } from './horizontal/sidebar/sidebar.comp
 import { AppBreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
 import { CustomizerComponent } from './shared/customizer/customizer.component';
 import { UserService } from 'src/app/services/user.service';
-import { PersonDTO } from 'src/app/DTOs/userDto';
+import { PersonDTO } from 'src/app/DTOs/personDTO';
 import { RoleService } from 'src/app/services/role.service';
-import { OperationalResultDTO } from 'src/app/DTOs/backendResponseDTO';
 import { AuthService } from 'src/app/services/auth.service';
+import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -92,109 +92,6 @@ export class FullComponent implements OnInit {
     return this.resView;
   }
 
-  // for mobile app sidebar
-  // apps: apps[] = [
-  //   {
-  //     id: 1,
-  //     img: '/assets/images/svgs/icon-dd-chat.svg',
-  //     title: 'Chat Application',
-  //     subtitle: 'Messages & Emails',
-  //     link: '/apps/chat',
-  //   },
-  //   {
-  //     id: 2,
-  //     img: '/assets/images/svgs/icon-dd-cart.svg',
-  //     title: 'eCommerce App',
-  //     subtitle: 'Buy a Product',
-  //     link: '/apps/email/inbox',
-  //   },
-  //   {
-  //     id: 3,
-  //     img: '/assets/images/svgs/icon-dd-invoice.svg',
-  //     title: 'Invoice App',
-  //     subtitle: 'Get latest invoice',
-  //     link: '/apps/invoice',
-  //   },
-  //   {
-  //     id: 4,
-  //     img: '/assets/images/svgs/icon-dd-date.svg',
-  //     title: 'Calendar App',
-  //     subtitle: 'Get Dates',
-  //     link: '/apps/calendar',
-  //   },
-  //   {
-  //     id: 5,
-  //     img: '/assets/images/svgs/icon-dd-mobile.svg',
-  //     title: 'Contact Application',
-  //     subtitle: '2 Unsaved Contacts',
-  //     link: '/apps/contacts',
-  //   },
-  //   {
-  //     id: 6,
-  //     img: '/assets/images/svgs/icon-dd-lifebuoy.svg',
-  //     title: 'Tickets App',
-  //     subtitle: 'Create new ticket',
-  //     link: '/apps/tickets',
-  //   },
-  //   {
-  //     id: 7,
-  //     img: '/assets/images/svgs/icon-dd-message-box.svg',
-  //     title: 'Email App',
-  //     subtitle: 'Get new emails',
-  //     link: '/apps/email/inbox',
-  //   },
-  //   {
-  //     id: 8,
-  //     img: '/assets/images/svgs/icon-dd-application.svg',
-  //     title: 'Courses',
-  //     subtitle: 'Create new course',
-  //     link: '/apps/courses',
-  //   },
-  // ];
-
-  // quicklinks: quicklinks[] = [
-  //   {
-  //     id: 1,
-  //     title: 'Pricing Page',
-  //     link: '/theme-pages/pricing',
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'Authentication Design',
-  //     link: '/authentication/side-login',
-  //   },
-  //   {
-  //     id: 3,
-  //     title: 'Register Now',
-  //     link: '/authentication/side-register',
-  //   },
-  //   {
-  //     id: 4,
-  //     title: '404 Error Page',
-  //     link: '/authentication/error',
-  //   },
-  //   {
-  //     id: 5,
-  //     title: 'Notes App',
-  //     link: '/apps/notes',
-  //   },
-  //   {
-  //     id: 6,
-  //     title: 'Employee App',
-  //     link: '/apps/employee',
-  //   },
-  //   {
-  //     id: 7,
-  //     title: 'Todo Application',
-  //     link: '/apps/todo',
-  //   },
-  //   {
-  //     id: 8,
-  //     title: 'Treeview',
-  //     link: '/theme-pages/treeview',
-  //   },
-  // ];
-
   constructor(
     private settings: CoreService,
     private mediaMatcher: MediaMatcher,
@@ -239,21 +136,21 @@ export class FullComponent implements OnInit {
     this.layoutChangesSubscription.unsubscribe();
   }
   getLoggedInPersonData() {
-    var getLoggedInUserId = localStorage.getItem('LoggedInUserId')!;
-    if (Number(getLoggedInUserId) > -1) {
+    var getLoggedInUserId = localStorage.getItem('LoggedInUserGuid')!;
+    if (getLoggedInUserId != "") {
       this._userService.getUserById(getLoggedInUserId).subscribe((userDetail) => {
-        var result = userDetail as PersonDTO
-        this.LoggedInPersonName = result.name.concat(' ', result.surname);
-        console.log(userDetail);
+        var result = userDetail as OperationalResultDTO<TransactionDTO>;
+        this.LoggedInPersonName = result.data!.personDTOs![0].name.concat(' ', result.data!.personDTOs![0].surname);
+        // console.log(userDetail);
       });
     }
   }
   getLoggedInUserRole() {
-    var getLoggedInUserId = localStorage.getItem('LoggedInUserId')!;
-    if (Number(getLoggedInUserId) > -1) {
+    var getLoggedInUserId = localStorage.getItem('LoggedInUserGuid')!;
+    if (getLoggedInUserId!="") {
       this._roleService.getUserRoleByUserId(getLoggedInUserId).subscribe(ax => {
-        var result = ax as OperationalResultDTO<string>;
-        this.LoggedInPersonRole = result.data!.toString();
+        var result = ax as OperationalResultDTO<TransactionDTO>;
+        this.LoggedInPersonRole = result.data!.stringResponseProperty!;
       });
     }
   }
@@ -261,7 +158,7 @@ export class FullComponent implements OnInit {
   signout(){
     this.authService.logout().subscribe(
       response => {
-        console.log(response);
+        // console.log(response);
         localStorage.clear();
         this.router.navigate(['/authentication/boxed-login']);
       },

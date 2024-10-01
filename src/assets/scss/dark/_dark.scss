@@ -1,5 +1,196 @@
 @use "sass:meta";
 
+.radio-group-label-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Aligns the content to the left */
+}
+//////////Import screen styling////////////////
+.import-card-with-shadow {
+  background-color: #293446;
+  color: #ffffff;
+}
+
+.import-file-drop-zone {
+  border: 2px dashed #757575;
+  border-radius: 5px;
+  padding: 40px;
+  text-align: center;
+  color: #757575;
+  transition: border-color 0.3s, background-color 0.3s;
+  background-color: #343434;
+  cursor: pointer;
+  position: relative;
+}
+
+.import-file-drop-zone:hover {
+  border-color: #3f51b5;
+  color: #3f51b5;
+}
+
+.import-file-drop-zone.drag-over {
+  border-color: #3f51b5;
+  background-color: rgba(63, 81, 181, 0.15);
+}
+
+.import-file-drop-zone .file-drop-content {
+  pointer-events: none;
+}
+
+.import-file-drop-zone p {
+  margin: 20px 0 0;
+}
+
+.import-file-drop-zone mat-icon {
+  margin-bottom: 10px;
+}
+
+/* Adjust the mat-form-field appearance */
+.import-mat-form-field .mat-form-field {
+  color: #ffffff;
+}
+
+.import-mat-form-field .mat-select-placeholder {
+  color: #757575;
+}
+
+.import-mat-form-field .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: #757575;
+}
+
+/* Button styling */
+.import-button[mat-flat-button] {
+  background-color: #3f51b5;
+  color: #ffffff;
+}
+
+.import-button[mat-flat-button]:hover {
+  background-color: #303f9f;
+}
+
+
+
+//////////Global search styling////////////////
+.search-item {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  cursor: pointer;
+  /* Hand icon */
+  color: white;
+  /* Ensure text is white and readable */
+  z-index: 2;
+  /* Ensure the text is above the pseudo-element */
+}
+
+.search-item::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: #3D52A0;
+  /* New background color */
+  transition: transform 1.0s, opacity 0.5s;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  z-index: 1;
+  /* Ensure the pseudo-element is behind the text */
+}
+
+.search-item:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.ripple-wrapper {
+  position: relative;
+  z-index: 3;
+  /* Ensure the ripple wrapper is above the pseudo-element */
+}
+
+mat-card-content {
+  position: relative;
+  z-index: 4;
+  /* Ensure the text is always on top */
+}
+
+//////////Global search styling end////////////////
+//////////Success Border Class//////////////////////
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline .mat-input-element {
+  &.input-success {
+    border: 2px solid green !important;
+  }
+
+  &.input-failed {
+    border: 2px solid red !important;
+  }
+}
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's above other elements */
+}
+
+.mat-dialog-container {
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+/////////////Success Border Class end//////////////
+/// custom table column width
+.quantity-column-header,
+.quantity-column-cell {
+  width: 5%; /* Adjust this value to set the desired width */
+  min-width: 5%; /* Prevent the column from expanding */
+  max-width: 5%; /* Enforce the column width */
+}
+
+.quantity-column-cell mat-form-field {
+  width: 100%; /* Ensure the input takes up the full width of the reduced column */
+}
+/// custom table column width end
+.radio-group-label {
+  margin-bottom: 8px;
+  /* Space between label and radio buttons */
+  font-weight: bold;
+  /* Optional: makes the label bold */
+}
+
+.searchfield-class {
+  color: white;
+  background-color: rgb(38 55 97);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  /* Adds some space above the button row */
+}
+
+.mat-card-content .table-responsive {
+  overflow-x: auto;
+}
+
+.mat-card-content .row.justify-content-end {
+  margin-right: 0;
+  flex-wrap: nowrap;
+}
+
+.mat-card-content .col-auto {
+  padding-right: 0;
+}
+
 .dark-theme {
   $textPrimary: #eaeff4;
   $textSecondary: #7c8fac;
@@ -86,10 +277,7 @@
   .cal-month-view .cal-cell-row:hover,
   .cal-month-view .cal-cell-row .cal-cell:hover,
   .cal-month-view .cal-cell.cal-has-events.cal-open,
-  .cal-week-view
-    .cal-time-events
-    .cal-day-columns:not(.cal-resize-active)
-    .cal-hour-segment:hover,
+  .cal-week-view .cal-time-events .cal-day-columns:not(.cal-resize-active) .cal-hour-segment:hover,
   .cal-week-view .cal-day-headers .cal-header:hover,
   .cal-week-view .cal-day-headers .cal-drag-over,
   .bg-extra-light {
@@ -105,12 +293,9 @@
   //   border
   // -------------------------------------------------------
   .theme-select {
-    .mdc-text-field--outlined
-      .mdc-notched-outline
-      .mdc-notched-outline__leading,
-    .mdc-text-field--outlined
-      .mdc-notched-outline
-      .mdc-notched-outline__trailing {
+
+    .mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__leading,
+    .mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__trailing {
       border-color: $darkborderColor;
     }
   }
@@ -133,11 +318,7 @@
     border: 1px solid $darkformborderColor !important;
   }
 
-  .mat-mdc-radio-button
-    .mdc-radio
-    .mdc-radio__native-control:enabled:not(:checked)
-    + .mdc-radio__background
-    .mdc-radio__outer-circle {
+  .mat-mdc-radio-button .mdc-radio .mdc-radio__native-control:enabled:not(:checked)+.mdc-radio__background .mdc-radio__outer-circle {
     border-color: $darkformborderColor;
   }
 
@@ -151,11 +332,7 @@
   .cal-week-view .cal-day-column,
   .cal-week-view .cal-day-headers .cal-header:first-child,
   .cal-week-view .cal-day-headers .cal-header:not(:last-child),
-  .mat-mdc-radio-button
-    .mdc-radio
-    .mdc-radio__native-control:enabled
-    + .mdc-radio__background
-    .mdc-radio__inner-circle {
+  .mat-mdc-radio-button .mdc-radio .mdc-radio__native-control:enabled+.mdc-radio__background .mdc-radio__inner-circle {
     border-color: $darkformborderColor !important;
   }
 
@@ -200,16 +377,19 @@
       background: $darkthemelightprimary !important;
     }
   }
+
   .inprogress {
     .taskboard-task {
       background: $darkthemelightwarning !important;
     }
   }
+
   .completed {
     .taskboard-task {
       background: $darkthemelightsuccess !important;
     }
   }
+
   .onhold {
     .taskboard-task {
       background: $darkthemelighterror !important;
@@ -222,9 +402,7 @@
   }
 
   // fill
-  .customizer-button-group
-    .mat-button-toggle-appearance-standard.mat-button-toggle-checked
-    i-tabler.fill-icon {
+  .customizer-button-group .mat-button-toggle-appearance-standard.mat-button-toggle-checked i-tabler.fill-icon {
     fill: $darkthemelightprimary;
   }
 
@@ -263,6 +441,7 @@
   .mat-mdc-select-value {
     color: rgba(255, 255, 255, 0.87) !important;
   }
+
   .mat-mdc-select-arrow svg {
     fill: rgba(255, 255, 255, 0.87) !important;
   }
@@ -273,12 +452,10 @@
 
     .mat-mdc-icon-button[disabled][disabled] {
       --mdc-icon-button-icon-color: rgba(255, 255, 255, 0.5) !important;
-      --mdc-icon-button-disabled-icon-color: rgba(
-        255,
-        255,
-        255,
-        0.5
-      ) !important;
+      --mdc-icon-button-disabled-icon-color: rgba(255,
+          255,
+          255,
+          0.5) !important;
     }
   }
 }
@@ -290,6 +467,7 @@ html.dark-theme {
     .mdc-card {
       box-shadow: none !important;
       border: 1px solid $darkborderColor !important;
+
       &.shadow-none {
         border: 0 !important;
       }
@@ -297,13 +475,16 @@ html.dark-theme {
   }
 
   .sidebarNav-horizontal .horizontal-navbar .parentBox {
-    &:hover > .activeMenu,
+
+    &:hover>.activeMenu,
     .activeMenu {
       color: $white;
     }
+
     .menuLink {
       color: #7c8fac;
     }
+
     .childBox {
       background-color: $darkcardbg;
     }
@@ -319,13 +500,12 @@ html.dark-theme {
       opacity: 0.05;
     }
   }
-  .mdc-text-field:not(.mdc-text-field--disabled)
-    .mdc-text-field__input::placeholder,
+
+  .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input::placeholder,
   .mdc-text-field__input::placeholder,
   .mat-mdc-tab .mdc-tab__text-label,
   .mat-mdc-tab-link .mdc-tab__text-label,
-  .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled)
-    .mdc-evolution-chip__text-label,
+  .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__text-label,
   .mat-mdc-checkbox-disabled label {
     color: rgba(255, 255, 255, 0.6) !important;
   }
@@ -402,6 +582,7 @@ html.dark-theme {
   .mdc-data-table__header-cell {
     border-bottom-color: rgba(255, 255, 255, 0.12);
   }
+
   .mat-mdc-checkbox .mdc-form-field,
   .mat-mdc-paginator,
   .mat-mdc-slide-toggle .mdc-form-field {
@@ -413,9 +594,7 @@ html.dark-theme {
     border: solid 1px $darkborderColor;
   }
 
-  .mat-button-toggle-group-appearance-standard
-    .mat-button-toggle
-    + .mat-button-toggle {
+  .mat-button-toggle-group-appearance-standard .mat-button-toggle+.mat-button-toggle {
     border-left: solid 1px $darkborderColor;
   }
 
@@ -431,11 +610,9 @@ html.dark-theme {
     }
   }
 
-  @include syntax-colors(
-    $primary: $primary,
+  @include syntax-colors($primary: $primary,
     $accent: $accent,
     $success: $success,
     $warning: $warning,
-    $error: $error
-  );
+    $error: $error );
 }

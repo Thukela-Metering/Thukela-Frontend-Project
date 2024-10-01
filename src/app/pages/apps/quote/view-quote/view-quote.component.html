@@ -1,0 +1,160 @@
+<div>
+  <mat-card class="cardWithShadow">
+    <mat-card-content class="p-24" style="overflow-y: auto; max-height: calc(100vh - 200px);">
+      <div #quote>
+        <div class="row m-b-24">
+          <div class="col-sm-4 d-flex align-items-center">
+            <h4 class="mat-subtitle-2 f-s-18 f-w-600" style="color: white;"># {{ quoteDetail.quoteNumber }}</h4>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="row p-y-24">
+          <div class="col-sm-6">
+            <span class="f-w-600 f-s-15 mat-body-1" style="color: white;">Invoice Ref:</span>
+            <h6 class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2">
+              <span>{{ quoteDetail.invoiceRef || 'No invoices linked' }}</span>
+            </h6>
+          </div>
+          <div class="col-sm-6 text-right">
+            <span class="f-w-600 f-s-15 mat-body-1" style="color: white;">Quote Date:</span>
+            <h6 class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2">{{ quoteDetail.quoteDate | date: 'mediumDate' }}</h6>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="row p-y-24">
+          <div class="col-sm-6 text-left">
+            <span class="f-w-600 f-s-15 mat-body-1" style="color: white;">
+              Bill To:
+              <ng-container *ngIf="retrievedTempClient; else buildingOwner">
+                {{ retrievedTempClient.name }}
+              </ng-container>
+              <ng-template #buildingOwner>
+                {{ foundOwnerAccount?.name }}
+              </ng-template>
+            </span>
+            <p class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2">
+              <ng-container *ngIf="retrievedTempClient; else buildingAddress">
+                {{ retrievedTempClient.address }}
+              </ng-container>
+              <ng-template #buildingAddress>
+                {{ foundOwnerAccount?.address }}
+              </ng-template>
+            </p>
+          </div>
+          <div class="col-sm-6 text-right">
+            <button mat-flat-button 
+            (click)="openInvoiceDialogWithQuote(quoteDetail)" 
+            color="primary" 
+            [disabled]="isInvoiceConvertDisabled" 
+            [ngClass]="{ 'disabled-button': isInvoiceConvertDisabled }">Convert to Invoice
+            </button>
+          </div>
+        </div>
+        <form>
+          <div class="b-1 table-responsive">
+            <table mat-table [dataSource]="dataSource" class="no-wrap v-middle w-100">
+              <!-- Item Name Column -->
+              <ng-container matColumnDef="itemName">
+                <th mat-header-cell *matHeaderCellDef class="f-s-15 f-w-600" style="color: white;">Item Name</th>
+                <td mat-cell *matCellDef="let element" style="color: white; font-weight: bold;">{{ element.itemName }}</td>
+              </ng-container>
+              <!-- Description Column -->
+              <ng-container matColumnDef="Description">
+                <th mat-header-cell *matHeaderCellDef class="f-s-15 f-w-600" style="color: white;">Description</th>
+                <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+              </ng-container>
+              <!-- Unit Price Column -->
+              <ng-container matColumnDef="unitPrice">
+                <th mat-header-cell *matHeaderCellDef class="f-s-15 f-w-600" style="color: white;">Unit Price</th>
+                <td mat-cell *matCellDef="let element">{{ element.unitPrice | currency: 'R' }}</td>
+              </ng-container>
+              <!-- Units Column -->
+              <ng-container matColumnDef="units">
+                <th mat-header-cell *matHeaderCellDef class="f-s-15 f-w-600" style="color: white;">Units</th>
+                <td mat-cell *matCellDef="let element">{{ element.units }}</td>
+              </ng-container>
+              <!-- Discount Column -->
+              <ng-container matColumnDef="lineDiscount">
+                <th mat-header-cell *matHeaderCellDef class="f-s-15 f-w-600" style="color: white;">Discount</th>
+                <td mat-cell *matCellDef="let element">{{ element.lineDiscount | currency: 'R' }}</td>
+              </ng-container>
+              <!-- Total Cost Column -->
+              <ng-container matColumnDef="itemTotal">
+                <th mat-header-cell *matHeaderCellDef class="f-s-15 f-w-600" style="color: white;">Total Cost</th>
+                <td mat-cell *matCellDef="let element" style="color: white; font-weight: bold;">{{ element.itemTotal | currency: 'R' }}</td>
+              </ng-container>
+
+              <!-- Add the following rows -->
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+          </div>
+        </form>
+        <div class="text-right m-t-30">
+          <h5 class="m-b-5 f-w-600 f-s-16" style="color: #7587a4;">Sub total: {{ quoteDetail.subTotal | currency: 'R' }}</h5>
+          <h5 class="m-b-5 f-w-600 f-s-16" style="color: #7587a4;">Discount: {{ quoteDetail.discount | currency: 'R' }}</h5>
+          <span class="f-w-600 f-s-16" style="color: #7587a4;">VAT: {{ quoteDetail.vat | currency: 'R' }}</span>
+          <h3 class="m-b-0 b-t-1 p-t-20 f-s-18" style="color: white;">Total Quote Amount: {{ quoteDetail.grandTotal | currency: 'R' }}</h3>
+        </div>
+        <div class="row m-t-30">
+          <div class="col-sm-6 d-flex justify-content-start">
+            <button mat-stroked-button color="primary" (click)="closeDialog()" class="m-r-10">Back</button>
+          </div>
+          <div class="col-sm-6 d-flex justify-content-end">
+            <button 
+              mat-fab 
+              color="primary" 
+              (click)="downloadQuote()"
+              aria-label="Download Quote" 
+              style="
+                width: 30px; 
+                height: 30px; 
+                min-width: 30px; 
+                min-height: 30px; 
+                margin-left: 10px; 
+                display: flex; 
+                justify-content: center; 
+                align-items: center;
+                padding: 0;">
+              <mat-icon style="font-size: 18px; position: relative; top: 50%; transform: translateY(-50%);">download</mat-icon>
+            </button>
+            <button 
+              mat-fab 
+              color="primary" 
+              (click)="emailQuote()"
+              aria-label="Email Quote" 
+              style="
+                width: 30px; 
+                height: 30px; 
+                min-width: 30px; 
+                min-height: 30px; 
+                margin-left: 10px; 
+                display: flex; 
+                justify-content: center; 
+                align-items: center;
+                padding: 0;">
+              <mat-icon style="font-size: 18px; position: relative; top: 50%; transform: translateY(-50%);">email</mat-icon>
+            </button>
+            <button 
+              mat-fab 
+              color="primary" 
+              (click)="previewQuote()"
+              aria-label="Preview Quote" 
+              style="
+                width: 30px; 
+                height: 30px; 
+                min-width: 30px; 
+                min-height: 30px; 
+                margin-left: 10px; 
+                display: flex; 
+                justify-content: center; 
+                align-items: center;
+                padding: 0;">
+              <mat-icon style="font-size: 18px; position: relative; top: 50%; transform: translateY(-50%);">visibility</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

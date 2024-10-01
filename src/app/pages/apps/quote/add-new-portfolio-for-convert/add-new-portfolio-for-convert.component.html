@@ -1,0 +1,51 @@
+<mat-dialog-content>
+  <mat-accordion #accordion="matAccordion" multi>
+    <!-- Building -->
+    <mat-expansion-panel class="cardWithShadow" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="f-w-600">
+          Building
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-building-dialog-content 
+        [localDataFromComponent]="selectedBuilding"
+        [isPortfolioCreation]="true"
+        (submissionSuccess)="onBuildingAdded($event)"></app-building-dialog-content>
+    </mat-expansion-panel>
+
+    <!-- Building Account -->
+    <mat-expansion-panel class="cardWithShadow" [disabled]="!isBuildingAdded">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="f-w-600">
+          Building Account
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-building-accounts 
+        [localDataFromComponent]="selectedBuildingAccount"
+        [isPortfolioCreation]="true"
+        [selectedBuilding]="selectedBuilding"
+        (submissionSuccess)="onAccountAdded($event)"></app-building-accounts>
+    </mat-expansion-panel>
+
+    <!-- Building Owner Account -->
+    <mat-expansion-panel class="cardWithShadow" [disabled]="!isBuildingAdded">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="f-w-600">
+          Building Owner Account
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-building-owner-dialog-content 
+        [localDataFromComponent]="selectedOwnerAccount"
+        [isPortfolioCreation]="true"
+        [selectedBuilding]="selectedBuilding"
+        (submissionSuccess)="onOwnerAdded($event)"></app-building-owner-dialog-content>
+    </mat-expansion-panel>
+  </mat-accordion>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="closeDialog()">Close</button>
+  <button mat-button 
+          (click)="proceedToInvoice()" 
+          [disabled]="!canProceedToInvoice()">Proceed to Invoice</button>
+</mat-dialog-actions>

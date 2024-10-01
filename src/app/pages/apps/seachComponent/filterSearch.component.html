@@ -1,0 +1,12 @@
+<mat-form-field appearance="outline" class="w-100 hide-hint">
+    <input matInput [formControl]="searchControl" placeholder="Search..." />
+</mat-form-field>
+<ul *ngIf="results.length">
+    <li *ngFor="let result of results" (click)="selectResult(result)">
+        <mat-card>
+            <mat-card-content class="search-item">
+                <div class="ripple-wrapper">{{ result.name }} </div>
+            </mat-card-content>
+        </mat-card>
+    </li>
+</ul>

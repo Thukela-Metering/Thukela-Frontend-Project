@@ -1,0 +1,54 @@
+<mat-dialog-content style="max-width: 600px">
+  <div [formGroup]="accountsForm">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Building</mat-label>
+      <mat-select formControlName="buildingId" [disabled]="action !== 'Add'">
+        <mat-option *ngFor="let building of filteredBuildings" [value]="building.id">
+          {{ building.name }}
+        </mat-option>
+      </mat-select>
+      <input matInput [formControl]="buildingFilterCtrl" placeholder="Filter buildings" [disabled]="action !== 'Add'">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Municipality One</mat-label>
+      <input matInput formControlName="municipalityOne">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Municipality Two</mat-label>
+      <input matInput formControlName="municipalityTwo">
+    </mat-form-field>
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="w-100">
+          <label class="mat-slide-toggle-label">Reading Slip</label>
+          <mat-slide-toggle formControlName="readingSlip" [checked]="local_data.readingSlip"></mat-slide-toggle>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="w-100">
+          <label class="mat-slide-toggle-label">Credit Control</label>
+          <mat-slide-toggle formControlName="creditControl" [checked]="local_data.creditControl"></mat-slide-toggle>
+        </div>
+      </div>
+    </div>
+    <br>
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Building Tax Number</mat-label>
+      <input matInput formControlName="buildingTaxNumber">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Book Number</mat-label>
+      <input matInput formControlName="bookNumber">
+    </mat-form-field>
+
+    <mat-checkbox formControlName="isActive">Is Active</mat-checkbox>
+
+    <div class="form-actions">
+      <button mat-stroked-button color="warn" (click)="onCancel()">Cancel</button>
+      <button mat-flat-button color="primary"  [disabled]="!accountsForm.valid" (click)="onSubmit()">{{action}}</button>
+    </div>
+  </div>
+</mat-dialog-content>

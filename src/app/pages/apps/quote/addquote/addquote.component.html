@@ -1,0 +1,206 @@
+<mat-card class="cardWithShadow" style="width: 100%;">
+  <mat-card-content class="p-24">
+    <form [formGroup]="addForm">
+      <div class="row justify-content-between m-b-24">
+        <div class="col-sm-4 d-flex align-items-center">
+          <h4 class="mat-subtitle-2 f-s-18 f-w-600" style="color: white;">
+            <span *ngIf="quoteDetails">
+              #{{ quoteDetails.quoteNumber }}
+            </span>
+          </h4>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="row p-y-24 justify-content-between align-items-center">
+        <div class="col-sm-4 d-flex align-items-center">
+          <h4 class="f-w-600 f-s-20" style="color: white;">
+            {{ isUpdateMode ? 'Quotation Update:' : 'Quotation Create:' }}
+          </h4>
+        </div>
+        <div class="col-sm-6 d-flex align-items-right justify-content-end">
+          <div class="text-right" *ngIf="!isUpdateMode">
+            <span class="f-w-600 f-s-15 mat-body-1 d-block m-b-8" style="color: white;">
+              Quote Date
+            </span>
+            <mat-form-field appearance="outline" class="w-100">
+              <input matInput [matDatepicker]="picker" formControlName="quoteDate" [min]="minDate" required>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="text-right" *ngIf="isUpdateMode" style="color: white; font-size: 16px;">
+            Quote Date: {{ addForm.get('quoteDate')?.value | date: 'fullDate' }}
+          </div>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="row m-y-24 p-t-24 justify-content-between">
+        <div class="col-sm-6 text-left">
+          <div *ngIf="!isUpdateMode">
+            <mat-checkbox formControlName="useExistingCustomer" (change)="onUseExistingCustomerChange()">
+              Use existing customer
+            </mat-checkbox>
+
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label style="color: white;">Bill to</mat-label>
+              <mat-select formControlName="billTo" [disabled]="!addForm.get('useExistingCustomer')?.value">
+                <mat-option>
+                  <ngx-mat-select-search
+                    placeholderLabel="Find building..."
+                    noEntriesFoundLabel="'No matching record found'"
+                    class="searchfield-class"
+                    [formControl]="buildingFilterCtrl">
+                  </ngx-mat-select-search>
+                </mat-option>
+                <mat-option *ngFor="let building of filteredBuildings | async" [value]="building">
+                  {{ building.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="justify-content-between">
+              <button mat-raised-button color="primary" class="align-self-right" (click)="openDialog('Add', {})"
+                      *ngIf="!addForm.get('useExistingCustomer')?.value">
+                Add Details
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="isUpdateMode" style="color: white; font-size: 16px;">
+            Bill to: {{ addForm.get('billTo')?.value }}
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div [formGroup]="addForm">
+      <div class="table-responsive">
+        <table class="table table-hover b-1 no-wrap w-100 rounded">
+          <thead>
+            <tr>
+              <th class="p-16" style="color: white;">#</th>
+              <th class="p-16" style="color: white;">Item Name</th>
+              <th class="p-16" style="color: white;">Description</th>
+              <th class="p-16" style="color: white;">Unit Price</th>
+              <th class="p-16" style="color: white;">Units</th>
+              <th class="p-16" style="color: white;">Discount</th>
+              <th class="p-16" style="color: white;">Unit Total Price</th>
+              <th class="p-16"></th>
+            </tr>
+          </thead>
+          <tbody formArrayName="rows">
+            <tr *ngFor="let row of rows.controls; let index = index;" [formGroupName]="index">
+              <td class="p-16" style="color: white;">
+                {{ index + 1 }}
+              </td>
+              <td class="p-16">
+                <mat-form-field appearance="outline" class="w-100 hide-hint">
+                  <input
+                    type="text"
+                    matInput
+                    class="form-control"
+                    formControlName="itemName"
+                    (keyup)="onItemNameInput(row, $event)"
+                    [matAutocomplete]="auto" />
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProductSelected(row, $event.option.value)">
+                    <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
+                      {{ product.name }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </td>
+
+              <td class="p-16">
+                <mat-form-field appearance="outline" class="w-100 hide-hint">
+                  <input
+                    type="text"
+                    matInput
+                    class="form-control"
+                    formControlName="description"
+                    (input)="itemsChanged()" />
+                </mat-form-field>
+              </td>
+
+              <td class="p-16">
+                <mat-form-field appearance="outline" class="w-100 hide-hint">
+                  <input
+                    type="number"
+                    matInput
+                    class="form-control"
+                    min="1"
+                    formControlName="unitPrice"
+                    (input)="itemsChanged()" />
+                </mat-form-field>
+              </td>
+
+              <td class="p-16">
+                <mat-form-field appearance="outline" class="w-100 hide-hint">
+                  <input
+                    type="number"
+                    matInput
+                    class="form-control"
+                    min="1"
+                    formControlName="units"
+                    (input)="itemsChanged()" />
+                </mat-form-field>
+              </td>
+
+              <td class="p-16">
+                <mat-form-field appearance="outline" class="w-100 hide-hint">
+                  <input
+                    type="number"
+                    matInput
+                    class="form-control"
+                    min="0"
+                    formControlName="lineDiscount"
+                    (blur)="onLineDiscountBlur(row)"
+                    (input)="itemsChanged()" />
+                </mat-form-field>
+              </td>
+
+              <td class="p-16">
+                <mat-form-field appearance="outline" class="w-100 hide-hint">
+                  <input
+                    [disabled]="true"
+                    matInput
+                    class="form-control"
+                    formControlName="itemTotal" />
+                </mat-form-field>
+              </td>
+
+              <td>
+                <button *ngIf="index > 0" color="warn" mat-icon-button (click)="onRemoveRow(index)" class="d-flex justify-content-center">
+                  <i-tabler name="trash" class="icon-18 d-flex"></i-tabler>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="button-group d-flex justify-content-between m-t-30">
+        <mat-form-field appearance="outline" style="width: 600px;">
+          <textarea appearance="outline" matInput formControlName="note"></textarea>
+        </mat-form-field>
+        <button class="d-flex text-right m-t-30" mat-stroked-button color="primary" (click)="onAddRow()">Add Row</button>
+      </div>
+      <h5 class="m-b-5 f-w-600 f-s-16 text-right m-t-30" style="color: white;">
+        Discount: {{ quote.discount | currency: 'R' }}
+      </h5>
+      <h5 class="m-b-5 f-w-600 f-s-16 text-right m-t-30" style="color: white;">
+        Sub total: {{ subTotal | currency: 'R' }}
+      </h5>
+      <h5 class="f-w-600 f-s-16 text-right m-t-30" style="color: white;">
+        Total VAT: {{ vat | currency: 'R' }}
+      </h5>
+      <mat-divider></mat-divider>
+      <h3 class="m-b-0 f-s-18 text-right" style="color: white;">
+        Grand Total: {{ grandTotal | currency: 'R' }}
+      </h3>
+      <mat-divider class="m-t-20"></mat-divider>
+      <div class="button-group d-flex justify-content-between m-t-30">
+        <button mat-stroked-button color="warn" (click)="dialogRef.close()">Cancel</button>
+        <button mat-raised-button color="primary" (click)="saveDetail()">Save Quote</button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

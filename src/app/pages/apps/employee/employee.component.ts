@@ -1,42 +1,75 @@
-import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit } from '@angular/core';
+import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit, OnChanges, SimpleChanges, Input } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { AppAddEmployeeComponent } from './add/add.component';
-import { PersonDTO } from 'src/app/DTOs/userDto';
+import { PersonDTO } from 'src/app/DTOs/personDTO';
 import { UserService as PersonService } from 'src/app/services/user.service';
-import { userRegistrationDTO as UserRegistrationDTO} from 'src/app/DTOs/userRegistrationDTO';
+import { UserDataDTO, UserDataDTO as UserRegistrationDTO } from 'src/app/DTOs/userDataDTO';
 import { AuthService } from 'src/app/services/auth.service';
 import { LookupValueDTO } from 'src/app/DTOs/lookupValueDTO';
+import { SystemUserDTO } from 'src/app/DTOs/systemUserDTO';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { SnackbarService } from 'src/app/services/snackbar.service';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   templateUrl: './employee.component.html',
+  selector: 'app-building-representative-link',
 })
 export class AppEmployeeComponent implements OnInit, AfterViewInit {
   @ViewChild(MatTable, { static: true }) table: MatTable<any> = Object.create(null);
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
+
   searchText: any;
-  persons: PersonDTO[] = [];
+  persons: UserDataDTO[] = [];
+  manageActiveUsers: boolean = true;
   displayedColumns: string[] = [
     'id',
     'name',
     'surname',
-    'idNumber',
     'email',
     'mobile',
+    'username',
     'address',
     'action',
   ];
   dataSource = new MatTableDataSource(this.persons);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator = Object.create(null);
 
-  constructor(public dialog: MatDialog, public datePipe: DatePipe,private _personService: PersonService,private authService: AuthService) { }
+  constructor(public dialog: MatDialog, public datePipe: DatePipe, private _personService: PersonService, private authService: AuthService, private snackbarService: SnackbarService,) { }
+  
   ngOnInit(): void {
     this.loadUserListData();
+    this.manageActiveUsers = true;
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  
+    // Customize sorting for specific columns
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch (property) {
+        case 'name':
+          return item.name?.trim().toLowerCase() || '';
+        case 'surname':
+          return item.surname?.trim().toLowerCase() || '';
+        case 'username':
+          return item.username?.trim().toLowerCase() || '';
+        case 'email':
+          return item.email?.trim().toLowerCase() || '';
+        case 'mobile':
+          return item.mobile;
+        case 'address':
+          return item.address?.trim().toLowerCase() || '';
+        default:
+          return (item as any)[property];
+      }
+    };
   }
 
   applyFilter(filterValue: string): void {
@@ -44,12 +77,12 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
   }
 
   loadUserListData(): void {
-    this._personService.getAllUsers().subscribe({
-      next: (response) => {
+    this._personService.getUserDataList(this.manageActiveUsers).subscribe({
+      next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response) {
-          this.dataSource.data = response as PersonDTO[];
+          this.dataSource.data = response.data?.userDataDTOs ?? [];
           this.persons = [];
-          this.persons = response as PersonDTO[]
+          this.persons = response.data?.userDataDTOs ?? [];
           this.table.renderRows();
         }
       },
@@ -64,6 +97,7 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(AppEmployeeDialogContentComponent, {
       data: obj,
     });
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result.event === 'Add') {
         this.addRowData(result.data);
@@ -72,84 +106,92 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
       } else if (result.event === 'Delete') {
         this.deleteRowData(result.data);
       }
+      this.manageActiveUsers = true
     });
   }
 
-  // tslint:disable-next-line - Disables all
-  addRowData(row_obj: UserRegistrationDTO): void {
-
+  addRowData(row_obj: UserDataDTO): void {
     this.authService.register(row_obj).subscribe(
-      response => {       
-        // Handle successful registration
-        console.log(response);
-        //////////////////////////////////////////////////////
-        var personDTO =new PersonDTO();
-        personDTO.id = row_obj.id,
-        personDTO.name = row_obj.name,
-        personDTO.surname = row_obj.surname,
-        personDTO.idNumber = row_obj.idNumber
-        personDTO.email = row_obj.email,
-        personDTO.mobile = row_obj.mobile,
-        personDTO.address = row_obj.address
-        this.persons.push(personDTO);
-        ////////////////////////////////////////////////////
-        // this.dataSource.data.push(personDTO);
-        // this.dataSource.data.unshift({
-        //   id: row_obj.id,
-        //   name: row_obj.name,
-        //   surname: row_obj.surname,
-        //   idNumber: row_obj.idNumber,
-        //   email: row_obj.email,
-        //   mobile: row_obj.mobile,
-        //   address: row_obj.address
-        // });
-        console.log(row_obj);
+      response => {
+        var userDataDTO = new UserDataDTO();
+        userDataDTO.id = row_obj.id,
+          userDataDTO.name = row_obj.name,
+          userDataDTO.surname = row_obj.surname,
+          userDataDTO.email = row_obj.email,
+          userDataDTO.mobile = row_obj.mobile,
+          userDataDTO.username = row_obj.username,
+          userDataDTO.userRole = row_obj.userRole,
+          userDataDTO.password = row_obj.password,
+          userDataDTO.confirmPassword = row_obj.confirmPassword,
+          userDataDTO.address = row_obj.address,
+          userDataDTO.password = row_obj.password,
+          userDataDTO.username = row_obj.username,
+          this.persons.push(userDataDTO);
         this.loadUserListData();
       },
       error => {
-        // Handle error
         console.error(error);
       }
     );
-    this.dialog.open(AppAddEmployeeComponent);    
+    this.dialog.open(AppAddEmployeeComponent);
   }
 
-  // tslint:disable-next-line - Disables all
-  updateRowData(row_obj: PersonDTO): boolean | any {
-    this.dataSource.data = this.dataSource.data.filter((value: any) => {
+  updateRowData(row_obj: UserDataDTO): boolean | any {
+    this.dataSource.data = this.dataSource.data.filter((value: UserDataDTO) => {
       if (value.id === row_obj.id) {
         value.name = row_obj.name;
+        value.id = row_obj.id;
+        value.isActive = row_obj.isActive;
+        value.dateDeleted = row_obj.dateDeleted;
         value.surname = row_obj.surname;
-        value.idNumber = row_obj.idNumber;
         value.email = row_obj.email;
         value.mobile = row_obj.mobile;
         value.address = row_obj.address;
+        value.username = row_obj.username;
+        value.password = row_obj.password;
+        value.guid = row_obj.guid;
+        value.isThukelaEmployee = row_obj.isThukelaEmployee;
+        value.confirmPassword = row_obj.confirmPassword;
+        value.userRole = row_obj.userRole;
+        if (value.isActive != false) {
+          this.manageActiveUsers = true;
+        }
+        else{
+          this.manageActiveUsers = false;
+        }
+    
+      if (row_obj.isActive) {
+        row_obj.dateDeleted = undefined;
       }
       this._personService.updateUserData(row_obj).subscribe({
         next: (response) => {
           if (response) {
-         console.log(response);
+            this.snackbarService.openSnackBar(response.message,"dismiss");
+            this.loadUserListData();
           }
         },
         error: (error) => {
+          this.snackbarService.openSnackBar(error.message,"dismiss");
           console.error('There was an error!', error);
         }
+        
       });
-      this.loadUserListData();
+    }
       return true;
     });
   }
 
-  // tslint:disable-next-line - Disables all
-  deleteRowData(row_obj: PersonDTO): boolean | any {
-    // this.dataSource.data = this.dataSource.data.filter((value: any) => {
-    //   return value.id !== row_obj.id;
-    // });
-    this._personService.deleteUser(row_obj).subscribe({
+  deleteRowData(row_obj: UserDataDTO): boolean | any {
+    if (row_obj.confirmPassword == "" || row_obj.confirmPassword == null) {
+      row_obj.confirmPassword = "some";
+    }
+    row_obj.isActive = false;
+    row_obj.dateDeleted = new Date();
+    row_obj.dateDeleted.setHours(0, 0, 0, 0);
+    this._personService.deleteUserData(row_obj).subscribe({
       next: (response) => {
         if (response) {
-       console.log(response);
-       this.loadUserListData();
+          this.loadUserListData();
         }
       },
       error: (error) => {
@@ -157,118 +199,170 @@ export class AppEmployeeComponent implements OnInit, AfterViewInit {
         this.loadUserListData();
       }
     });
-   
+
     return true;
   }
 }
 
 @Component({
-  // tslint:disable-next-line: component-selector
   selector: 'app-dialog-content',
   templateUrl: 'employee-dialog-content.html',
 })
-// tslint:disable-next-line: component-class-suffix
-export class AppEmployeeDialogContentComponent implements OnInit {
+export class AppEmployeeDialogContentComponent implements OnInit, OnChanges {
+  @Input() localDataFromComponent: UserDataDTO;
   action: string;
-  userRegistrationDTO: UserRegistrationDTO = new UserRegistrationDTO();
-  // tslint:disable-next-line - Disables all
-  local_data: PersonDTO;
-  username:string;
-  password:string;
-  confirmPassword:string;
-  userRoleId:number;
+  userRegistrationDTO: UserDataDTO = new UserDataDTO();
+  local_data: UserDataDTO;
+  local_data_systemUser: SystemUserDTO;
+  username: string;
+  password: string;
+  confirmPassword: string;
+  userRoleId: number;
   selectedImage: any = '';
   joiningDate: any = '';
   DropDownValues: LookupValueDTO[] = [];
+  filteredRoles: LookupValueDTO[] = [...this.DropDownValues];
+  roleFilterCtrl: FormControl = new FormControl();
+
   constructor(
     public datePipe: DatePipe,
-    public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
+    @Optional() public dialogRef: MatDialogRef<AppEmployeeDialogContentComponent>,
     private authService: AuthService,
-    // @Optional() is used to prevent error if no data is passed
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: PersonDTO,
+    private _personService: PersonService,
+    private snackbarService: SnackbarService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: UserDataDTO,
   ) {
     this.local_data = { ...data };
     this.action = this.local_data.action ? this.local_data.action : "Update";
-    // if (this.local_data.DateOfJoining !== undefined) {
-    //   this.joiningDate = this.datePipe.transform(
-    //     new Date(this.local_data.DateOfJoining),
-    //     'yyyy-MM-dd',
-    //   );
-    // }
-    // if (this.local_data.imagePath === undefined) {
-    //   this.local_data.imagePath = 'assets/images/profile/user-1.jpg';
-    // }
   }
+
   ngOnInit(): void {
-  this.getDropdownValues();
-  
+    this.roleFilterCtrl.valueChanges.pipe(
+      distinctUntilChanged()
+    ).subscribe(value => {
+      this.filterRoles(value || '');
+    });
+
+    this.filteredRoles = [...this.DropDownValues];
+    this.getDropdownValues();
+    if (this.localDataFromComponent) {
+      this.local_data = this.localDataFromComponent;
+    }
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
+      this.local_data = this.localDataFromComponent;
+    }
+  }
+
+  filterRole(filter: string): void {
+    const filterValue = filter ? filter.toLowerCase() : '';
+    this.filteredRoles = this.DropDownValues.filter(option => option.name.toLowerCase().includes(filterValue));
+  }
+
   getDropdownValues() {
-    var userRoleResponse = this.authService.getLookupValues().subscribe(
-      response => {
-        if (response != null) {
-          this.DropDownValues = response.map((item: any) => {
-            const lookupValue: LookupValueDTO = new LookupValueDTO();
-            lookupValue.Id = item.id;
-            lookupValue.Name = item.name;
-            lookupValue.Description = item.description;
-            lookupValue.LookupGroupValueId = item.lookupGroupValueId;
-            lookupValue.LookupGroupValueValue = item.lookupGroupValueValue;
-            lookupValue.LookupListValueId = item.lookupListValueId;
-            lookupValue.LookupListValueValue = item.lookupListValueValue;
-            lookupValue.DateCreated = item.dateCreated;
-            return lookupValue;
-          });
-          console.log(this.DropDownValues);
+    this.authService.getLookupValues().subscribe(
+      (response: OperationalResultDTO<TransactionDTO>) => {
+        if (response.success) {
+          if (response.data != null) {
+            this.DropDownValues = response.data.lookupValueDTOs!.map((item: any) => {
+              const lookupValue: LookupValueDTO = new LookupValueDTO();
+              lookupValue.id = item.id;
+              lookupValue.name = item.name;
+              lookupValue.description = item.description;
+              lookupValue.lookupGroupValueId = item.lookupGroupValueId;
+              lookupValue.lookupGroupValueValue = item.lookupGroupValueValue;
+              lookupValue.lookupListValueId = item.lookupListValueId;
+              lookupValue.lookupListValueValue = item.lookupListValueValue;
+              lookupValue.dateCreated = item.dateCreated;
+              return lookupValue;
+            });
+            this.filteredRoles = response.data.lookupValueDTOs!.map((item: any) => {
+              const lookupValue: LookupValueDTO = new LookupValueDTO();
+              lookupValue.id = item.id;
+              lookupValue.name = item.name;
+              lookupValue.description = item.description;
+              lookupValue.lookupGroupValueId = item.lookupGroupValueId;
+              lookupValue.lookupGroupValueValue = item.lookupGroupValueValue;
+              lookupValue.lookupListValueId = item.lookupListValueId;
+              lookupValue.lookupListValueValue = item.lookupListValueValue;
+              lookupValue.dateCreated = item.dateCreated;
+              return lookupValue;
+            });
+          }
         }
       },
       error => {
-        // Handle error
         console.error(error);
       }
     );
   }
+
   doAction(): void {
-    if(this.action == "Add")
-      {
-        this.userRegistrationDTO.ConfirmPassword = this.confirmPassword;
-        this.userRegistrationDTO.Password = this.password;
-        this.userRegistrationDTO.Username = this.username;
-        this.userRegistrationDTO.UserRole = this.userRoleId;
-        this.userRegistrationDTO.name = this.local_data.name;
-        this.userRegistrationDTO.surname = this.local_data.surname;
-        this.userRegistrationDTO.idNumber = this.local_data.idNumber;
-        this.userRegistrationDTO.email = this.local_data.email;
-        this.userRegistrationDTO.mobile = this.local_data.mobile;
-        this.userRegistrationDTO.address = this.local_data.address;
-        this.dialogRef.close({ event: this.action, data: this.userRegistrationDTO });
-      }else
+    if (this.action == "Add") {
+      this.userRegistrationDTO.confirmPassword = this.confirmPassword;
+      this.userRegistrationDTO.password = this.password;
+      this.userRegistrationDTO.username = this.username;
+      this.userRegistrationDTO.userRole = this.userRoleId;
+      this.userRegistrationDTO.name = this.local_data.name;
+      this.userRegistrationDTO.username = this.local_data.username;
+      this.userRegistrationDTO.password = this.local_data.password;
+      this.userRegistrationDTO.confirmPassword = this.local_data.confirmPassword;
+      this.userRegistrationDTO.surname = this.local_data.surname;
+      this.userRegistrationDTO.userRole = this.local_data.userRole;
+      this.userRegistrationDTO.email = this.local_data.email;
+      this.userRegistrationDTO.mobile = this.local_data.mobile;
+      this.userRegistrationDTO.address = this.local_data.address;
+      this.userRegistrationDTO.isActive = this.local_data.isActive;
+      this.userRegistrationDTO.dateDeleted = this.local_data.dateDeleted;
+      this.dialogRef.close({ event: this.action, data: this.userRegistrationDTO });
+    } else {
+    if(this.dialogRef != null)
       {
         this.dialogRef.close({ event: this.action, data: this.local_data });
+      }else
+      {
+        this.updateRowData(this.local_data);
       }
-   
+    }
   }
+
   closeDialog(): void {
     this.dialogRef.close({ event: 'Cancel' });
   }
 
-  // selectFile(event: any): void {
-  //   if (!event.target.files[0] || event.target.files[0].length === 0) {
-  //     // this.msg = 'You must select an image';
-  //     return;
-  //   }
-  //   const mimeType = event.target.files[0].type;
-  //   if (mimeType.match(/image\/*/) == null) {
-  //     // this.msg = "Only images are supported";
-  //     return;
-  //   }
-  //   // tslint:disable-next-line - Disables all
-  //   const reader = new FileReader();
-  //   reader.readAsDataURL(event.target.files[0]);
-  //   // tslint:disable-next-line - Disables all
-  //   reader.onload = (_event) => {
-  //     // tslint:disable-next-line - Disables all
-  //     this.local_data.imagePath = reader.result;
-  //   };
-  // }
+  filterRoles(filter: string): void {
+    const filterValue = filter ? filter.toLowerCase() : '';
+    this.filteredRoles = this.DropDownValues.filter(option => option.name.toLowerCase().includes(filterValue));
+  }
+
+  addRowData(row_obj: UserDataDTO): void {
+    this.authService.register(row_obj).subscribe(
+      response => {
+        if(response)
+          {
+            this.snackbarService.openSnackBar(response.message, "dismiss");
+          }             
+      },
+      error => {
+        console.error(error);
+        this.snackbarService.openSnackBar(error.message, "dismiss");
+      }
+    );
+  }
+
+  updateRowData(row_obj: UserDataDTO): boolean | any {    
+    this._personService.updateUserData(row_obj).subscribe({
+      next: (response) => {
+        if (response) {
+          this.snackbarService.openSnackBar(response.message, "dismiss");
+        }
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+        this.snackbarService.openSnackBar(error.message, "dismiss");
+      }
+    });
+  }
 }

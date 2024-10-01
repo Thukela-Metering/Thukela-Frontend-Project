@@ -1,0 +1,99 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="row justify-content-between">
+      <div class="col-sm-4">
+        <mat-form-field appearance="outline" class="w-100 hide-hint">
+          <input matInput placeholder="Search Credit Note" (keyup)="applyFilter($event)" />
+          <mat-icon matSuffix>
+            <i-tabler name="search" class="icon-20"></i-tabler>
+          </mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="row align-items-center">
+            <div class="col">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>From Date:</mat-label>
+                <input matInput [matDatepicker]="fromDateDP" placeholder="Select From Date"
+                  [(ngModel)]="selectedFromDate" id="fromDate"  />
+                <mat-datepicker-toggle matSuffix [for]="fromDateDP"></mat-datepicker-toggle>
+                <mat-datepicker #fromDateDP></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="row align-items-center">
+            <div class="col">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>To Date:</mat-label>
+                <input matInput [matDatepicker]="toDateDP" placeholder="Select To Date"
+                  [(ngModel)]="selectedToDate" id="toDate" />
+                <mat-datepicker-toggle matSuffix [for]="toDateDP"></mat-datepicker-toggle>
+                <mat-datepicker #toDateDP></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+          <button style="float: right;" mat-stroked-button (click)="loadCreditNoteListData()" color="primary">Get CreditNotes</button> 
+        </div>        
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="cardWithShadow">
+  <div class="table-responsive">
+    <table mat-table [dataSource]="dataSource" matSort class="w-100">
+      <ng-container matColumnDef="chk">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox [checked]="allComplete" [indeterminate]="someComplete()" (change)="setAll($event.checked)" color="primary"></mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <mat-checkbox [(ngModel)]="element.completed" (ngModelChange)="updateAllComplete()" color="primary"></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ref">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">Ref</th>
+        <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white; font-weight: bold;">
+          {{ element.invoiceReferenceNumber }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="item">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">Item</th>
+        <td mat-cell *matCellDef="let element" class="f-s-14">
+          {{ element.items[0]?.itemName }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="billTo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">Bill To</th>
+        <td mat-cell *matCellDef="let element" class="f-s-14" style="color: white; font-weight: bold;">
+          {{ buildingOwnerNames[element.buildingOwnerId ?? 0] || 'Loading...' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="totalCost">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-w-600 f-s-15">Credit Total</th>
+        <td mat-cell *matCellDef="let element" class="f-s-14">
+          {{ element.creditNoteTotal   | currency: 'R'}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-15">Action</th>
+        <td mat-cell *matCellDef="let element" class="f-s-14 d-flex">
+          <a mat-icon-button (click)="openCreditNoteDialog(element.guid, element.invoiceReferenceNumber)" class="d-flex align-items-center justify-content-center">
+            <i-tabler name="eye" class="icon-18 d-flex align-items-center"></i-tabler>
+          </a>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
+</mat-card>
