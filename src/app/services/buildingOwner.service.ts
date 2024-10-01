@@ -10,7 +10,7 @@ export class BuildingOwnerService {
     constructor(private http: HttpClient) { }
 
     //private apiUrl = 'http://localhost:8080/api';
-    private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
+    private apiUrl = 'https://b30615ba44f55a1e.p60.rt3.io/api';
 
 
     addNewBuildingOwner(buildingOwnerToSave: BuildingOwnerDTO): Observable<OperationalResultDTO<TransactionDTO>> {
