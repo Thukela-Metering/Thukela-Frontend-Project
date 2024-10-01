@@ -7,7 +7,7 @@ import { InvoiceService } from 'src/app/services/invoice.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { CreditNoteService } from 'src/app/services/credit-note.service';
-import { BuildingOwnerDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { BuildingOwnerDTO, FilterDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { CreditNoteDTO } from 'src/app/DTOs/CreditNoteDTO';
 import { CreditNoteViewComponent } from './credit-note-view.component';
 import { catchError, map, of } from 'rxjs';
@@ -19,6 +19,9 @@ import { catchError, map, of } from 'rxjs';
 export class CreditNoteTableComponent implements OnInit, AfterViewInit {
   allComplete: boolean = false;
   creditNote: CreditNoteDTO[] = [];
+  filterDTO: FilterDTO = new FilterDTO();
+  selectedFromDate = new Date();
+  selectedToDate = new Date();
   invoiceFind: InvoiceDTO[] = [];
   buildingOwnerNames: { [key: number]: string } = {};
   displayedColumns: string[] = [
@@ -69,7 +72,7 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
   }
 
   loadInvoices(): void {
-    this._invoiceService.getAllInvoices(true).subscribe({
+    this._invoiceService.getAllInvoices(this.filterDTO).subscribe({
       next: (response: any) => {
         this.invoiceFind = response.data.invoicesDTOs || [];
       },
