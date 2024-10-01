@@ -29,7 +29,7 @@
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>From Date:</mat-label>
                       <input matInput [matDatepicker]="fromDateDP" placeholder="Select From Date"
-                        [(ngModel)]="filterDTO.fromDate" id="fromDate"  />
+                        [(ngModel)]="selectedFromDate" id="fromDate"  />
                       <mat-datepicker-toggle matSuffix [for]="fromDateDP"></mat-datepicker-toggle>
                       <mat-datepicker #fromDateDP></mat-datepicker>
                     </mat-form-field>
@@ -42,7 +42,7 @@
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>To Date:</mat-label>
                       <input matInput [matDatepicker]="toDateDP" placeholder="Select To Date"
-                        [(ngModel)]="filterDTO.toDate" id="toDate" />
+                        [(ngModel)]="selectedToDate" id="toDate" />
                       <mat-datepicker-toggle matSuffix [for]="toDateDP"></mat-datepicker-toggle>
                       <mat-datepicker #toDateDP></mat-datepicker>
                     </mat-form-field>

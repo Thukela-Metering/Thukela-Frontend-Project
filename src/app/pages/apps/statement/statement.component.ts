@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { BuildingOwnerDTO, BuildingAccountDTO, StatementItemDTO, StatementFilterDTO, BuildingDTO, TransactionDTO, UserDataDTO } from 'src/app/DTOs/dtoIndex';
+import { BuildingOwnerDTO, BuildingAccountDTO, StatementItemDTO, FilterDTO, BuildingDTO, TransactionDTO, UserDataDTO } from 'src/app/DTOs/dtoIndex';
 import { BuildingService } from 'src/app/services/building.service';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { PortfolioService } from 'src/app/services/portfolio.service';
@@ -27,7 +27,9 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
   allComplete: boolean = false;
   statementItems: StatementItemDTO[] = [];
   StatementItemList: MatTableDataSource<StatementItemDTO>;
-  filterDTO: StatementFilterDTO = new StatementFilterDTO();
+  filterDTO: FilterDTO = new FilterDTO();
+  selectedFromDate = new Date();
+  selectedToDate = new Date();
   selectedBuilding: BuildingDTO | null = null;
   buildingOwners: BuildingOwnerDTO[] = [];
   selectedBuildingAccount: BuildingAccountDTO;
@@ -67,6 +69,7 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
+    this.initializeFilterDates();
     this.loadBuildingOwnerListData();
     this.loadBuildingListData();
   }
@@ -74,6 +77,15 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+  initializeFilterDates(): void {
+    const today = new Date();
+
+    // First day of the current month in UTC
+    this.selectedFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));
+
+    // Today's date in UTC
+    this.selectedToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
   }
 
   loadBuildingListData(): void {
@@ -94,16 +106,12 @@ export class AppStatementScreenComponent implements OnInit, AfterViewInit {
     console.log("The filter DTO :", this.filterDTO);
 
     // Convert dates to strings in the Africa/Johannesburg timezone
-    const filterDTOWithStringDates: StatementFilterDTO = {
-      ...this.filterDTO,
-      fromDate: this.filterDTO.fromDate ? this.convertToTimeZoneString(new Date(this.filterDTO.fromDate), 'Africa/Johannesburg') : "",
-      toDate: this.filterDTO.toDate ? this.convertToTimeZoneString(new Date(this.filterDTO.toDate), 'Africa/Johannesburg') : ""
-    };
-
-    console.log("Formatted DTO with String Dates: ", filterDTOWithStringDates);
+    this.filterDTO.fromDate = this.selectedFromDate.toISOString();
+    this.filterDTO.toDate = this.selectedToDate.toISOString();
+    this.filterDTO.booleanFilterValue = true;
 
     // Use the DTO with formatted dates for the API call
-    this._statementService.getByAccountId(filterDTOWithStringDates).subscribe({
+    this._statementService.getByAccountId(this.filterDTO).subscribe({
       next: (response: any) => {
         this.statementItems = response.data?.statementItemDTOs!;
         console.log("The statementItemList: ", this.statementItems);

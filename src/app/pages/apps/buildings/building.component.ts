@@ -1,4 +1,4 @@
-import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit, Input, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Inject, Optional, ViewChild, AfterViewInit, OnInit, Input, OnChanges, SimpleChanges, EventEmitter, Output, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -39,7 +39,14 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
   ];
   dataSource = new MatTableDataSource(this.buildings);
 
-  constructor(public dialog: MatDialog, public datePipe: DatePipe, private _buildingService: BuildingService, private authService: AuthService) { }
+  constructor(
+    public dialog: MatDialog,
+    public datePipe: DatePipe,
+    private _buildingService: BuildingService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
+  ) { }
+
   ngOnInit(): void {
     this.loadBuildingListData();
     this.manageActiveBuildings = true;
@@ -66,7 +73,6 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
           return (item as any)[property];
       }
     };
-    this.manageActiveBuildings = true;
   }
 
   applyFilter(filterValue: string): void {
@@ -74,13 +80,15 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
   }
 
   loadBuildingListData(): void {
+    console.log('Loading buildings. manageActiveBuildings:', this.manageActiveBuildings);
     this._buildingService.getAllBuildings(this.manageActiveBuildings).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response) {
+          console.log('Received buildings:', response.data?.buildingDTOs);
           this.dataSource.data = response.data?.buildingDTOs ?? [];
-          this.buildings = [];
           this.buildings = response.data?.buildingDTOs ?? [];
           this.table.renderRows();
+          this.cdr.detectChanges(); // Manually trigger change detection if needed
         }
       },
       error: (error) => {
@@ -91,30 +99,27 @@ export class AppBuildingComponent implements OnInit, AfterViewInit {
 
   openDialog(action: string, obj: any = {}): void {
     obj.action = action;
-  
+
     if (action === 'Add') {
-      // Ensure the object has the structure needed for adding a building
-      obj = { ...new BuildingDTO(), action: 'Add' };
+      // Initialize with default values for adding a building
+      obj = { ...new BuildingDTO(), action: 'Add', isActive: true, dateDeleted: null };
     }
-  
+
     const dialogRef = this.dialog.open(AppBuildingDialogContentComponent, {
       data: obj,
     });
-  
+
     dialogRef.afterClosed().subscribe((result) => {
-      if (result.event === 'Add') {
+      if (result?.event === 'Add' || result?.event === 'Update') {
+        this.manageActiveBuildings = true; // Set before loading data
         this.loadBuildingListData();
-        this.manageActiveBuildings = true;
-      } else if (result.event === 'Update') {
-        this.loadBuildingListData();
-        this.manageActiveBuildings = true;
-      } else if (result.event === 'Delete') {
+      } else if (result?.event === 'Delete') {
         this.deleteRowData(result.data);
         this.manageActiveBuildings = true;
       }
     });
   }
-  
+
   // tslint:disable-next-line - Disables all
   deleteRowData(row_obj: BuildingDTO): boolean | any {
     row_obj.isActive = false;
@@ -161,17 +166,29 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
   ) {
     this.local_data = { ...data };
     this.action = this.local_data.action ? this.local_data.action : "Update";
+
+    if (this.action === 'Add') {
+      this.local_data.isActive = true; // Default to active
+    }
+    // Removed auto-swap logic for 'Update' action
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['localDataFromComponent'] && changes['localDataFromComponent'].currentValue) {
-      this.local_data.isActive = this.localDataFromComponent.isActive;
-      this.local_data = this.localDataFromComponent;
+      // Update local_data without altering isActive
+      const updatedData: BuildingDTO = changes['localDataFromComponent'].currentValue;
+      this.local_data = { ...updatedData };
+      // No manual setting of isActive
     }
   }
 
   ngOnInit(): void {
     this.getDropdownValues();
+
+    if (this.action === 'Add') {
+      this.local_data.isActive = true; // Ensure default is active when adding
+    }
+    // No auto-swap for update
   }
 
   getDropdownValues() {
@@ -201,6 +218,16 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
   }
 
   doAction(): void {
+    // Ensure dateDeleted is set only if isActive is false
+    if (this.local_data.isActive) {
+    } else {
+      // Validate dateDeleted is provided
+      if (!this.local_data.dateDeleted) {
+        this.snackbarService.openSnackBar("Inactive date is required.", "dismiss");
+        return;
+      }
+    }
+
     const actionData = this.local_data?.action ? this.local_data : this.localDataFromComponent;
     if (actionData.action === "Add") {
       // Ensure all properties are set correctly for a new building
@@ -211,6 +238,7 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
         address: this.local_data.address,
         notes: this.local_data.notes,
         isActive: this.local_data.isActive,
+        dateDeleted: this.local_data.dateDeleted,
       };
       this.addRowData(this.buildingDTO);
     } else {
@@ -244,37 +272,37 @@ export class AppBuildingDialogContentComponent implements OnInit, OnChanges {
 
   addRowData(row_obj: BuildingDTO): void {
     this._buildingService.addNewBuilding(row_obj).subscribe(
-        response => {
-            if (response.success) {
-                // If saved successfully, load the building list to retrieve the full BuildingDTO
-                this._buildingService.getAllBuildings(true).subscribe(
-                    buildingResponse => {
-                        const savedBuilding = buildingResponse.data?.buildingDTOs?.find(b => b.name === row_obj.name);
+      response => {
+        if (response.success) {
+          // If saved successfully, load the building list to retrieve the full BuildingDTO
+          this._buildingService.getAllBuildings(true).subscribe(
+            buildingResponse => {
+              const savedBuilding = buildingResponse.data?.buildingDTOs?.find(b => b.name === row_obj.name);
 
-                        if (!savedBuilding) {
-                            this.snackbarService.openSnackBar("Building not found after saving.", "dismiss");
-                        } else {
-                            this.submissionSuccess.emit(savedBuilding);  // Emit the found building with the ID
-                            if (!this.isPortfolioCreation) {
-                              if (this.dialogRef) {
-                                this.dialogRef.close({ event: this.action, data: this.local_data });
-                              }
-                          }
-                          this.snackbarService.openSnackBar("Building saved successfully", "dismiss");
-                        }
-                    },
-                    error => {
-                        console.error("Error retrieving building list:", error);
-                    }
-                );
-            } else {
-                console.error("Failed to save the building:", response.message);
+              if (!savedBuilding) {
+                this.snackbarService.openSnackBar("Building not found after saving.", "dismiss");
+              } else {
+                this.submissionSuccess.emit(savedBuilding);  // Emit the found building with the ID
+                if (!this.isPortfolioCreation) {
+                  if (this.dialogRef) {
+                    this.dialogRef.close({ event: this.action, data: this.local_data });
+                  }
+                }
+                this.snackbarService.openSnackBar("Building saved successfully", "dismiss");
+              }
+            },
+            error => {
+              console.error("Error retrieving building list:", error);
             }
-        },
-        error => {
-            this.snackbarService.openSnackBar(error.message, "dismiss");
-            console.error(error);
+          );
+        } else {
+          console.error("Failed to save the building:", response.message);
         }
+      },
+      error => {
+        this.snackbarService.openSnackBar(error.message, "dismiss");
+        console.error(error);
+      }
     );
   }
 
