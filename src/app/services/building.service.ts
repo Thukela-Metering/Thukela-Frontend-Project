@@ -10,8 +10,8 @@ import { OperationalResultDTO, TransactionDTO } from "../DTOs/dtoIndex";
 export class BuildingService {
   constructor(private http: HttpClient) { }
 
-//private apiUrl = 'http://localhost:8080/api'; // Replace with your API URL
-private apiUrl = 'https://thukelameteringproduction.co.za/api';
+    //private apiUrl = 'http://localhost:8080/api';
+    private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
 
   getAllBuildings(active: boolean): Observable<OperationalResultDTO<TransactionDTO>> {
     {

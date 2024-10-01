@@ -8,8 +8,8 @@ import { FilterDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dt
 })
 export class CreditNoteService {
 
-//private apiUrl = 'http://localhost:8080/api'; // Replace with your API URL
-private apiUrl = 'https://thukelameteringproduction.co.za/api';
+    //private apiUrl = 'http://localhost:8080/api';
+    private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
 
   constructor(private http: HttpClient) { }
 
