@@ -6,7 +6,7 @@ import { InvoiceService } from 'src/app/services/invoice.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { AppAddInvoiceComponent } from './add-invoice.component';
 import { MatDialog } from '@angular/material/dialog';
-import { InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { FilterDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { AppInvoiceViewComponent } from './view-invoice.component'; // Import the view component
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { catchError, forkJoin, map, of } from 'rxjs';
@@ -19,6 +19,9 @@ import { LoaderService } from 'src/app/services/lottieLoader.service';
 export class AppInvoiceListComponent implements OnInit, AfterViewInit {
   allComplete: boolean = false;
   invoices: InvoiceDTO[] = [];
+  filterDTO: FilterDTO = new FilterDTO();
+  selectedFromDate = new Date();
+  selectedToDate = new Date();
   buildingOwnerNames: { [key: number]: string } = {}; // Mapping of buildingOwnerId to buildingOwnerName
   displayedColumns: string[] = [
     'ref',
@@ -118,7 +121,10 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
   }
 
   loadInvoicesListData(): void {
-    this._invoiceService.getAllInvoices(true).subscribe({
+    this.filterDTO.fromDate = this.selectedFromDate.toISOString();
+    this.filterDTO.toDate = this.selectedToDate.toISOString();
+    this.filterDTO.booleanFilterValue =true;
+    this._invoiceService.getAllInvoices(this.filterDTO).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response && response.data) {
           console.log('data received from backend:', response.data.invoicesDTOs);

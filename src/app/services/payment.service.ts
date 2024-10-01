@@ -12,15 +12,7 @@ export class PaymentService {
 
   private apiUrl = 'http://localhost:8080/api'; // Replace with your API URL
   //private apiUrl = 'https://thukelameteringproduction.co.za/api';
-
-  getAllPayments(isActive: boolean): Observable<OperationalResultDTO<TransactionDTO>> {
-    {
-      const params = new HttpParams().set('isactive', isActive.toString());
-      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount`, { params });
-      return getResponse;
-    }
-  }
-
+  
   getPayments(filterDTO: FilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {   
 
     var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment/GetPayments`, filterDTO);   
