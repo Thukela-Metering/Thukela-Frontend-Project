@@ -7,7 +7,7 @@ import { InvoiceService } from 'src/app/services/invoice.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { CreditNoteService } from 'src/app/services/credit-note.service';
-import { BuildingOwnerDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { BuildingOwnerDTO, FilterDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { CreditNoteDTO } from 'src/app/DTOs/CreditNoteDTO';
 import { CreditNoteViewComponent } from './credit-note-view.component';
 import { catchError, map, of } from 'rxjs';
@@ -20,6 +20,9 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
   allComplete: boolean = false;
   creditNote: CreditNoteDTO[] = [];
   invoiceFind: InvoiceDTO[] = [];
+  filterDTO: FilterDTO = new FilterDTO();
+  selectedFromDate = new Date();
+  selectedToDate = new Date();
   buildingOwnerNames: { [key: number]: string } = {};
   displayedColumns: string[] = [
     'chk',
@@ -125,7 +128,10 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
   }
 
   loadCreditNoteListData(): void {
-    this._creditService.getAllCreditNotes(true).subscribe({
+    this.filterDTO.fromDate = this.selectedFromDate.toISOString();
+    this.filterDTO.toDate = this.selectedToDate.toISOString();
+    this.filterDTO.booleanFilterValue = true;
+    this._creditService.getAllCreditNotes(this.filterDTO).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response && response.data) {
           console.log('Credit notes data received from backend:', response.data.creditNoteDTOs);
