@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { DebitorReportDTO, DebitorSummaryReportDTO, PdfDTO, StatementFilterDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { DebitorReportDTO, DebitorSummaryReportDTO, PdfDTO, FilterDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import * as moment from 'moment-timezone';
 import { MatPaginator } from '@angular/material/paginator';
@@ -22,7 +22,7 @@ export class AppDebitorsReportComponent implements OnInit, AfterViewInit {
     reportBadDeptItems: DebitorReportDTO[] = [];
     reportSummaryItems: DebitorSummaryReportDTO[] = [];
 
-    filterDTO: StatementFilterDTO = new StatementFilterDTO();
+    filterDTO: FilterDTO = new FilterDTO();
     fromDate: Date;
     toDate: Date;
     dataLoaded: boolean = false;
