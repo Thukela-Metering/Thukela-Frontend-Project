@@ -47,6 +47,7 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    this.initializeFilterDates();
     this.loadCreditNoteListData();
     this.loadInvoices(); // Load invoices data here
   }
@@ -70,7 +71,15 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
       }
     };
   }
+  initializeFilterDates(): void {
+    const today = new Date();
 
+    // First day of the current month in UTC
+    this.selectedFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));
+
+    // Today's date in UTC
+    this.selectedToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+  }
   loadInvoices(): void {
     this._invoiceService.getAllInvoices(this.filterDTO).subscribe({
       next: (response: any) => {

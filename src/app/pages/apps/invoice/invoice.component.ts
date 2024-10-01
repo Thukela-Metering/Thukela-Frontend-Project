@@ -47,6 +47,7 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
   //  this.loaderService.show();
+  this.initializeFilterDates();
     this.loadInvoicesListData();
    
   }
@@ -73,7 +74,15 @@ export class AppInvoiceListComponent implements OnInit, AfterViewInit {
       }
     };
   }
+  initializeFilterDates(): void {
+    const today = new Date();
 
+    // First day of the current month in UTC
+    this.selectedFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));
+
+    // Today's date in UTC
+    this.selectedToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+  }
   openDialog(action: string, obj: any): void {
     obj.action = action;
     const dialogRef = this.dialog.open(AppAddInvoiceComponent, {
