@@ -23,9 +23,6 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
   selectedFromDate = new Date();
   selectedToDate = new Date();
   invoiceFind: InvoiceDTO[] = [];
-  filterDTO: FilterDTO = new FilterDTO();
-  selectedFromDate = new Date();
-  selectedToDate = new Date();
   buildingOwnerNames: { [key: number]: string } = {};
   displayedColumns: string[] = [
     'chk',
