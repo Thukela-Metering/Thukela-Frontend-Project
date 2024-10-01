@@ -19,6 +19,7 @@ import { SnackbarService } from "src/app/services/snackbar.service";
     badDeptForm: FormGroup;
     @Input() localDataFromComponent: badDeptDTO;
     action: string;
+    disabledProperty:boolean = true;
     badDeptDTO: badDeptDTO = new badDeptDTO();
     local_data: badDeptDTO;
     DropDownValues: LookupValueDTO[] = [];
@@ -43,6 +44,7 @@ import { SnackbarService } from "src/app/services/snackbar.service";
       this.getDropdownValues();
       this.badDeptForm = this.fb.group({
         amount: ['', Validators.required],
+        nsp_AccountRunningBalance:[{ value: '', disabled: true }],
         closeAccount: [false, Validators.required],
         buildingAccountNumber: [{ value: '', disabled: true }],        
         note: [''],

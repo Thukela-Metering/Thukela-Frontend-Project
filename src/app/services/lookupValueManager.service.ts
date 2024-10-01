@@ -11,6 +11,7 @@ export class LookupValueManagerService {
     //private apiUrl = 'http://localhost:8080/api';
     private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
 
+
   private lookupValues: LookupValueDTO[] = []; // Cache for lookup values
   private lookupValuesLoaded = false; // Flag to check if values are loaded
 

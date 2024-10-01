@@ -7,7 +7,7 @@ import { InvoiceService } from 'src/app/services/invoice.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { BuildingOwnerService } from 'src/app/services/buildingOwner.service';
 import { CreditNoteService } from 'src/app/services/credit-note.service';
-import { BuildingOwnerDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { BuildingOwnerDTO, FilterDTO, InvoiceDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 import { CreditNoteDTO } from 'src/app/DTOs/CreditNoteDTO';
 import { CreditNoteViewComponent } from './credit-note-view.component';
 import { catchError, map, of } from 'rxjs';
@@ -19,6 +19,9 @@ import { catchError, map, of } from 'rxjs';
 export class CreditNoteTableComponent implements OnInit, AfterViewInit {
   allComplete: boolean = false;
   creditNote: CreditNoteDTO[] = [];
+  filterDTO: FilterDTO = new FilterDTO();
+  selectedFromDate = new Date();
+  selectedToDate = new Date();
   invoiceFind: InvoiceDTO[] = [];
   buildingOwnerNames: { [key: number]: string } = {};
   displayedColumns: string[] = [
@@ -44,6 +47,7 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    this.initializeFilterDates();
     this.loadCreditNoteListData();
     this.loadInvoices(); // Load invoices data here
   }
@@ -67,9 +71,17 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
       }
     };
   }
+  initializeFilterDates(): void {
+    const today = new Date();
 
+    // First day of the current month in UTC
+    this.selectedFromDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));
+
+    // Today's date in UTC
+    this.selectedToDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+  }
   loadInvoices(): void {
-    this._invoiceService.getAllInvoices(true).subscribe({
+    this._invoiceService.getAllInvoices(this.filterDTO).subscribe({
       next: (response: any) => {
         this.invoiceFind = response.data.invoicesDTOs || [];
       },
@@ -125,7 +137,10 @@ export class CreditNoteTableComponent implements OnInit, AfterViewInit {
   }
 
   loadCreditNoteListData(): void {
-    this._creditService.getAllCreditNotes(true).subscribe({
+    this.filterDTO.fromDate = this.selectedFromDate.toISOString();
+    this.filterDTO.toDate = this.selectedToDate.toISOString();
+    this.filterDTO.booleanFilterValue = true;
+    this._creditService.getAllCreditNotes(this.filterDTO).subscribe({
       next: (response: OperationalResultDTO<TransactionDTO>) => {
         if (response && response.data) {
           console.log('Credit notes data received from backend:', response.data.creditNoteDTOs);

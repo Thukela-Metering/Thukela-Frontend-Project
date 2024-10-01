@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OperationalResultDTO } from '../DTOs/operationalResultDTO';
 import { TransactionDTO } from '../DTOs/transactionDTO';
-import { InvoiceDTO } from '../DTOs/dtoIndex';
+import { FilterDTO, InvoiceDTO } from '../DTOs/dtoIndex';
 
 @Injectable({
   providedIn: 'root'
@@ -12,14 +12,13 @@ export class InvoiceService {
 
   constructor(private http: HttpClient) { }
 
-
     //private apiUrl = 'http://localhost:8080/api';
     private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
+
   
-  getAllInvoices(active: boolean): Observable<OperationalResultDTO<TransactionDTO>> {
-    {
-      const params = new HttpParams().set('isactive', active.toString());
-      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Invoice`, { params });
+  getAllInvoices(filterDTO: FilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    {     
+      var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Invoice/GetAllInvoices`, filterDTO);
       return getResponse;
     }
   }

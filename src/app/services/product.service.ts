@@ -13,6 +13,7 @@ export class ProductService {
     //private apiUrl = 'http://localhost:8080/api';
     private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
 
+
     updateProduct(productData: ProductDTO): Observable<OperationalResultDTO<TransactionDTO>> {
         var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Product/Update/${productData.id}`, productData);
         return response;

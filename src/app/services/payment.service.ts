@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { OperationalResultDTO, PaymentInvoiceItemDTO, TransactionDTO } from '../DTOs/dtoIndex';
+import { FilterDTO, OperationalResultDTO, PaymentInvoiceItemDTO, TransactionDTO } from '../DTOs/dtoIndex';
 import { PaymentDTO } from '../DTOs/paymentDTO';
 
 @Injectable({
@@ -13,16 +13,8 @@ export class PaymentService {
     //private apiUrl = 'http://localhost:8080/api';
     private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
 
-  getAllPayments(isActive: boolean): Observable<OperationalResultDTO<TransactionDTO>> {
-    {
-      const params = new HttpParams().set('isactive', isActive.toString());
-      var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BuildingAccount`, { params });
-      return getResponse;
-    }
-  }
-
-  getPayments(): Observable<OperationalResultDTO<TransactionDTO>> {
-    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment`);
+  getPayments(filterDTO: FilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {   
+    var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment/GetPayments`, filterDTO); 
     return getResponse;
   }
 
@@ -33,6 +25,11 @@ export class PaymentService {
 
   createPayment(payment: PaymentDTO): Observable<OperationalResultDTO<TransactionDTO>> {
     var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment`, payment);
+    return getResponse;
+  }
+
+  reversePayment(payment: PaymentDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment/ReversePayment`, payment);
     return getResponse;
   }
 }

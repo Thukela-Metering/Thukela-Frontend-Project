@@ -9,13 +9,43 @@
           </mat-icon>
         </mat-form-field>
       </div>
-      <div class="col-sm-4 d-flex align-items-center justify-content-end">
-        <button mat-flat-button (click)="openDialog('Add', {})" color="primary">Add Invoice</button>
+   <!-- add filter controls here -->
+   <div class="row">
+    <div class="col-12 mb-3">
+      <div class="row align-items-center">
+        <div class="col">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>From Date:</mat-label>
+            <input matInput [matDatepicker]="fromDateDP" placeholder="Select From Date"
+              [(ngModel)]="selectedFromDate" id="fromDate"  />
+            <mat-datepicker-toggle matSuffix [for]="fromDateDP"></mat-datepicker-toggle>
+            <mat-datepicker #fromDateDP></mat-datepicker>
+          </mat-form-field>
+        </div>
       </div>
+    </div>
+    <div class="col-12">
+      <div class="row align-items-center">
+        <div class="col">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>To Date:</mat-label>
+            <input matInput [matDatepicker]="toDateDP" placeholder="Select To Date"
+              [(ngModel)]="selectedToDate" id="toDate" />
+            <mat-datepicker-toggle matSuffix [for]="toDateDP"></mat-datepicker-toggle>
+            <mat-datepicker #toDateDP></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+      <button style="float: right;" mat-stroked-button (click)="loadInvoicesListData()" color="primary">Get Invoice List</button>
+    </div>
+  
+  </div>
     </div>
   </mat-card-content>
 </mat-card>
-
+<div class="col-sm-12 d-flex align-items-center justify-content-end">
+  <button mat-flat-button (click)="openDialog('Add', {})" color="primary">Add Invoice</button>
+</div>
 <mat-card class="cardWithShadow">
   <div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort class="w-100">

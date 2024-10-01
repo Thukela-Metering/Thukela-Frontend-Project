@@ -24,7 +24,7 @@ export class ImportComponent implements OnInit {
 
   // Mapping of import types to their respective template file paths
   importTypeTemplates: { [key: string]: string } = {
-    'Buildings': 'assets/Templates/import-template-buildings.xlsx',
+    'Buildings': 'assets/Templates/Buildings Template.xltx',
     //'Tenants': 'assets/templates/import-template-tenants.xlsx', // Add path for Tenants
   };
 

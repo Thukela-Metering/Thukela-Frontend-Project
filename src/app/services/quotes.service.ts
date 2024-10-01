@@ -11,7 +11,7 @@ import { TempClientDTO } from "../DTOs/tempClientDTO";
 })
 export class QuoteService {
   constructor(private http: HttpClient) { }
-  
+
     //private apiUrl = 'http://localhost:8080/api';
     private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
 

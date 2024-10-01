@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
+import { FilterDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/dtoIndex';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +13,8 @@ export class CreditNoteService {
 
   constructor(private http: HttpClient) { }
 
-  getAllCreditNotes(isActive: boolean): Observable<OperationalResultDTO<TransactionDTO>> {
-    var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/creditNote?isActive=${isActive}`);
+  getAllCreditNotes(filterDTO: FilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {
+    var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/creditNote/GetAllCreditNotes`,filterDTO);
     return getResponse;
   }
 

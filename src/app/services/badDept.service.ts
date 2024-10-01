@@ -12,6 +12,7 @@ export class BadDeptService {
    private apiUrl = 'https://e1d7091f2954de03.p61.rt3.io/api';
    constructor(private http: HttpClient) { }
 
+
     getAllBadDept(isActive: boolean): Observable<OperationalResultDTO<TransactionDTO>> {
         var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BadDept/All?isActive=${isActive}`);
         return getResponse;
