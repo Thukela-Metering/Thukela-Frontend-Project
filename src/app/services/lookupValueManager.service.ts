@@ -8,8 +8,8 @@ import { BuildingOwnerDTO, LookupValueDTO, OperationalResultDTO, TransactionDTO 
   providedIn: 'root'
 })
 export class LookupValueManagerService {
-  private apiUrl = 'http://localhost:8080/api'; // Replace with your API URL
-  //private apiUrl = 'https://thukelameteringproduction.co.za/api';
+//private apiUrl = 'http://localhost:8080/api'; // Replace with your API URL
+private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
   private lookupValues: LookupValueDTO[] = []; // Cache for lookup values
   private lookupValuesLoaded = false; // Flag to check if values are loaded
