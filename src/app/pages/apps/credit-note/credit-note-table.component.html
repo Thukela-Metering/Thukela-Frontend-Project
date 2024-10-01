@@ -9,6 +9,35 @@
           </mat-icon>
         </mat-form-field>
       </div>
+      <div class="row">
+        <div class="col-12 mb-3">
+          <div class="row align-items-center">
+            <div class="col">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>From Date:</mat-label>
+                <input matInput [matDatepicker]="fromDateDP" placeholder="Select From Date"
+                  [(ngModel)]="selectedFromDate" id="fromDate"  />
+                <mat-datepicker-toggle matSuffix [for]="fromDateDP"></mat-datepicker-toggle>
+                <mat-datepicker #fromDateDP></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="row align-items-center">
+            <div class="col">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>To Date:</mat-label>
+                <input matInput [matDatepicker]="toDateDP" placeholder="Select To Date"
+                  [(ngModel)]="selectedToDate" id="toDate" />
+                <mat-datepicker-toggle matSuffix [for]="toDateDP"></mat-datepicker-toggle>
+                <mat-datepicker #toDateDP></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+          <button style="float: right;" mat-stroked-button (click)="loadCreditNoteListData()" color="primary">Get CreditNotes</button> 
+        </div>        
+      </div>
     </div>
   </mat-card-content>
 </mat-card>
