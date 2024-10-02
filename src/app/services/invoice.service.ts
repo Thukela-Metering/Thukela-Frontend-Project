@@ -13,7 +13,7 @@ export class InvoiceService {
   constructor(private http: HttpClient) { }
 
     //private apiUrl = 'http://localhost:8080/api';
-    private apiUrl = 'https://1ed5a077899b845a.p61.rt3.io/api';
+    private apiUrl = 'https://f81b980619307a79.p61.rt3.io/api';
 
   
   getAllInvoices(filterDTO: FilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {
