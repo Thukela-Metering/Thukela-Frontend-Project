@@ -12,8 +12,9 @@ interface OperationalResultDTO<T> {
   providedIn: 'root'
 })
 export class ImportService {
-//private apiUrl = 'http://localhost:8080/api'; // Replace with your API URL
-private apiUrl = 'https://thukelameteringproduction.co.za/api';
+
+  private apiUrl = 'http://localhost:8080/api'; // Replace with your API URL
+//private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
   constructor(private http: HttpClient) {}
 
