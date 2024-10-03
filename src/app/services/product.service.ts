@@ -11,7 +11,7 @@ export class ProductService {
     constructor(private http: HttpClient) { }
 
     //private apiUrl = 'http://localhost:8080/api';
-    private apiUrl = 'https://f81b980619307a79.p61.rt3.io/api';
+    private apiUrl = 'https://6k2nti3up32q.connect.remote.it/api';
 
 
     updateProduct(productData: ProductDTO): Observable<OperationalResultDTO<TransactionDTO>> {

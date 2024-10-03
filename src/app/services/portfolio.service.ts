@@ -11,7 +11,7 @@ export class PortfolioService {
     constructor(private http: HttpClient) { }
     
     //private apiUrl = 'http://localhost:8080/api';
-    private apiUrl = 'https://f81b980619307a79.p61.rt3.io/api';
+    private apiUrl = 'https://6k2nti3up32q.connect.remote.it/api';
 
     updateBuildingData(buildingData: BuildingDTO): Observable<OperationalResultDTO<TransactionDTO>> {
         var response = this.http.put<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Building/${buildingData.id}`, buildingData);
