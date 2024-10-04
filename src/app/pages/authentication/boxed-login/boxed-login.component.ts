@@ -17,6 +17,7 @@ import { LookupValueManagerService } from 'src/app/services/lookupValueManager.s
 })
 export class AppBoxedLoginComponent {
   options = this.settings.getOptions();
+  hidePassword: boolean = true; // Property to track password visibility
 
   constructor(
     private settings: CoreService,
@@ -27,12 +28,17 @@ export class AppBoxedLoginComponent {
   ) {}
 
   form = new FormGroup({
-    uname: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    uname: new FormControl('', [Validators.required, Validators.minLength(6)]),
     password: new FormControl('', [Validators.required]),
   });
 
   get f() {
     return this.form.controls;
+  }
+
+  // Method to toggle password visibility
+  togglePasswordVisibility(): void {
+    this.hidePassword = !this.hidePassword;
   }
 
   submit() {
