@@ -1,4 +1,4 @@
-<div class="blank-layout-container justify-content-center align-items-center">
+<div class="blank-layout-container justify-content-center align-items-center" style="padding-bottom: 50px;">
   <div
     class="position-relative row w-100 h-100 bg-gradient justify-content-center"
   >
@@ -6,6 +6,7 @@
       <mat-card class="cardWithShadow boxed-auth">
         <mat-card-content class="p-32">
           <div class="text-center">
+            <!-- Light Theme Logo and Text -->
             @if(options.theme === 'light') {
               <img
                 src="./assets/images/logos/thukela-logo.png"
@@ -13,7 +14,7 @@
                 class="align-middle m-2"
                 alt="Thukela Metering Logo - Light Theme"
               />
-              <!-- Added Text Below Logo -->
+              <!-- Text Below Logo -->
               <div
                 style="
                   font-size: 18px;
@@ -25,6 +26,7 @@
                 Thukela Metering
               </div>
             }
+            <!-- Dark Theme Logo and Text -->
             @if(options.theme === 'dark') {
               <img
                 src="./assets/images/logos/thukela-logo.png"
@@ -32,7 +34,7 @@
                 style="width: 155px; height: auto; max-width: 100%;"
                 alt="Thukela Metering Logo - Dark Theme"
               />
-              <!-- Added Text Below Logo -->
+              <!-- Text Below Logo -->
               <div
                 style="
                   font-size: 18px;
@@ -85,6 +87,7 @@
                 (click)="togglePasswordVisibility()"
                 [attr.aria-label]="'Hide password'"
                 [attr.aria-pressed]="!hidePassword"
+                style="margin-right: 8px;"
               >
                 <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
@@ -97,31 +100,36 @@
               }
             </mat-form-field>
 
-            <!-- Forgot Password Link (Commented Out) -->
-            <!--
-            <div class="d-flex align-items-center m-b-12">
-              <a
-                [routerLink]="['/authentication/boxed-forgot-pwd']"
-                class="text-primary f-w-600 text-decoration-none m-l-auto f-s-14"
-              >
-                Forgot Password?
-              </a>
-            </div>
-            -->
-
             <!-- Sign In Button -->
             <button
               mat-flat-button
               color="primary"
               class="w-100"
               [disabled]="!form.valid"
+              style="height: 40px;"
             >
               Sign In
             </button>
-            <!-- Input -->
           </form>
         </mat-card-content>
       </mat-card>
     </div>
   </div>
 </div>
+
+<!-- Footer -->
+<footer style="
+  width: 100%;
+  text-align: center;
+  padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: #495060;
+  color: #ffffff;
+  font-size: 14px;
+  box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+">
+  Designed and developed by Thukela Metering (Pty) Ltd 2024
+</footer>
+738096
