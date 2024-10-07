@@ -8,10 +8,10 @@ import { badDeptDTO, OperationalResultDTO, TransactionDTO } from 'src/app/DTOs/d
 })
 export class BadDeptService {
 
+
     //private apiUrl = 'http://localhost:8080/api';
     private apiUrl = 'https://6k2nti3up32q.connect.remote.it/api';
    constructor(private http: HttpClient) { }
-
 
     getAllBadDept(isActive: boolean): Observable<OperationalResultDTO<TransactionDTO>> {
         var getResponse = this.http.get<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/BadDept/All?isActive=${isActive}`);

@@ -13,6 +13,7 @@ export class BuildingAccountService {
     //private apiUrl = 'http://localhost:8080/api';
     private apiUrl = 'https://6k2nti3up32q.connect.remote.it/api';
 
+
   getAllBuildingAccounts(isActive:boolean):Observable<OperationalResultDTO<TransactionDTO>>{
     {
       const params = new HttpParams().set('isactive', isActive.toString());

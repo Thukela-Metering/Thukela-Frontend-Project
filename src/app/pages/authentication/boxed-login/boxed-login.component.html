@@ -1,82 +1,135 @@
-<div class="blank-layout-container justify-content-center align-items-center">
+<div class="blank-layout-container justify-content-center align-items-center" style="padding-bottom: 50px;">
   <div
-    class="position-relative row w-100 h-100 bg-gredient justify-content-center"
+    class="position-relative row w-100 h-100 bg-gradient justify-content-center"
   >
     <div class="col-lg-4 d-flex align-items-center">
       <mat-card class="cardWithShadow boxed-auth">
         <mat-card-content class="p-32">
           <div class="text-center">
+            <!-- Light Theme Logo and Text -->
             @if(options.theme === 'light') {
-            <a [routerLink]="['/dashboards/dashboard1']">
               <img
-                src="./assets/images/logos/dark-logo.svg"
+                src="./assets/images/logos/thukela-logo.png"
+                style="width: 155px; height: auto; max-width: 100%;"
                 class="align-middle m-2"
-                alt="logo"
+                alt="Thukela Metering Logo - Light Theme"
               />
-            </a>
-            } @if(options.theme === 'dark') {
-            <a [routerLink]="['/dashboards/dashboard1']">
+              <!-- Text Below Logo -->
+              <div
+                style="
+                  font-size: 18px;
+                  font-weight: 600;
+                  color: #333;
+                  margin-top: 8px;
+                "
+              >
+                Thukela Metering
+              </div>
+            }
+            <!-- Dark Theme Logo and Text -->
+            @if(options.theme === 'dark') {
               <img
-                src="./assets/images/logos/light-logo.svg"
+                src="./assets/images/logos/thukela-logo.png"
                 class="align-middle m-2"
-                alt="logo"
+                style="width: 155px; height: auto; max-width: 100%;"
+                alt="Thukela Metering Logo - Dark Theme"
               />
-            </a>
+              <!-- Text Below Logo -->
+              <div
+                style="
+                  font-size: 18px;
+                  font-weight: 600;
+                  color: #fff;
+                  margin-top: 8px;
+                "
+              >
+                Thukela Metering
+              </div>
             }
           </div>
 
           <div class="or-border m-t-30">Sign in</div>
 
           <form class="m-t-30" [formGroup]="form" (ngSubmit)="submit()">
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-              >Username</mat-label
-            >
+            <!-- Username Field -->
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">
+              Username
+            </mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput formControlName="uname" />
+              <input matInput formControlName="uname" autocomplete="username" />
               @if(f['uname'].touched && f['uname'].invalid) {
-              <mat-hint class="m-b-16 error-msg">
-                @if(f['uname'].errors && f['uname'].errors['required']) {
-                <div class="text-error">Username is required.</div>
-                } @if(f['uname'].errors && f['uname'].errors['minlength']) {
-                <div class="text-error">Username should be 6 character.</div>
-                }
-              </mat-hint>
-              }
-            </mat-form-field>
-            <!-- password -->
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-              >Password</mat-label
-            >
-            <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput type="password" formControlName="password" />
-              @if(f['password'].touched && f['password'].invalid) {
-              <mat-hint class="m-b-16 error-msg">
-                @if(f['password'].errors && f['password'].errors['required']) {
-                <div class="text-error">Password is required.</div>
-                }
-              </mat-hint>
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['uname'].errors && f['uname'].errors['required']) {
+                    <div class="text-error">Username is required.</div>
+                  }
+                  @if(f['uname'].errors && f['uname'].errors['minlength']) {
+                    <div class="text-error">Username should be 6 characters.</div>
+                  }
+                </mat-hint>
               }
             </mat-form-field>
 
-            <div class="d-flex align-items-center m-b-12">
-              <a
-                [routerLink]="['/authentication/boxed-forgot-pwd']"
-                class="text-primary f-w-600 text-decoration-none m-l-auto f-s-14"
-                >Forgot Password ?</a
+            <!-- Password Field with Show/Hide Toggle -->
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">
+              Password
+            </mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input
+                matInput
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                mat-icon-button
+                matSuffix
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="!hidePassword"
+                style="margin-right: 8px;"
               >
-            </div>
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              @if(f['password'].touched && f['password'].invalid) {
+                <mat-hint class="m-b-16 error-msg">
+                  @if(f['password'].errors && f['password'].errors['required']) {
+                    <div class="text-error">Password is required.</div>
+                  }
+                </mat-hint>
+              }
+            </mat-form-field>
+
+            <!-- Sign In Button -->
             <button
               mat-flat-button
               color="primary"
               class="w-100"
               [disabled]="!form.valid"
+              style="height: 40px;"
             >
               Sign In
             </button>
-            <!-- input -->
           </form>
         </mat-card-content>
       </mat-card>
     </div>
   </div>
 </div>
+
+<!-- Footer -->
+<footer style="
+  width: 100%;
+  text-align: center;
+  padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: #495060;
+  color: #ffffff;
+  font-size: 14px;
+  box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+">
+  Designed and developed by Thukela Metering (Pty) Ltd 2024
+</footer>
+738096

@@ -9,7 +9,6 @@ import { OperationalResultDTO, TransactionDTO } from '../DTOs/dtoIndex';
   providedIn: 'root'
 })
 export class UserService {
-  
     //private apiUrl = 'http://localhost:8080/api';
     private apiUrl = 'https://6k2nti3up32q.connect.remote.it/api';
 

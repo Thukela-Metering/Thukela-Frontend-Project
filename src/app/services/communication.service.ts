@@ -10,7 +10,7 @@ import { TransactionDTO } from '../DTOs/transactionDTO';
   providedIn: 'root'
 })
 export class CommunicationService {
-
+  
     //private apiUrl = 'http://localhost:8080/api';
     private apiUrl = 'https://6k2nti3up32q.connect.remote.it/api';
 
