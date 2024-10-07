@@ -1,7 +1,8 @@
-
 <mat-card class="cardWithShadow">
   <mat-card-content>
+    <!-- Search and Filter Section -->
     <div class="row justify-content-between">
+      <!-- Search Input -->
       <div class="col-sm-4">
         <mat-form-field appearance="outline" class="w-100 hide-hint">
           <input matInput placeholder="Search statement content" (keyup)="filter($any($event.target).value)" />
@@ -10,27 +11,22 @@
           </mat-icon>
         </mat-form-field>
       </div>
-      <!-- do date selector component here -->
+      
+      <!-- Date Selector Component -->
       <div class="col-sm-4 mx-2">
         <mat-card class="cardWithShadow p-3">
           <mat-card-content class="p-24">
             <label class="checkbox-group-label">Manage Payments or Reversed Payments:</label>
             <div class="checkbox-group">
-              <mat-checkbox
-                [(ngModel)]="isActive"
-                (change)="onCheckboxChange('active')"
-                name="isActive"
-              >
+              <mat-checkbox [(ngModel)]="isActive" (change)="onCheckboxChange('active')" name="isActive">
                 Payments
               </mat-checkbox>
-              <mat-checkbox
-                [(ngModel)]="isInactive"
-                (change)="onCheckboxChange('inactive')"
-                name="isInactive"
-              >
+              <mat-checkbox [(ngModel)]="isInactive" (change)="onCheckboxChange('inactive')" name="isInactive">
                 Reversed Payments
               </mat-checkbox>
             </div>
+            
+            <!-- Date Pickers -->
             <div class="row">
               <div class="col-12 mb-3">
                 <div class="row align-items-center">
@@ -59,15 +55,18 @@
                 </div>
               </div>
             </div>
+            
+            <!-- Get Statement Button -->
             <button style="float: right;" mat-stroked-button (click)="loadPaymentData()" color="primary">Get Statement</button>
           </mat-card-content>
         </mat-card>
       </div>
-      <!-- end of date selector component -->
+      <!-- End of Date Selector Component -->
     </div>
   </mat-card-content>
 </mat-card>
 
+<!-- Payment Table -->
 <div class="mat-elevation-z8">
   <mat-card-content class="p-24" style="overflow-y: auto; max-height: calc(100vh - 200px);">
     <table mat-table [dataSource]="dataSource" matSort class="no-wrap v-middle w-100">
@@ -96,28 +95,40 @@
         <td mat-cell *matCellDef="let payment" >{{ payment.amount | currency:'R' }}</td>
       </ng-container>
 
+      <!-- Action Column -->
       <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header  class="f-s-15 f-w-600" style="color: white;">Action</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="f-s-15 f-w-600" style="color: white;">Action</th>
         <td mat-cell *matCellDef="let element" class="action-link">
-          <div  *ngIf="isActive" class="row justify-content-space-around">            
-            <button mat-icon-button [ngStyle]="{'color':'#079ade'}"  [matMenuTriggerFor]="menu" aria-label="Menu">
+          <div *ngIf="isActive" style="display: flex; align-items: center; gap: 12px;">
+            <!-- Menu Trigger Button -->
+            <button
+              mat-icon-button
+              [ngStyle]="{'color':'#079ade'}"
+              [matMenuTriggerFor]="menu"
+              aria-label="Menu"
+              style="display: flex; align-items: center; justify-content: center; padding: 8px;"
+            >
               <i-tabler name="menu" class="icon-18"></i-tabler>
             </button>
+            
+            <!-- Action Menu -->
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="reversePayment( element)">
-                <i-tabler name="eye" class="icon-18"></i-tabler>
+              <button mat-menu-item (click)="reversePayment(element)" style="display: flex; align-items: center; gap: 8px;">
+                <i-tabler name="eye" class="icon-18" style="vertical-align: middle;"></i-tabler>
                 reverse
               </button>              
             </mat-menu>
           </div>
         </td>
       </ng-container>
+
       <!-- Table Header and Row Definitions -->
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
     </table>
 
+    <!-- Paginator -->
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
   </mat-card-content>
 </div>

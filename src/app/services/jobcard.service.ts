@@ -10,8 +10,9 @@ import { TransactionDTO } from '../DTOs/transactionDTO';
 })
 export class JobCardService {
 
-//private apiUrl = 'http://localhost:8080/api'; // Replace with your API URL
-private apiUrl = 'https://thukelameteringproduction.co.za/api';
+    //private apiUrl = 'http://localhost:8080/api';
+    private apiUrl = 'https://6k2nti3up32q.connect.remote.it/api';
+  
   constructor(private http: HttpClient) {}
 
   // Get all job cards

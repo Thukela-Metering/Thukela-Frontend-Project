@@ -8,17 +8,19 @@ import { CoreService } from 'src/app/services/core.service';
   template: `
     <div class="branding">
       @if(options.theme === 'light') {
-      <a href="/">
+      <a href="/dashboards/dashboard1">
         <img
-          src="./assets/images/logos/dark-logo.svg"
+          src="./assets/images/logos/thukela-logo.png"
+          style="width: 155px; height: auto; max-width: 100%;"
           class="align-middle m-2"
           alt="logo"
         />
       </a>
       } @if(options.theme === 'dark') {
-      <a href="/">
+      <a href="/dashboards/dashboard1">
         <img
-          src="./assets/images/logos/light-logo.svg"
+          src="./assets/images/logos/thukela-logo.png"
+          style="width: 155px; height: auto; max-width: 100%;"
           class="align-middle m-2"
           alt="logo"
         />
