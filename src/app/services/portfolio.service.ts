@@ -11,7 +11,7 @@ export class PortfolioService {
     constructor(private http: HttpClient) { }
     
     //private apiUrl = 'http://localhost:8080/api';
-    private apiUrl = 'https://6k2nti3up32q.connect.remote.it/api';
+    private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
 
     updateBuildingData(buildingData: BuildingDTO): Observable<OperationalResultDTO<TransactionDTO>> {

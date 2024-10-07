@@ -11,7 +11,7 @@ export class PaymentService {
   constructor(private http: HttpClient) { }
 
     //private apiUrl = 'http://localhost:8080/api';
-    private apiUrl = 'https://6k2nti3up32q.connect.remote.it/api';
+    private apiUrl = 'https://thukelameteringproduction.co.za/api';
 
   getPayments(filterDTO: FilterDTO): Observable<OperationalResultDTO<TransactionDTO>> {   
     var getResponse = this.http.post<OperationalResultDTO<TransactionDTO>>(`${this.apiUrl}/Payment/GetPayments`, filterDTO); 
