@@ -100,7 +100,8 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
     this._buildingOwnerService.getBuildingOwnerAccountByBuildingId(this.data.buildingId ?? 0, true).subscribe({
       next: (response: any) => {
         this.retrievedBuildings = response.data?.buildingOwnerAccountDTOs ?? [];
-        this.foundOwnerAccount = this.retrievedBuildings.find(owner => owner.buildingId === this.invoiceDetail.buildingId);
+        this.foundOwnerAccount = response.data?.buildingOwnerAccountDTOs[0];
+        console.log("");
       },
       error: (error) => {
         console.error('There was an error!', error);
@@ -164,6 +165,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
       discount: this.invoiceDetail.discount || 0,
       vat: this.invoiceDetail.vat || 0,
       grandTotal: this.invoiceDetail.outstandingAmount || 0,
+      accountNumber: selectedOwner?.accountNumber,
       items: this.invoiceDetail.items || [],
       note: this.data.note || ""
     };
@@ -208,8 +210,8 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
     const selectedOwner = this.retrievedBuildings.find(owner => owner.id === this.invoiceDetail.buildingId);
     const emailData = {
       filename: `invoice_${this.invoiceDetail.referenceNumber}.pdf`,
-      clientEmail: selectedOwner?.email || "",
-      clientName: selectedOwner?.name || "",
+      clientEmail: this.foundOwnerAccount?.email || "",
+      clientName: this.foundOwnerAccount?.name || "",
       isActive: true
     };
 
@@ -217,7 +219,7 @@ export class AppInvoiceViewComponent implements OnInit, AfterViewInit {
 
     try {
       await this._emailService.sendEmail(pdfDto, JSON.stringify(emailData), 1).toPromise();
-      this.snackbarService.openSnackBar("Email has been sent to: " + selectedOwner?.email + " successfully", "dismiss", 8000);
+      this.snackbarService.openSnackBar("Email has been sent to: " + this.foundOwnerAccount?.email + " successfully", "dismiss", 8000);
       this.dialogRef.close();
     } catch (error: any) {
       console.error('Error sending email:', error);
