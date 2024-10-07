@@ -1,59 +1,60 @@
+// sidebar-data.ts
+
 import { NavItem } from './nav-item/nav-item';
 
 export const navItems: NavItem[] = [
   {
     navCap: 'Home',
   },
- 
   {
     displayName: 'User Management',
     iconName: 'user-plus',
-    route: '/apps',
+    route: '/apps/employee', // Updated to absolute path
     children: [
       {
         displayName: 'Manage users',
         iconName: 'point',
-        route: 'apps/employee',     
+        route: '/apps/employee', // Ensure this matches AppsRoutes
       },
     ],
   },
   {
-    navCap: 'Buildings ',
+    navCap: 'Buildings',
   },
   {
     displayName: 'Building Management',
     iconName: 'apps',
-    route: '/menu-level',
+    route: '/apps/building', // Updated to absolute path
     children: [
       {
         displayName: 'Buildings',
         iconName: 'point',
-        route: 'apps/building',     
+        route: '/apps/building',     
       },
       {
         displayName: 'Building Accounts',
         iconName: 'point',
-        route: 'apps/building/buildingAccount',     
+        route: '/apps/building/buildingAccount',     
       },
       {
         displayName: 'Representative Link',
         iconName: 'point',
-        route: 'apps/building/buildingRepresentative',     
+        route: '/apps/building/buildingRepresentative',     
       },
       {
         displayName: 'PropertyGroup Link',
         iconName: 'point',
-        route: 'apps/building/buildingPropertyGroup',     
+        route: '/apps/building/buildingPropertyGroup',     
       },
       {
         displayName: 'Building Owner',
         iconName: 'point',
-        route: 'apps/building/buildingOwner',     
+        route: '/apps/building/buildingOwner',     
       },
       {
         displayName: 'Building Portfolio',
         iconName: 'point',
-        route: 'apps/building/Portfolio',     
+        route: '/apps/building/Portfolio',     
       },
     ],
   },
@@ -63,58 +64,61 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Invoicing',
     iconName: 'file-invoice',
-    route: '/apps',
+    route: '/apps/invoice', // Updated to absolute path
     children: [
       {
         displayName: 'Quotes',
         iconName: 'point',
-        route: 'apps/Quotes',     
+        route: '/apps/Quotes',     
       },
       {
         displayName: 'Invoice List',
         iconName: 'point',
-        route: 'apps/invoice',     
+        route: '/apps/invoice',     
       },
-      { displayName: 'Credit Note',
+      { 
+        displayName: 'Credit Note',
         iconName: 'point',
-        route: 'apps/creditNote',   
+        route: '/apps/creditNote',   
       },
-      { displayName: 'Recurring Invoices',
+      { 
+        displayName: 'Recurring Invoices',
         iconName: 'point',
-        route: 'apps/recurring',   
+        route: '/apps/recurring',   
       },
     ],
   },
   {
     displayName: 'Payments',
     iconName: 'file-invoice',
-    route: '/apps',
+    route: '/apps/payment', // Updated to absolute path
     children: [
       {
         displayName: 'Load Payment',
         iconName: 'point',
-        route: 'apps/statementSearch',              
+        route: '/apps/statementSearch',              
       },
       {
         displayName: 'Payment List',
         iconName: 'point',
-        route: 'apps/payment',              
+        route: '/apps/payment',              
       },
     ],
   },
   {
     displayName: 'Ledger',
     iconName: 'file-invoice',
-    route: '/apps',
+    route: '/apps/badDept', // Updated to absolute path
     children: [
-      { displayName: 'Bad Dept',
+      { 
+        displayName: 'Bad Dept',
         iconName: 'point',
-        route: 'apps/badDept',   
+        route: '/apps/badDept',   
       },
       {
-       displayName: 'Statement Screen',
-       iconName: 'point',
-       route: 'apps/statement',     
+        displayName: 'Statement Screen',
+        iconName: 'point',
+        route: '/apps/statement',     
       },
     ],
   },
@@ -124,12 +128,12 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Job Cards',
     iconName: 'file-invoice',
-    route: '/apps',
+    route: '/apps/Job-Cards', // Updated to absolute path
     children: [
       {
         displayName: 'Job Cards',
         iconName: 'point',
-        route: 'apps/Job-Cards',     
+        route: '/apps/Job-Cards',     
       },
     ],
   },
@@ -139,12 +143,12 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Reports',
     iconName: 'file-invoice',
-    route: '/apps',
+    route: '/apps/debitorsReport', // Updated to absolute path
     children: [
       {
         displayName: 'Debitors Report',
         iconName: 'point',
-        route: 'apps/debitorsReport',     
+        route: '/apps/debitorsReport',     
       },
     ],
   },
@@ -154,12 +158,12 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Product-management',
     iconName: 'file-invoice',
-    route: '/apps',
+    route: '/apps/product-management', // Updated to absolute path
     children: [
       {
-        displayName: 'Product-management-screen',
+        displayName: 'Product Management',
         iconName: 'point',
-        route: 'apps/product-management',     
+        route: '/apps/product-management',     
       },
     ],
   },
@@ -169,19 +173,18 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Tools',
     iconName: 'file-invoice',
-    route: '/apps',
+    route: '/apps/hangfire', // Updated to absolute path
     children: [
       {
         displayName: 'Hangfire Dashboard',
         iconName: 'point',
-        route: 'apps/hangfire',     
+        route: '/apps/hangfire',     
       },
       {
         displayName: 'Importing',
         iconName: 'point',
-        route: 'apps/Import',     
+        route: '/apps/Import',     
       },
     ],
   },
-  
 ];

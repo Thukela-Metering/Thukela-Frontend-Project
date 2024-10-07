@@ -1,6 +1,8 @@
+// full.component.ts
+
 import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Subscription, concat } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 import { CoreService } from 'src/app/services/core.service';
 import { AppSettings } from 'src/app/app.config';
@@ -70,14 +72,16 @@ interface quicklinks {
 export class FullComponent implements OnInit {
 
   navItems = navItems;
-  LoggedInPersonName: string;
-  LoggedInPersonRole: string;
-  @ViewChild('leftsidenav')
-  public sidenav: MatSidenav;
-  resView = false;
+  LoggedInPersonName: string = '';
+  LoggedInPersonRole: string = '';
+
+  // ViewChild for Main Navigation Sidenav
+  @ViewChild('leftsidenav') sidenav?: MatSidenav;
+
   @ViewChild('content', { static: true }) content!: MatSidenavContent;
-  //get options from service
-  options = this.settings.getOptions();
+
+  // Get options from service
+  options: AppSettings;
   private layoutChangesSubscription = Subscription.EMPTY;
   private isMobileScreen = false;
   private isContentWidthFixed = true;
@@ -92,6 +96,8 @@ export class FullComponent implements OnInit {
     return this.resView;
   }
 
+  resView = false;
+
   constructor(
     private settings: CoreService,
     private mediaMatcher: MediaMatcher,
@@ -103,17 +109,35 @@ export class FullComponent implements OnInit {
     private authService: AuthService
   ) {
     this.htmlElement = document.querySelector('html')!;
+    this.options = this.settings.getOptions() || {
+      sidenavOpened: true,
+      sidenavCollapsed: false,
+      horizontal: false,
+      navPos: 'side',
+      dir: 'ltr',
+      theme: 'light',
+      // ... other default settings
+    };
+
     this.layoutChangesSubscription = this.breakpointObserver
       .observe([MOBILE_VIEW, TABLET_VIEW, MONITOR_VIEW, BELOWMONITOR])
       .subscribe((state) => {
-        // SidenavOpened must be reset true when layout changes
-        this.options.sidenavOpened = true;
-        this.isMobileScreen = state.breakpoints[BELOWMONITOR];
-        if (this.options.sidenavCollapsed == false) {
-          this.options.sidenavCollapsed = state.breakpoints[TABLET_VIEW];
+        if (state.breakpoints[MOBILE_VIEW] || state.breakpoints[BELOWMONITOR]) {
+          this.isMobileScreen = true;
+          this.options.sidenavOpened = false;
+          this.options.sidenavCollapsed = false;
+        } else if (state.breakpoints[TABLET_VIEW]) {
+          this.isMobileScreen = false;
+          this.options.sidenavOpened = true;
+          this.options.sidenavCollapsed = true;
+        } else if (state.breakpoints[MONITOR_VIEW]) {
+          this.isMobileScreen = false;
+          this.options.sidenavOpened = true;
+          this.options.sidenavCollapsed = false;
         }
-        this.isContentWidthFixed = state.breakpoints[MONITOR_VIEW];
-        this.resView = state.breakpoints[BELOWMONITOR];
+
+        // Update settings after state changes
+        this.settings.setOptions(this.options);
       });
 
     // Initialize project theme with options
@@ -122,7 +146,7 @@ export class FullComponent implements OnInit {
     // This is for scroll to top
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((e) => {
+      .subscribe(() => {
         this.content.scrollTo({ top: 0 });
       });
   }
@@ -135,22 +159,25 @@ export class FullComponent implements OnInit {
   ngOnDestroy() {
     this.layoutChangesSubscription.unsubscribe();
   }
+
   getLoggedInPersonData() {
-    var getLoggedInUserId = localStorage.getItem('LoggedInUserGuid')!;
-    if (getLoggedInUserId != "") {
+    const getLoggedInUserId = localStorage.getItem('LoggedInUserGuid');
+    if (getLoggedInUserId) {
       this._userService.getUserById(getLoggedInUserId).subscribe((userDetail) => {
-        var result = userDetail as OperationalResultDTO<TransactionDTO>;
-        this.LoggedInPersonName = result.data!.personDTOs![0].name.concat(' ', result.data!.personDTOs![0].surname);
-        // console.log(userDetail);
+        const result = userDetail as OperationalResultDTO<TransactionDTO>;
+        if (result.data && result.data.personDTOs && result.data.personDTOs.length > 0) {
+          this.LoggedInPersonName = `${result.data.personDTOs[0].name} ${result.data.personDTOs[0].surname}`;
+        }
       });
     }
   }
+
   getLoggedInUserRole() {
-    var getLoggedInUserId = localStorage.getItem('LoggedInUserGuid')!;
-    if (getLoggedInUserId!="") {
+    const getLoggedInUserId = localStorage.getItem('LoggedInUserGuid');
+    if (getLoggedInUserId) {
       this._roleService.getUserRoleByUserId(getLoggedInUserId).subscribe(ax => {
-        var result = ax as OperationalResultDTO<TransactionDTO>;
-        this.LoggedInPersonRole = result.data!.stringResponseProperty!;
+        const result = ax as OperationalResultDTO<TransactionDTO>;
+        this.LoggedInPersonRole = result.data?.stringResponseProperty || '';
       });
     }
   }
@@ -158,7 +185,6 @@ export class FullComponent implements OnInit {
   signout(){
     this.authService.logout().subscribe(
       response => {
-        // console.log(response);
         localStorage.clear();
         this.router.navigate(['/authentication/boxed-login']);
       },
@@ -167,6 +193,7 @@ export class FullComponent implements OnInit {
       }
     );
   }
+
   toggleCollapsed() {
     this.isContentWidthFixed = false;
     this.options.sidenavCollapsed = !this.options.sidenavCollapsed;
@@ -199,6 +226,16 @@ export class FullComponent implements OnInit {
     } else {
       this.htmlElement.classList.remove('dark-theme');
       this.htmlElement.classList.add('light-theme');
+    }
+  }
+
+  // Unified Toggle Function
+  toggleSidenav() {
+    if (this.sidenav) {
+      this.sidenav.toggle();
+      // Update the sidenavOpened state based on the new state
+      this.sidenav.opened ? (this.options.sidenavOpened = true) : (this.options.sidenavOpened = false);
+      this.settings.setOptions(this.options);
     }
   }
 }

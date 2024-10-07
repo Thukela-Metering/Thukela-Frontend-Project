@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { PaymentService } from 'src/app/services/payment.service';
 import { PaymentDTO } from 'src/app/DTOs/paymentDTO';
 import { FilterDTO, PaymentInvoiceItemDTO } from 'src/app/DTOs/dtoIndex';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'app-payment-table',
@@ -18,6 +19,7 @@ export class PaymentTableComponent implements OnInit {
   filterDTO: FilterDTO = new FilterDTO();
   selectedFromDate = new Date();
   selectedToDate = new Date();
+  private snackbarService: SnackbarService;
   selectedPaymentToReverse: PaymentDTO = new PaymentDTO();
   paymentInvoiceItemDTO: PaymentInvoiceItemDTO[] = []
   displayedColumns: string[] = [
@@ -126,9 +128,9 @@ export class PaymentTableComponent implements OnInit {
 
     this.paymentService.reversePayment(this.selectedPaymentToReverse).subscribe(response => {
       if (response.success) {
-
+        this.snackbarService.openSnackBar("Reversed payment successfully", "dismiss");
       } else {
-
+        this.snackbarService.openSnackBar("Payment could not be reversed!", "dismiss");
       }
     });
   }
